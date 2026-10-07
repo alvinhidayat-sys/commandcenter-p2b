@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Dashboard Kinerja Command Center</title>
+<title>Dashboard Kinerja dan Administrasi Command Center</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Special+Elite&display=swap" rel="stylesheet">
 <style>
@@ -9,7 +9,7 @@
 body{margin:0;font:15px/1.55 Lora,Georgia,"Times New Roman",serif;color:var(--ink);background:radial-gradient(circle at 15% 0,#f6ead0,transparent 60%),repeating-linear-gradient(45deg,rgba(120,80,30,.045) 0 2px,transparent 2px 6px),var(--bg)}
 header{position:sticky;top:0;z-index:8;background:var(--ink);color:#f6e7c1;padding:18px calc(var(--hw) + 44px) 18px 22px;border-bottom:6px double var(--acc);box-shadow:0 8px 14px -8px rgba(58,42,28,calc(.6*var(--p,0)))}
 header h1{margin:0;font:400 26px "Special Elite","Courier New",monospace;letter-spacing:.5px}
-header p{margin:3px 0 0;opacity:calc(.85*var(--fd,1));font-size:13px;font-style:italic}
+header p:empty{display:none}header p{margin:3px 0 0;opacity:calc(.85*var(--fd,1));font-size:13px;font-style:italic}
 main{position:relative;z-index:1;max-width:1240px;margin:0 auto;padding:16px}
 .card{background:rgba(251,242,220,.78);border:2px solid var(--ink);border-radius:3px;padding:14px;margin-bottom:16px;box-shadow:4px 4px 0 var(--line)}
 .row{display:flex;flex-wrap:wrap;gap:12px;align-items:end}
@@ -136,7 +136,7 @@ summary{cursor:pointer;font-style:italic;color:var(--mut)}
 @media(max-width:640px){#cb .btns{flex:1 1 100%}#cb .btns button{flex:1 1 44%}
 #cbOut table{min-width:0}#cbOut td{border-right:0}#cbOut td.b{border-left:0}#cbOut td.pc{min-width:0}#cbOut tr.u td:nth-child(2){padding-left:0}}
 </style></head><body>
-<header><div class="hero" id="hr"><video id="hv" src="journey.mp4" poster="journey-poster.jpg" autoplay muted loop playsinline preload="auto" disablepictureinpicture disableremoteplayback aria-hidden="true" tabindex="-1"></video></div><div class="brand"><b id="bt">Command Center</b><span id="bs">UIW Papua dan Papua Barat</span></div><h1 id="ht">Dashboard Kinerja Command Center</h1><p id="hp">Pilih menu untuk melihat rekap kinerja Command Center</p></header>
+<header><div class="hero" id="hr"><video id="hv" src="journey.mp4" poster="journey-poster.jpg" autoplay muted loop playsinline preload="auto" disablepictureinpicture disableremoteplayback aria-hidden="true" tabindex="-1"></video></div><div class="brand"><b id="bt">Command Center</b><span id="bs">UIW Papua dan Papua Barat</span></div><h1 id="ht">Dashboard Kinerja dan Administrasi Command Center</h1><p id="hp"></p></header>
 <div id="fl" aria-hidden="true"></div>
 <main id="home">
 <p class="intro">MONITORING KINERJA COMMAND CENTER UIW PAPUA DAN PAPUA BARAT.</p>
@@ -380,7 +380,7 @@ const MENUS={
  dispatch:{pre:'Dispatch',t:'Rekap Durasi Manual Dispatch',p:'Durasi laporan masuk ke APKT hingga diteruskan oleh Operator Command Center ke petugas di lapangan (MANUAL COMMAND CENTER), diperbarui otomatis setiap 2 menit',
   load:()=>loadP2(h=>({kk:col(h,['ketkirim'],'KET_KIRIM'),pg:col(h,['tglpenugasanregu'],'TGL_PENUGASAN_REGU'),ro:col(h,['tglreturnorder'],'TGL_RETURN_ORDER')}),(x,c)=>nrm(x[c.kk])=='MANUAL COMMAND CENTER',calcP),
   ok:'Sudah terhitung',bad:'Belum terhitung',okS:'terhitung',avgL:'Rata-rata durasi manual dispatch (menit)',DH:DH_P,SL:SL_N,det:detP,RH:RH_N,min:true}};
-function home(){cur=null;$('home').hidden=false;$('app').hidden=true;$('cb').hidden=true;$('md').hidden=true;$('ht').textContent='Dashboard Durasi Command Center';$('hp').textContent='Pilih menu untuk melihat rekap durasi layanan pengaduan pelanggan';document.title='Dashboard Durasi Command Center';window.scrollTo(0,0)}
+function home(){cur=null;$('home').hidden=false;$('app').hidden=true;$('cb').hidden=true;$('md').hidden=true;$('ht').textContent='Dashboard Kinerja dan Administrasi Command Center';$('hp').textContent='';document.title='Dashboard Kinerja dan Administrasi Command Center';window.scrollTo(0,0)}
 function enter(k){if(cur==k&&!$('app').hidden)return;const g=MENUS[k];cur=k;CG=g;DH=g.DH;SL=g.SL;detRow=g.det;RH=g.RH;MM=g.min;RN=g.min?[3,4,5]:[3];
  $('ht').textContent=g.t;$('hp').textContent=g.p;document.title=g.t;$('home').hidden=true;$('app').hidden=false;$('cb').hidden=true;
  tab='R';lim=200;open.clear();CH.sel=null;$('tR').classList.add('on');$('tD').classList.remove('on');
@@ -666,6 +666,9 @@ const hd=document.querySelector('header'),br=hd.querySelector('.brand'),bt=docum
 let G=null,raf=0;
 const lerp=(a,b,t)=>a+(b-a)*t,ease=t=>t*t*(3-2*t);
 function measure(){
+ ht.style.fontSize='';
+ const cs0=getComputedStyle(hd),avail=hd.clientWidth-(parseFloat(cs0.paddingLeft)||0)-(parseFloat(cs0.paddingRight)||0),nat=ht.scrollWidth;
+ if(nat>avail+1)ht.style.fontSize=Math.max(11,parseFloat(getComputedStyle(ht).fontSize)*avail/nat-.3).toFixed(2)+'px';
  const vw=hd.clientWidth,H=hd.offsetHeight,small=mq.matches,cs=getComputedStyle(hd),padL=parseFloat(cs.paddingLeft)||0;
  const on=!!hr&&!hr.hidden,hh=on?hr.offsetHeight:0,hw=on?hr.offsetWidth:0,hRt=on?(parseFloat(getComputedStyle(hr).right)||0):0;
  const tH=bs.offsetTop+bs.offsetHeight-bt.offsetTop,bw=Math.max(bt.offsetWidth,bs.offsetWidth);
@@ -677,7 +680,7 @@ function measure(){
  let kb,kt,kh,yb,yt,yh,xt;
  if(fit){kb=kb1;kt=kt1;kh=kh1;yb=(inn-tH*kb)/2;yh=(inn-hh*kh)/2;yt=(inn-hT*kt)/2}
  else{/* mode 2 baris (mobile): brand + video di atas, judul di tengah baris bawah */
-  C=92;inn=C-BD;kb=Math.min(1,36/tH);kh=hh?38/hh:1;kt=Math.min(.82,(vw-28)/tW);yb=9;yh=9;
+  C=92;inn=C-BD;kb=Math.min(1,36/tH);kh=hh?38/hh:1;kt=Math.min(.9,(vw-28)/tW);yb=9;yh=9;
   const bb=yb+tH*kb;yt=bb+Math.max(0,(inn-bb-hT*kt)/2)}
  xt=(vw-tW*kt)/2;
  const R=H-C;hd.style.top=(-Math.max(0,R))+'px';
