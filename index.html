@@ -188,7 +188,8 @@ summary{cursor:pointer;font-style:italic;color:var(--mut)}
 <script>
 const $=id=>document.getElementById(id),e=s=>String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
 const D={id:'1nis3nxgCj-U2IHLcs5UzYKTbZdKYGymlLhn81E-Llis',a:'Data APKT',b:'Data AP2T',ga:'1789637322',gb:'679644625',neg:0.1,tol:120,win:24,iv:2,p:'199yFxZpD1S4AVoaRdjI_g8vv9hGmQVcXVImnik9MLjc',gp:'503046358'};
-let R=[],tab='R',lim=200,open=new Set(),TR=[],KP=[],PP=null;
+let R=[],tab='R',lim=200,open=new Set(),TR=[],KP=[],PP=null,PP2=null;
+const qa=s=>e(s).replace(/"/g,'&quot;');
 const MN=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
 const nz=s=>String(s).toLowerCase().replace(/[^a-z0-9]/g,''),p2=n=>String(n).padStart(2,'0'),n2=v=>v.toFixed(2).replace('.',',');
 const hms=s=>{s=Math.round(s);return Math.floor(s/3600)+':'+p2(Math.floor(s%3600/60))+':'+p2(s%60)};
@@ -295,8 +296,10 @@ const RH_C=['Nama Area','Nama Unit','Jumlah No Laporan','Rata-rata (menit)','Dur
 const DH_C=['No','No Laporan','Nama Area','Nama Unit','ID Pelanggan','Tanggal Lapor','Tanggal Transaksi','Durasi (jj:mm:ss)','Poin (menit)','Status'];
 const SL_C={ok:'Create CTT',auto:'Transaksi lebih awal',belum:'Belum create'};
 const detC=(r,i)=>[i+1,r.no,r.area,r.unit,r.ip,fd(r.t),r.m?fd(r.m.t):'',r.m?hms(r.sec):'',r.pt==null?'':r.pt,SL[r.st]];
-let DH=DH_C,SL=SL_C,detRow=detC,RH=RH_C,RN=[3],MM=false,CG=null;
-const det=l=>({h:DH,a:l.map(detRow),f:[8]});
+const DX_C=['No','No Laporan','Nama Area','Nama Unit','ID Pelanggan','Tanggal Lapor','Tanggal Transaksi (AP2T)','Selisih Waktu (detik)','Durasi (jj:mm:ss)','Poin Durasi (menit)','Status'];
+const detXC=(r,i)=>[i+1,r.no,r.area,r.unit,r.ip,fd(r.t),r.m?fd(r.m.t):'',r.m?r.d:'',r.m?hms(r.sec):'',r.pt==null?'':r.pt,SL[r.st]];
+let DH=DH_C,SL=SL_C,detRow=detC,DX=DX_C,detX=detXC,RH=RH_C,RN=[3],MM=false,CG=null;
+const det=(l,nt)=>({h:DH,a:l.map(detRow),f:[8],dh:DX,da:l.map(detX),nt:nt||''});
 const SDv=s=>MM?n2(s/60):hms(s);
 const one=(rows,f)=>{const ok=rows.filter(r=>r.m);return ok.length?[ok.reduce((b,r)=>f*(r.sec-b.sec)<0?r:b)]:[]};
 function recHtml(rows){const L=flat(rows),fa=$('fA').value;
@@ -306,8 +309,8 @@ function recHtml(rows){const L=flat(rows),fa=$('fA').value;
    return `<tr class="${c.tot?'tot':c.u?'u':'sub'}"${h?` data-i="${c.i}"`:''}><td>${nm}</td><td>${e(c[1])}</td><td class="n">${c[2]}</td><td class="n">${n2(c[3])}</td><td class="n">${MM?n2(c[4]):c[4]}</td><td class="n">${MM?n2(c[5]):c[5]}</td></tr>`}).join('')+'</tbody></table>'}
 function render(){const rows=filt(),ok=rows.filter(r=>r.m),by=f=>[...ok].sort((a,b)=>f*(a.sec-b.sec)),av=ok.length?ok.reduce((s,r)=>s+r.pt,0)/ok.length:0;
  KP=[{l:'Total No Laporan',v:rows.length,d:()=>det(rows)},{l:CG.ok,v:ok.length,d:()=>det(ok)},{l:CG.bad,v:rows.length-ok.length,d:()=>det(rows.filter(r=>!r.m))},
-  {l:'Rata-rata (menit)',v:ok.length?n2(av):'-',d:()=>({h:RH,a:flat(rows),f:RN})},{l:'Tercepat'+(MM?' (menit)':''),v:ok.length?SDv(by(1)[0].sec):'-',d:()=>det(one(rows,1))},{l:'Terlama'+(MM?' (menit)':''),v:ok.length?SDv(by(-1)[0].sec):'-',d:()=>det(one(rows,-1))}];
- $('kpi').innerHTML=KP.map((k,i)=>`<button data-k="${i}"><b>${k.v}</b>${k.l}</button>`).join('');$('more').innerHTML='';chart(rows);
+  {l:'Rata-rata (menit)',v:ok.length?n2(av):'-',d:()=>det(ok,ok.length?'Dasar perhitungan rata-rata: '+ok.length+' laporan terhitung, rata-rata '+n2(av)+' menit.':'')},{l:'Tercepat'+(MM?' (menit)':''),v:ok.length?SDv(by(1)[0].sec):'-',d:()=>det(one(rows,1),'Laporan dengan durasi tercepat.')},{l:'Terlama'+(MM?' (menit)':''),v:ok.length?SDv(by(-1)[0].sec):'-',d:()=>det(one(rows,-1),'Laporan dengan durasi terlama.')}];
+ $('kpi').innerHTML=KP.map((k,i)=>`<button data-k="${i}" title="Klik untuk melihat detail data"><b>${k.v}</b>${k.l}</button>`).join('');$('more').innerHTML='';chart(rows);
  if(!rows.length){$('out').innerHTML='<div class="emp">Belum ada data. Klik "Sinkron sekarang" atau ubah filter.</div>';return}
  if(tab=='R'){$('out').innerHTML=recHtml(rows);return}
  const s=rows.slice(0,lim);$('out').innerHTML='<table><thead><tr>'+DH.map((h,i)=>`<th class="${i==8?'n':''}">${h}</th>`).join('')+'</tr></thead><tbody>'+
@@ -345,11 +348,13 @@ function dl(h,a,n,sn,x){const ws=XLSX.utils.aoa_to_sheet([h,...a]);ws['!cols']=h
 const sfx=()=>{const f=[$('fM').value,$('fA').value,$('fU').value].filter(Boolean).join('_').replace(/[^\w-]+/g,'-');return f?'_'+f:''};
 function xl(k){const rows=filt();if(!rows.length)return alert('Tidak ada data untuk diunduh.');
  k=='R'?dl(RH,flat(rows),CG.pre+'_Rekap'+sfx()):dl(DH,rows.map(detRow),CG.pre+'_Detail'+sfx())}
-function popD(l,d){PP={...d,n:CG.pre+'_'+l.replace(/[^\w]+/g,'-')+sfx()};$('mx').textContent='Unduh Excel';$('mx2').hidden=true;
+function popD(l,d){PP={h:d.h,a:d.a,f:d.f,n:CG.pre+'_'+l.replace(/[^\w]+/g,'-')+sfx(),sn:'Tampilan'};
+ PP2=d.dh?{h:d.dh,a:d.da,n:PP.n+'_detail'}:null;
+ $('mx').textContent=PP2?'Unduh Excel (tampilan)':'Unduh Excel';$('mx2').textContent='Unduh Excel (detail)';$('mx2').hidden=!PP2;
  $('mt').textContent=l+' ('+d.a.length+' baris)';
  $('mi').innerHTML='<table><thead><tr>'+d.h.map((h,i)=>`<th class="${d.f.includes(i)?'n':''}">${h}</th>`).join('')+'</tr></thead><tbody>'+
   (d.a.length?d.a.slice(0,300).map(r=>'<tr>'+r.map((v,j)=>`<td data-l="${qa(d.h[j])}" class="${d.f.includes(j)?'n':''}">${e(d.f.includes(j)&&v!==''?n2(v):v)}</td>`).join('')+'</tr>').join(''):'<tr><td colspan="'+d.h.length+'" class="emp">Tidak ada data</td></tr>')+'</tbody></table>';
- $('mf').textContent=d.a.length>300?'Menampilkan 300 baris pertama. File Excel berisi semua '+d.a.length+' baris.':'';$('md').hidden=false}
+ $('mf').textContent=[d.nt||'',d.a.length>300?'Menampilkan 300 baris pertama. File Excel berisi semua '+d.a.length+' baris.':''].filter(Boolean).join(' ');$('md').hidden=false}
 function pop(k){const x=KP[k];popD(x.l,x.d())}
 function one1(f){popD(f>0?'Durasi terkecil':'Durasi terbesar',det(one(filt(),f)))}
 function setTab(t){tab=t;lim=200;$('tR').classList.toggle('on',t=='R');$('tD').classList.toggle('on',t=='D');render()}
@@ -372,16 +377,20 @@ const RH_N=['Nama Area','Nama Unit','Jumlah No Laporan','Rata-rata (menit)','Dur
 const dm=t=>t==null?'':fd(t),SL_N={ok:'Terhitung',auto:'Durasi negatif',belum:'Data belum lengkap'};
 const detM=(r,i)=>[i+1,r.no,r.area,r.unit,dm(r.t),dm(r.rf),dm(r.tm),r.m?r.bs:'',r.m?r.pt:'',SL_N[r.st]];
 const detP=(r,i)=>[i+1,r.no,r.area,r.unit,dm(r.t),dm(r.pg),dm(r.ro),r.m?r.bs:'',r.m?r.pt:'',SL_N[r.st]];
+const DX_M=['No','No Laporan','Nama Area','Nama Unit','ID Pelanggan','Tanggal Lapor','Tanggal Lapor Referensi','Tanggal Marking','Acuan Hitung','Durasi (detik)','Durasi (menit)','Status'];
+const DX_P=['No','No Laporan','Nama Area','Nama Unit','ID Pelanggan','Tanggal Lapor','Tanggal Penugasan Regu','Tanggal Return Order','Rumus Hitung','Durasi (detik)','Durasi (menit)','Status'];
+const detXM=(r,i)=>[i+1,r.no,r.area,r.unit,r.ip,dm(r.t),dm(r.rf),dm(r.tm),r.m?r.bs:'',r.m?r.sec:'',r.m?r.pt:'',SL_N[r.st]];
+const detXP=(r,i)=>[i+1,r.no,r.area,r.unit,r.ip,dm(r.t),dm(r.pg),dm(r.ro),r.m?r.bs:'',r.m?r.sec:'',r.m?r.pt:'',SL_N[r.st]];
 const MENUS={
- ctt:{pre:'CTT',t:'Rekap Durasi Create CTT',p:'Durasi terbit CTT oleh Operator Command Center setelah laporan masuk ke APKT (APKT dicocokkan dengan AP2T per ID Pelanggan), diperbarui otomatis setiap 2 menit',load:loadCTT,ok:'Sudah create CTT',bad:'Belum create',okS:'create CTT',avgL:'Rata-rata durasi create CTT (menit)',DH:DH_C,SL:SL_C,det:detC,RH:RH_C,min:false},
+ ctt:{pre:'CTT',t:'Rekap Durasi Create CTT',p:'Durasi terbit CTT oleh Operator Command Center setelah laporan masuk ke APKT (APKT dicocokkan dengan AP2T per ID Pelanggan), diperbarui otomatis setiap 2 menit',load:loadCTT,ok:'Sudah create CTT',bad:'Belum create',okS:'create CTT',avgL:'Rata-rata durasi create CTT (menit)',DH:DH_C,SL:SL_C,det:detC,DX:DX_C,dtx:detXC,RH:RH_C,min:false},
  marking:{pre:'Marking',t:'Rekap Durasi Manual Marking',p:'Durasi Operator Command Center mengelompokkan laporan imbas padam meluas / pemadaman dengan laporan lainnya, atau laporan gangguan TM / Pemeliharaan TM (MANUAL MARKING), diperbarui otomatis setiap 2 menit',
   load:()=>loadP2(h=>({km:col(h,['keteranganmarking'],'KETERANGAN_MARKING'),tm:col(h,['tglmarking'],'TGL_MARKING'),rf:col(h,['tgllaporreferensi'],'TGL_LAPOR_REFERENSI')}),(x,c)=>nrm(x[c.km])=='MANUAL MARKING',calcM),
-  ok:'Sudah terhitung',bad:'Belum terhitung',okS:'terhitung',avgL:'Rata-rata durasi manual marking (menit)',DH:DH_M,SL:SL_N,det:detM,RH:RH_N,min:true},
+  ok:'Sudah terhitung',bad:'Belum terhitung',okS:'terhitung',avgL:'Rata-rata durasi manual marking (menit)',DH:DH_M,SL:SL_N,det:detM,DX:DX_M,dtx:detXM,RH:RH_N,min:true},
  dispatch:{pre:'Dispatch',t:'Rekap Durasi Manual Dispatch',p:'Durasi laporan masuk ke APKT hingga diteruskan oleh Operator Command Center ke petugas di lapangan (MANUAL COMMAND CENTER), diperbarui otomatis setiap 2 menit',
   load:()=>loadP2(h=>({kk:col(h,['ketkirim'],'KET_KIRIM'),pg:col(h,['tglpenugasanregu'],'TGL_PENUGASAN_REGU'),ro:col(h,['tglreturnorder'],'TGL_RETURN_ORDER')}),(x,c)=>nrm(x[c.kk])=='MANUAL COMMAND CENTER',calcP),
-  ok:'Sudah terhitung',bad:'Belum terhitung',okS:'terhitung',avgL:'Rata-rata durasi manual dispatch (menit)',DH:DH_P,SL:SL_N,det:detP,RH:RH_N,min:true}};
+  ok:'Sudah terhitung',bad:'Belum terhitung',okS:'terhitung',avgL:'Rata-rata durasi manual dispatch (menit)',DH:DH_P,SL:SL_N,det:detP,DX:DX_P,dtx:detXP,RH:RH_N,min:true}};
 function home(){cur=null;$('home').hidden=false;$('app').hidden=true;$('cb').hidden=true;$('md').hidden=true;$('ht').textContent='Dashboard Kinerja dan Administrasi Command Center';$('hp').textContent='';document.title='Dashboard Kinerja dan Administrasi Command Center';window.scrollTo(0,0)}
-function enter(k){if(cur==k&&!$('app').hidden)return;const g=MENUS[k];cur=k;CG=g;DH=g.DH;SL=g.SL;detRow=g.det;RH=g.RH;MM=g.min;RN=g.min?[3,4,5]:[3];
+function enter(k){if(cur==k&&!$('app').hidden)return;const g=MENUS[k];cur=k;CG=g;DH=g.DH;SL=g.SL;detRow=g.det;DX=g.DX;detX=g.dtx;RH=g.RH;MM=g.min;RN=g.min?[3,4,5]:[3];
  $('ht').textContent=g.t;$('hp').textContent=g.p;document.title=g.t;$('home').hidden=true;$('app').hidden=false;$('cb').hidden=true;
  tab='R';lim=200;open.clear();CH.sel=null;$('tR').classList.add('on');$('tD').classList.remove('on');
  $('fM').value='';$('fA').value='';$('fU').value='';R=DATA[k]||[];fill();render();
@@ -520,7 +529,7 @@ function agg(M,f){
  const A=[...AR.values()].sort((x,y)=>srt(x.name,y.name)).map(a=>({name:a.name,t:a.t,U:[...a.U.entries()].sort((x,y)=>x[0].localeCompare(y[0]))}));
  return{T,A,called,rep,cl}}
 /* ===== UI ===== */
-const CB={raw:null,M:null,Z:null,G:[],cols:[],busy:false,open:new Set(),init:false,KP:[],view:null};let PP2=null;
+const CB={raw:null,M:null,Z:null,G:[],cols:[],busy:false,open:new Set(),init:false,KP:[],view:null};
 const fT=t=>isNaN(t)?'':fd(t),pcn=(c,r)=>r?c/r*100:null,pcs=v=>v==null?'-':v.toFixed(1).replace('.',',')+'%';
 const tel=k=>k?'62'+k:'',qa=s=>e(s).replace(/"/g,'&quot;');
 function filters(){return{m:$('cbM').value,a:$('cbA').value,u:$('cbU').value}}
