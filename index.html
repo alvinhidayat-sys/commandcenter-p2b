@@ -296,7 +296,7 @@ const agg=()=>({n:0,s:0,mn:1e12,mx:-1}),mg=(t,o)=>{t.n+=o.n;t.s+=o.s;t.mn=Math.m
 function tree(rows){const A={};rows.filter(r=>r.m).forEach(r=>{const a=A[r.area]=A[r.area]||{name:r.area,t:agg(),U:{}},u=a.U[r.unit]=a.U[r.unit]||agg();
  [a.t,u].forEach(o=>mg(o,{n:1,s:r.pt,mn:r.sec,mx:r.sec}))});
  return Object.values(A).sort((x,y)=>x.name.localeCompare(y.name)).map(a=>({name:a.name,t:a.t,U:Object.entries(a.U).sort((x,y)=>x[0].localeCompare(y[0]))}))}
-const cl=(a,u,o)=>[a,u,o.n,+(o.s/o.n).toFixed(2),MM?+(o.mn/60).toFixed(2):hms(o.mn),MM?+(o.mx/60).toFixed(2):hms(o.mx)];
+const cl=(a,u,o)=>[a,u,o.n,+(o.s/o.n).toFixed(2),hms(o.mn),hms(o.mx)];
 function flat(rows){const t=tree(rows),out=[],fa=$('fA').value;TR=t.map(x=>x.name);
  t.forEach((x,i)=>{if(!fa){const r=cl(x.name,'Semua unit',x.t);r.i=i;out.push(r)}
   if(fa||open.has(x.name))x.U.forEach(([n,o])=>{const r=cl(x.name,n,o);r.u=1;out.push(r)})});
@@ -310,16 +310,16 @@ const DX_C=['No','No Laporan','Nama Area','Nama Unit','ID Pelanggan','Tanggal La
 const detXC=(r,i)=>[i+1,r.no,r.area,r.unit,r.ip,fd(r.t),r.m?fd(r.m.t):'',r.m?r.d:'',r.m?hms(r.sec):'',r.pt==null?'':r.pt,SL[r.st]];
 let DH=DH_C,SL=SL_C,detRow=detC,DX=DX_C,detX=detXC,RH=RH_C,RN=[3],MM=false,CG=null;
 const det=(l,nt)=>({h:DH,a:l.map(detRow),f:[DH.length-2],dh:DX,da:l.map(detX),nt:nt||''});
-const SDv=s=>MM?n2(s/60):hms(s);
+const SDv=s=>hms(s);
 const one=(rows,f)=>{const ok=rows.filter(r=>r.m);return ok.length?[ok.reduce((b,r)=>f*(r.sec-b.sec)<0?r:b)]:[]};
 function recHtml(rows){const L=flat(rows),fa=$('fA').value;
  const ctl=fa?'':'<div class="row" style="margin-bottom:8px"><button class="alt" id="bEa">Buka semua UP3</button><button class="alt" id="bEc">Tutup semua</button></div>';
  return ctl+'<table><thead><tr>'+RH.map((x,i)=>`<th class="${i>1?'n':''}">${x}</th>`).join('')+'</tr></thead><tbody>'+
   L.map(c=>{const h=c.i!==undefined,nm=h?(open.has(TR[c.i])?'▾ ':'▸ ')+e(c[0]):e(c[0]);
-   return `<tr class="${c.tot?'tot':c.u?'u':'sub'}"${h?` data-i="${c.i}"`:''}><td>${nm}</td><td>${e(c[1])}</td><td class="n">${c[2]}</td><td class="n">${n2(c[3])}</td><td class="n">${MM?n2(c[4]):c[4]}</td><td class="n">${MM?n2(c[5]):c[5]}</td></tr>`}).join('')+'</tbody></table>'}
+   return `<tr class="${c.tot?'tot':c.u?'u':'sub'}"${h?` data-i="${c.i}"`:''}><td>${nm}</td><td>${e(c[1])}</td><td class="n">${c[2]}</td><td class="n">${n2(c[3])}</td><td class="n">${c[4]}</td><td class="n">${c[5]}</td></tr>`}).join('')+'</tbody></table>'}
 function render(){const rows=filt(),ok=rows.filter(r=>r.m),by=f=>[...ok].sort((a,b)=>f*(a.sec-b.sec)),av=ok.length?ok.reduce((s,r)=>s+r.pt,0)/ok.length:0;
  KP=[{l:'Total No Laporan',v:rows.length,d:()=>det(rows)},{l:CG.ok,v:ok.length,d:()=>det(ok)},{l:CG.bad,v:rows.length-ok.length,d:()=>det(rows.filter(r=>!r.m))},
-  {l:'Rata-rata (menit)',v:ok.length?n2(av):'-',d:()=>det(ok,ok.length?'Dasar perhitungan rata-rata: '+ok.length+' laporan terhitung, rata-rata '+n2(av)+' menit.':'')},{l:'Tercepat'+(MM?' (menit)':''),v:ok.length?SDv(by(1)[0].sec):'-',d:()=>det(one(rows,1),'Laporan dengan durasi tercepat.')},{l:'Terlama'+(MM?' (menit)':''),v:ok.length?SDv(by(-1)[0].sec):'-',d:()=>det(one(rows,-1),'Laporan dengan durasi terlama.')}];
+  {l:'Rata-rata (menit)',v:ok.length?n2(av):'-',d:()=>det(ok,ok.length?'Dasar perhitungan rata-rata: '+ok.length+' laporan terhitung, rata-rata '+n2(av)+' menit.':'')},{l:'Tercepat',v:ok.length?SDv(by(1)[0].sec):'-',d:()=>det(one(rows,1),'Laporan dengan durasi tercepat.')},{l:'Terlama',v:ok.length?SDv(by(-1)[0].sec):'-',d:()=>det(one(rows,-1),'Laporan dengan durasi terlama.')}];
  petRender(rows);$('kpi').innerHTML=KP.map((k,i)=>`<button data-k="${i}" title="Klik untuk melihat detail data"><b>${k.v}</b>${k.l}</button>`).join('');$('more').innerHTML='';chart(rows);
  if(!rows.length){$('out').innerHTML='<div class="emp">Belum ada data. Klik "Sinkron sekarang" atau ubah filter.</div>';return}
  if(tab=='R'){$('out').innerHTML=recHtml(rows);return}
@@ -327,21 +327,22 @@ function render(){const rows=filt(),ok=rows.filter(r=>r.m),by=f=>[...ok].sort((a
   s.map((r,i)=>{const c=detRow(r,i);return `<tr>${c.slice(0,DH.length-1).map((v,j)=>`<td class="${j==DH.length-2?'n':''}">${e(j==DH.length-2&&v!==''?n2(v):v)}</td>`).join('')}<td><span class="tag ${r.st}">${c[DH.length-1]}</span></td></tr>`}).join('')+'</tbody></table>';
  if(rows.length>lim){$('more').innerHTML=`<button class="alt" id="bM">Tampilkan ${Math.min(200,rows.length-lim)} baris lagi (${lim} dari ${rows.length})</button>`;$('bM').onclick=()=>{lim+=200;render()}}}
 const NOBY='(Tanpa petugas)';let PG=[],PV=null;
-const PH=()=>['User Comcen','Area','Unit/Posko','Total No Lap','Total '+CG.by,'Rata-rata (Menit)','Tercepat (Menit)','Terlama (Menit)'];
+const PH=()=>['User Comcen','Area','Total No Lap','Total '+CG.by,'Rata-rata (Menit)','Tercepat (jj:mm:ss)','Terlama (jj:mm:ss)'];
 function petStat(G){const ok=G.filter(r=>r.m);if(!ok.length)return{n:G.length,k:0,av:'',lo:'',hi:''};
- const sc=ok.map(r=>r.sec);return{n:G.length,k:ok.length,av:+(ok.reduce((a,r)=>a+r.pt,0)/ok.length).toFixed(2),lo:+(Math.min(...sc)/60).toFixed(2),hi:+(Math.max(...sc)/60).toFixed(2)}}
+ const sc=ok.map(r=>r.sec);return{n:G.length,k:ok.length,av:+(ok.reduce((a,r)=>a+r.pt,0)/ok.length).toFixed(2),lo:hms(Math.min(...sc)),hi:hms(Math.max(...sc))}}
 function petRender(rows){const C=$('pC');if(!CG||!CG.by){C.hidden=true;return}C.hidden=false;
  $('pT').textContent='Rekap Manual '+CG.by+' per Petugas';
- const M={};rows.forEach(r=>{const u=r.by||NOBY,k=u+'\u0001'+r.area+'\u0001'+r.unit;(M[k]=M[k]||{u,area:r.area,unit:r.unit,G:[]}).G.push(r)});
- const L=Object.values(M).sort((a,b)=>(a.u==NOBY)-(b.u==NOBY)||a.u.localeCompare(b.u)||a.area.localeCompare(b.area)||a.unit.localeCompare(b.unit));
- PG=L.map(g=>({...g,st:petStat(g.G),lb:g.u+' · '+g.area+' · '+g.unit}));
- if(PG.length>1)PG.push({u:'TOTAL',area:'',unit:'',G:rows,st:petStat(rows),lb:'Semua petugas',tot:1});
- const H=PH();PV={h:H,a:PG.map(g=>[g.u,g.area,g.unit,g.st.n,g.st.k,g.st.av,g.st.lo,g.st.hi])};
- const ce=(g,i,m,v,l)=>`<td class="n" data-l="${qa(l)}" ${v===''?'':`data-m="${m}" data-g="${i}"`}>${v===''?'-':(m=='n'||m=='k'?v:n2(v))}</td>`;
- $('pOut').innerHTML=rows.length?'<table><thead><tr>'+H.map((h,i)=>`<th class="${i>2?'n':''}">${h}</th>`).join('')+'</tr></thead><tbody>'+PG.map((g,i)=>
-  `<tr class="${g.tot?'tot':''}"><td data-l="${H[0]}">${e(g.u)}</td><td data-l="${H[1]}">${e(g.area)}</td><td data-l="${H[2]}">${e(g.unit)}</td>`+
-  ce(g,i,'n',g.st.n,H[3])+ce(g,i,'k',g.st.k,H[4])+ce(g,i,'a',g.st.av,H[5])+ce(g,i,'lo',g.st.lo,H[6])+ce(g,i,'hi',g.st.hi,H[7])+'</tr>').join('')+'</tbody></table>':'<div class="emp">Belum ada data.</div>';
- $('pN').innerHTML='<span><b>Total No Lap</b> = semua laporan manual petugas tersebut</span><span><b>Total '+CG.by+'</b> = laporan yang masuk hitungan</span><span><b>Rata-rata / Tercepat / Terlama</b> = dari laporan yang masuk hitungan, dalam menit</span><span>Laporan tanpa user di sheet ditampilkan sebagai '+NOBY+'</span>'}
+ const M={};rows.forEach(r=>{const u=r.by||NOBY;(M[u]=M[u]||{u,G:[]}).G.push(r)});
+ PG=Object.values(M).map(g=>({...g,area:[...new Set(g.G.map(r=>r.area))].sort().join(', '),st:petStat(g.G),lb:g.u}));
+ const av=g=>g.st.av===''?-1:g.st.av;
+ PG.sort((a,b)=>av(b)-av(a)||b.st.k-a.st.k||a.u.localeCompare(b.u));
+ if(PG.length>1)PG.push({u:'TOTAL',area:'',G:rows,st:petStat(rows),lb:'Semua petugas',tot:1});
+ const H=PH();PV={h:H,a:PG.map(g=>[g.u,g.area,g.st.n,g.st.k,g.st.av,g.st.lo,g.st.hi])};
+ const ce=(g,i,m,v,l)=>`<td class="n" data-l="${qa(l)}" ${v===''?'':`data-m="${m}" data-g="${i}"`}>${v===''?'-':(m=='a'?n2(v):v)}</td>`;
+ $('pOut').innerHTML=rows.length?'<table><thead><tr>'+H.map((h,i)=>`<th class="${i>1?'n':''}">${h}</th>`).join('')+'</tr></thead><tbody>'+PG.map((g,i)=>
+  `<tr class="${g.tot?'tot':''}"><td data-l="${H[0]}">${e(g.u)}</td><td data-l="${H[1]}">${e(g.area)}</td>`+
+  ce(g,i,'n',g.st.n,H[2])+ce(g,i,'k',g.st.k,H[3])+ce(g,i,'a',g.st.av,H[4])+ce(g,i,'lo',g.st.lo,H[5])+ce(g,i,'hi',g.st.hi,H[6])+'</tr>').join('')+'</tbody></table>':'<div class="emp">Belum ada data.</div>';
+ $('pN').innerHTML='<span><b>Total No Lap</b> = semua laporan manual petugas tersebut</span><span><b>Total '+CG.by+'</b> = laporan yang masuk hitungan</span><span><b>Rata-rata / Tercepat / Terlama</b> = dari laporan yang masuk hitungan; Rata-rata dalam menit, Tercepat dan Terlama dalam jj:mm:ss</span><span>Urutan: Rata-rata tertinggi ke terendah. Satu petugas satu baris (jika bertugas di lebih dari satu area, semua area ditampilkan). Laporan tanpa user di sheet ditampilkan sebagai '+NOBY+'</span>'}
 function petPop(g,m){const st=g.st;let t,d;
  if(m=='n'){t='Total No Lap';d=det(g.G)}
  else if(m=='k'){t='Total '+CG.by;d=det(g.G.filter(r=>r.m))}
@@ -409,14 +410,14 @@ fitBrand();if(document.fonts&&document.fonts.ready)document.fonts.ready.then(fit
 
 const DH_M=['No','No Laporan','Nama Area','Nama Unit','User Comcen','Tanggal Lapor','Tanggal Lapor Referensi','Tanggal Marking','Acuan Hitung','Durasi (menit)','Status'];
 const DH_P=['No','No Laporan','Nama Area','Nama Unit','User Comcen','Tanggal Lapor','Tanggal Penugasan Regu','Tanggal Return Order','Rumus Hitung','Durasi (menit)','Status'];
-const RH_N=['Nama Area','Nama Unit','Jumlah No Laporan','Rata-rata (menit)','Durasi Tercepat (menit)','Durasi Terlama (menit)'];
+const RH_N=['Nama Area','Nama Unit','Jumlah No Laporan','Rata-rata (menit)','Durasi Tercepat (jj:mm:ss)','Durasi Terlama (jj:mm:ss)'];
 const dm=t=>t==null?'':fd(t),SL_N={ok:'Terhitung',auto:'Durasi negatif',belum:'Data belum lengkap'};
 const detM=(r,i)=>[i+1,r.no,r.area,r.unit,r.by||'-',dm(r.t),dm(r.rf),dm(r.tm),r.m?r.bs:'',r.m?r.pt:'',SL_N[r.st]];
 const detP=(r,i)=>[i+1,r.no,r.area,r.unit,r.by||'-',dm(r.t),dm(r.pg),dm(r.ro),r.m?r.bs:'',r.m?r.pt:'',SL_N[r.st]];
-const DX_M=['No','No Laporan','Nama Area','Nama Unit','User Comcen','ID Pelanggan','Tanggal Lapor','Tanggal Lapor Referensi','Tanggal Marking','Acuan Hitung','Durasi (detik)','Durasi (menit)','Status'];
-const DX_P=['No','No Laporan','Nama Area','Nama Unit','User Comcen','ID Pelanggan','Tanggal Lapor','Tanggal Penugasan Regu','Tanggal Return Order','Rumus Hitung','Durasi (detik)','Durasi (menit)','Status'];
-const detXM=(r,i)=>[i+1,r.no,r.area,r.unit,r.by||'-',r.ip,dm(r.t),dm(r.rf),dm(r.tm),r.m?r.bs:'',r.m?r.sec:'',r.m?r.pt:'',SL_N[r.st]];
-const detXP=(r,i)=>[i+1,r.no,r.area,r.unit,r.by||'-',r.ip,dm(r.t),dm(r.pg),dm(r.ro),r.m?r.bs:'',r.m?r.sec:'',r.m?r.pt:'',SL_N[r.st]];
+const DX_M=['No','No Laporan','Nama Area','Nama Unit','User Comcen','ID Pelanggan','Tanggal Lapor','Tanggal Lapor Referensi','Tanggal Marking','Acuan Hitung','Durasi (detik)','Durasi (jj:mm:ss)','Durasi (menit)','Status'];
+const DX_P=['No','No Laporan','Nama Area','Nama Unit','User Comcen','ID Pelanggan','Tanggal Lapor','Tanggal Penugasan Regu','Tanggal Return Order','Rumus Hitung','Durasi (detik)','Durasi (jj:mm:ss)','Durasi (menit)','Status'];
+const detXM=(r,i)=>[i+1,r.no,r.area,r.unit,r.by||'-',r.ip,dm(r.t),dm(r.rf),dm(r.tm),r.m?r.bs:'',r.m?r.sec:'',r.m?hms(r.sec):'',r.m?r.pt:'',SL_N[r.st]];
+const detXP=(r,i)=>[i+1,r.no,r.area,r.unit,r.by||'-',r.ip,dm(r.t),dm(r.pg),dm(r.ro),r.m?r.bs:'',r.m?r.sec:'',r.m?hms(r.sec):'',r.m?r.pt:'',SL_N[r.st]];
 const MENUS={
  ctt:{pre:'CTT',t:'Rekap Durasi Create CTT',p:'Durasi terbit CTT oleh Operator Command Center setelah laporan masuk ke APKT (APKT dicocokkan dengan AP2T per ID Pelanggan), diperbarui otomatis setiap 2 menit',load:loadCTT,ok:'Sudah create CTT',bad:'Belum create',okS:'create CTT',avgL:'Rata-rata durasi create CTT (menit)',DH:DH_C,SL:SL_C,det:detC,DX:DX_C,dtx:detXC,RH:RH_C,min:false},
  marking:{pre:'Marking',t:'Rekap Durasi Manual Marking',p:'Durasi Operator Command Center mengelompokkan laporan imbas padam meluas / pemadaman dengan laporan lainnya, atau laporan gangguan TM / Pemeliharaan TM (MANUAL MARKING), diperbarui otomatis setiap 2 menit',
