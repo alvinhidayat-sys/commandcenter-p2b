@@ -32,6 +32,9 @@ tr.tot td{background:var(--ink);color:#f6e7c1;font-weight:700}
 .tag.ok{color:var(--olv);background:#eef0d2}.tag.auto{color:#8a5a00;background:#fbe9b8}.tag.belum{color:var(--pri);background:#f6d9ce}
 #st{font-size:13px;color:var(--mut);font-style:italic}#err{color:var(--pri);margin-top:8px;white-space:pre-wrap}
 .emp{padding:28px;text-align:center;color:var(--mut);font-style:italic}
+#pOut td[data-m]{cursor:pointer}#pOut td[data-m]:hover{background:#fff6de;text-decoration:underline dotted}
+#pOut tr.tot td[data-m]:hover{background:var(--ink);color:#fff}
+#pOut table{min-width:900px}#pC[hidden]{display:none}
 #md{position:fixed;inset:0;background:rgba(58,42,28,.6);display:flex;align-items:center;justify-content:center;padding:14px;z-index:9}#md[hidden]{display:none}
 #md .box{background:var(--paper);border:3px double var(--ink);width:min(1000px,100%);max-height:88vh;display:flex;flex-direction:column;padding:14px;gap:10px}
 #md h2{margin:0;font:400 20px "Special Elite","Courier New",monospace}#mi{flex:1}#mf{font-size:12.5px;color:var(--mut);font-style:italic}
@@ -81,7 +84,8 @@ label{flex:1 1 100%}label select{width:100%}
 #bS{flex:1 1 40%}#st{flex:1 1 55%}
 .kpi{grid-template-columns:repeat(2,1fr);gap:8px}.kpi button{padding:8px 10px}.kpi b{font-size:21px}
 .row.tabs,.row:has(#xR){flex:1 1 100%}.tabs button{flex:1}.row:has(#xR) button{flex:1 1 44%}
-#out.wrap{max-height:none;overflow:visible}
+#out.wrap,#pOut.wrap{max-height:none;overflow:visible}
+.row:has(#pXR){flex:1 1 100%}.row:has(#pXR) button{flex:1 1 44%}#pOut table{min-width:0}
 table{min-width:0}thead{display:none}table,tbody,tr,td{display:block;width:100%}
 tr{border:2px solid var(--ink);border-radius:3px;background:#fff9ea;margin-bottom:10px;padding:4px 12px;box-shadow:2px 2px 0 var(--line)}
 td{display:flex;justify-content:space-between;gap:12px;white-space:normal;text-align:right;border:0;border-bottom:1px dotted var(--line);padding:6px 0}
@@ -165,6 +169,10 @@ summary{cursor:pointer;font-style:italic;color:var(--mut)}
 <div class="row tabs"><button id="tR" class="on">Rekap per UP3</button><button id="tD">Detail laporan</button></div>
 <div class="row"><button class="alt" id="xR">Unduh Excel rekap</button><button class="alt" id="xD">Unduh Excel detail</button><button class="alt" id="bMin">Detail durasi terkecil</button><button class="alt" id="bMax">Detail durasi terbesar</button></div></div>
 <div class="wrap" id="out" style="margin-top:10px"></div><div id="more" style="margin-top:8px"></div></div>
+<div class="card" id="pC" hidden><div class="row" style="justify-content:space-between;align-items:center"><div><b id="pT"></b><div class="clg cbn" style="margin:3px 0 0"><span>Klik angka untuk membuka rincian laporan (pop up, bisa diunduh ke Excel).</span></div></div>
+<div class="row"><button class="alt" id="pXR">Unduh Excel tampilan tabel</button><button class="alt" id="pXD">Unduh Excel detail laporan</button></div></div>
+<div class="wrap" id="pOut" style="margin-top:10px"></div>
+<div class="clg cbn" id="pN"></div></div>
 </main>
 <main id="cb" hidden>
 <div class="row" style="margin-bottom:12px"><a class="btnlink" href="#">← Kembali ke Beranda</a></div>
@@ -248,7 +256,7 @@ async function loadCTT(){
 const nrm=x=>String(x==null?'':x).replace(/\s+/g,' ').trim().toUpperCase();
 let P2=null;
 async function p2b(){if(P2&&Date.now()-P2.t<15000)return P2.a;const a=await load(null,D.gp,D.p);P2={t:Date.now(),a};return a}
-async function loadP2(ex,fl,calc){
+async function loadP2(ex,fl,calc,byName){
  const A=await p2b();
  const ha=hdr(A,h=>Object.assign({no:col(h,['nolaporan'],'NO_LAPORAN'),ar:col(h,['namaarea'],'NAMA_AREA'),un:col(h,['namaposko'],'NAMA_POSKO'),tl:col(h,['tgllapor'],'TGL_LAPOR'),ip:col(h,['idpelanggan','idpel'],'ID_PELANGGAN')},ex(h)));
  const c=ha.c,seen=new Set(),rows=[],bad=[];
@@ -257,17 +265,19 @@ async function loadP2(ex,fl,calc){
   if(seen.has(no))return;seen.add(no);
   const r={no,area:lb(x[c.ar]),unit:lb(x[c.un]),ip:ip(x[c.ip]),t};calc(x,c,r);rows.push(r)});
  rows.sort((a,b)=>a.t-b.t);
- const w=[];if(bad.length)w.push('Sheet cc_p2b: '+bad.length+' baris dilewati karena TGL_LAPOR tidak terbaca, contoh: '+bad.slice(0,3).join(', '));
+ const w=[];if(c.by===-1)w.push('Sheet cc_p2b: kolom '+byName+' tidak ditemukan, rekap per petugas tidak bisa dibuat');if(bad.length)w.push('Sheet cc_p2b: '+bad.length+' baris dilewati karena TGL_LAPOR tidak terbaca, contoh: '+bad.slice(0,3).join(', '));
  return{rows,msg:rows.length+' laporan manual, '+rows.filter(r=>r.m).length+' terhitung',w}}
+const colo=(h,al)=>{const H=h.map(nz);for(const a of al){const i=H.indexOf(a);if(i>=0)return i}for(const a of al){const i=H.findIndex(x=>x.includes(a));if(i>=0)return i}return -1};
+const byv=v=>{const t=String(v==null?'':v).replace(/\s+/g,' ').trim();return t&&t!='-'?lb(t):''};
 const pdn=v=>{const t=pd(v);return isNaN(t)?null:t};
 function fin(r,base,sec,bs){r.bs=bs;r.m=null;r.pt=r.sec=null;
  if(base==null){r.st='belum';return}
  if(sec<0){r.st='auto';return}
  r.st='ok';r.m=true;r.sec=sec;r.pt=Math.round(sec/60*100)/100}
-function calcM(x,c,r){r.tm=pdn(x[c.tm]);r.rf=pdn(x[c.rf]);
+function calcM(x,c,r){r.by=byv(x[c.by]);r.tm=pdn(x[c.tm]);r.rf=pdn(x[c.rf]);
  const useRef=r.rf!=null&&r.rf>r.t,base=useRef?r.rf:r.t;
  fin(r,r.tm,r.tm==null?0:r.tm-base,useRef?'TGL_LAPOR_REFERENSI':'TGL_LAPOR')}
-function calcP(x,c,r){r.pg=pdn(x[c.pg]);r.ro=pdn(x[c.ro]);
+function calcP(x,c,r){r.by=byv(x[c.by]);r.pg=pdn(x[c.pg]);r.ro=pdn(x[c.ro]);
  if(r.pg==null)return fin(r,null,0,'');
  if(r.ro==null)return fin(r,1,r.pg-r.t,'Penugasan Regu − Lapor');
  fin(r,1,Math.abs(r.ro-r.pg),'Return Order − Penugasan Regu')}
@@ -299,7 +309,7 @@ const detC=(r,i)=>[i+1,r.no,r.area,r.unit,r.ip,fd(r.t),r.m?fd(r.m.t):'',r.m?hms(
 const DX_C=['No','No Laporan','Nama Area','Nama Unit','ID Pelanggan','Tanggal Lapor','Tanggal Transaksi (AP2T)','Selisih Waktu (detik)','Durasi (jj:mm:ss)','Poin Durasi (menit)','Status'];
 const detXC=(r,i)=>[i+1,r.no,r.area,r.unit,r.ip,fd(r.t),r.m?fd(r.m.t):'',r.m?r.d:'',r.m?hms(r.sec):'',r.pt==null?'':r.pt,SL[r.st]];
 let DH=DH_C,SL=SL_C,detRow=detC,DX=DX_C,detX=detXC,RH=RH_C,RN=[3],MM=false,CG=null;
-const det=(l,nt)=>({h:DH,a:l.map(detRow),f:[8],dh:DX,da:l.map(detX),nt:nt||''});
+const det=(l,nt)=>({h:DH,a:l.map(detRow),f:[DH.length-2],dh:DX,da:l.map(detX),nt:nt||''});
 const SDv=s=>MM?n2(s/60):hms(s);
 const one=(rows,f)=>{const ok=rows.filter(r=>r.m);return ok.length?[ok.reduce((b,r)=>f*(r.sec-b.sec)<0?r:b)]:[]};
 function recHtml(rows){const L=flat(rows),fa=$('fA').value;
@@ -310,12 +320,38 @@ function recHtml(rows){const L=flat(rows),fa=$('fA').value;
 function render(){const rows=filt(),ok=rows.filter(r=>r.m),by=f=>[...ok].sort((a,b)=>f*(a.sec-b.sec)),av=ok.length?ok.reduce((s,r)=>s+r.pt,0)/ok.length:0;
  KP=[{l:'Total No Laporan',v:rows.length,d:()=>det(rows)},{l:CG.ok,v:ok.length,d:()=>det(ok)},{l:CG.bad,v:rows.length-ok.length,d:()=>det(rows.filter(r=>!r.m))},
   {l:'Rata-rata (menit)',v:ok.length?n2(av):'-',d:()=>det(ok,ok.length?'Dasar perhitungan rata-rata: '+ok.length+' laporan terhitung, rata-rata '+n2(av)+' menit.':'')},{l:'Tercepat'+(MM?' (menit)':''),v:ok.length?SDv(by(1)[0].sec):'-',d:()=>det(one(rows,1),'Laporan dengan durasi tercepat.')},{l:'Terlama'+(MM?' (menit)':''),v:ok.length?SDv(by(-1)[0].sec):'-',d:()=>det(one(rows,-1),'Laporan dengan durasi terlama.')}];
- $('kpi').innerHTML=KP.map((k,i)=>`<button data-k="${i}" title="Klik untuk melihat detail data"><b>${k.v}</b>${k.l}</button>`).join('');$('more').innerHTML='';chart(rows);
+ petRender(rows);$('kpi').innerHTML=KP.map((k,i)=>`<button data-k="${i}" title="Klik untuk melihat detail data"><b>${k.v}</b>${k.l}</button>`).join('');$('more').innerHTML='';chart(rows);
  if(!rows.length){$('out').innerHTML='<div class="emp">Belum ada data. Klik "Sinkron sekarang" atau ubah filter.</div>';return}
  if(tab=='R'){$('out').innerHTML=recHtml(rows);return}
- const s=rows.slice(0,lim);$('out').innerHTML='<table><thead><tr>'+DH.map((h,i)=>`<th class="${i==8?'n':''}">${h}</th>`).join('')+'</tr></thead><tbody>'+
-  s.map((r,i)=>{const c=detRow(r,i);return `<tr>${c.slice(0,9).map((v,j)=>`<td class="${j==8?'n':''}">${e(j==8&&v!==''?n2(v):v)}</td>`).join('')}<td><span class="tag ${r.st}">${c[9]}</span></td></tr>`}).join('')+'</tbody></table>';
+ const s=rows.slice(0,lim);$('out').innerHTML='<table><thead><tr>'+DH.map((h,i)=>`<th class="${i==DH.length-2?'n':''}">${h}</th>`).join('')+'</tr></thead><tbody>'+
+  s.map((r,i)=>{const c=detRow(r,i);return `<tr>${c.slice(0,DH.length-1).map((v,j)=>`<td class="${j==DH.length-2?'n':''}">${e(j==DH.length-2&&v!==''?n2(v):v)}</td>`).join('')}<td><span class="tag ${r.st}">${c[DH.length-1]}</span></td></tr>`}).join('')+'</tbody></table>';
  if(rows.length>lim){$('more').innerHTML=`<button class="alt" id="bM">Tampilkan ${Math.min(200,rows.length-lim)} baris lagi (${lim} dari ${rows.length})</button>`;$('bM').onclick=()=>{lim+=200;render()}}}
+const NOBY='(Tanpa petugas)';let PG=[],PV=null;
+const PH=()=>['User Comcen','Area','Unit/Posko','Total No Lap','Total '+CG.by,'Rata-rata (Menit)','Tercepat (Menit)','Terlama (Menit)'];
+function petStat(G){const ok=G.filter(r=>r.m);if(!ok.length)return{n:G.length,k:0,av:'',lo:'',hi:''};
+ const sc=ok.map(r=>r.sec);return{n:G.length,k:ok.length,av:+(ok.reduce((a,r)=>a+r.pt,0)/ok.length).toFixed(2),lo:+(Math.min(...sc)/60).toFixed(2),hi:+(Math.max(...sc)/60).toFixed(2)}}
+function petRender(rows){const C=$('pC');if(!CG||!CG.by){C.hidden=true;return}C.hidden=false;
+ $('pT').textContent='Rekap Manual '+CG.by+' per Petugas';
+ const M={};rows.forEach(r=>{const u=r.by||NOBY,k=u+'\u0001'+r.area+'\u0001'+r.unit;(M[k]=M[k]||{u,area:r.area,unit:r.unit,G:[]}).G.push(r)});
+ const L=Object.values(M).sort((a,b)=>(a.u==NOBY)-(b.u==NOBY)||a.u.localeCompare(b.u)||a.area.localeCompare(b.area)||a.unit.localeCompare(b.unit));
+ PG=L.map(g=>({...g,st:petStat(g.G),lb:g.u+' · '+g.area+' · '+g.unit}));
+ if(PG.length>1)PG.push({u:'TOTAL',area:'',unit:'',G:rows,st:petStat(rows),lb:'Semua petugas',tot:1});
+ const H=PH();PV={h:H,a:PG.map(g=>[g.u,g.area,g.unit,g.st.n,g.st.k,g.st.av,g.st.lo,g.st.hi])};
+ const ce=(g,i,m,v,l)=>`<td class="n" data-l="${qa(l)}" ${v===''?'':`data-m="${m}" data-g="${i}"`}>${v===''?'-':(m=='n'||m=='k'?v:n2(v))}</td>`;
+ $('pOut').innerHTML=rows.length?'<table><thead><tr>'+H.map((h,i)=>`<th class="${i>2?'n':''}">${h}</th>`).join('')+'</tr></thead><tbody>'+PG.map((g,i)=>
+  `<tr class="${g.tot?'tot':''}"><td data-l="${H[0]}">${e(g.u)}</td><td data-l="${H[1]}">${e(g.area)}</td><td data-l="${H[2]}">${e(g.unit)}</td>`+
+  ce(g,i,'n',g.st.n,H[3])+ce(g,i,'k',g.st.k,H[4])+ce(g,i,'a',g.st.av,H[5])+ce(g,i,'lo',g.st.lo,H[6])+ce(g,i,'hi',g.st.hi,H[7])+'</tr>').join('')+'</tbody></table>':'<div class="emp">Belum ada data.</div>';
+ $('pN').innerHTML='<span><b>Total No Lap</b> = semua laporan manual petugas tersebut</span><span><b>Total '+CG.by+'</b> = laporan yang masuk hitungan</span><span><b>Rata-rata / Tercepat / Terlama</b> = dari laporan yang masuk hitungan, dalam menit</span><span>Laporan tanpa user di sheet ditampilkan sebagai '+NOBY+'</span>'}
+function petPop(g,m){const st=g.st;let t,d;
+ if(m=='n'){t='Total No Lap';d=det(g.G)}
+ else if(m=='k'){t='Total '+CG.by;d=det(g.G.filter(r=>r.m))}
+ else if(m=='a'){t='Rata-rata (menit)';d=det(g.G.filter(r=>r.m),'Dasar perhitungan rata-rata: '+st.k+' laporan terhitung, rata-rata '+n2(st.av)+' menit.')}
+ else if(m=='lo'){t='Tercepat';d=det(one(g.G,1),'Laporan dengan durasi tercepat.')}
+ else{t='Terlama';d=det(one(g.G,-1),'Laporan dengan durasi terlama.')}
+ popD(t+' - '+g.lb,d)}
+$('pOut').onclick=ev=>{const c=ev.target.closest('td[data-m]');if(c)petPop(PG[+c.dataset.g],c.dataset.m)};
+$('pXR').onclick=()=>{if(!PV||!PV.a.length)return alert('Tidak ada data untuk diunduh.');dl(PV.h,PV.a,CG.pre+'_RekapPetugas'+sfx(),'Rekap Petugas')};
+$('pXD').onclick=()=>{const rows=filt().sort((a,b)=>(a.by||'~').localeCompare(b.by||'~')||a.area.localeCompare(b.area)||a.unit.localeCompare(b.unit)||a.t-b.t);if(!rows.length)return alert('Tidak ada data untuk diunduh.');dl(DX,rows.map(detX),CG.pre+'_DetailPetugas'+sfx(),'Detail Laporan')};
 let CH={mode:'g',met:'n',sel:null},CI=[],CF=null;
 const dk=t=>new Date(t*1000).toISOString().slice(0,10);
 function chData(rows){const fa=$('fA').value,fm=$('fM').value,G={};
@@ -348,7 +384,7 @@ function dl(h,a,n,sn,x){const ws=XLSX.utils.aoa_to_sheet([h,...a]);ws['!cols']=h
 const sfx=()=>{const f=[$('fM').value,$('fA').value,$('fU').value].filter(Boolean).join('_').replace(/[^\w-]+/g,'-');return f?'_'+f:''};
 function xl(k){const rows=filt();if(!rows.length)return alert('Tidak ada data untuk diunduh.');
  k=='R'?dl(RH,flat(rows),CG.pre+'_Rekap'+sfx()):dl(DH,rows.map(detRow),CG.pre+'_Detail'+sfx())}
-function popD(l,d){PP={h:d.h,a:d.a,f:d.f,n:CG.pre+'_'+l.replace(/[^\w]+/g,'-')+sfx(),sn:'Tampilan'};
+function popD(l,d){PP={h:d.h,a:d.a,f:d.f,n:CG.pre+'_'+l.replace(/[^\w]+/g,'-').slice(0,90)+sfx(),sn:'Tampilan'};
  PP2=d.dh?{h:d.dh,a:d.da,n:PP.n+'_detail'}:null;
  $('mx').textContent=PP2?'Unduh Excel (tampilan)':'Unduh Excel';$('mx2').textContent='Unduh Excel (detail)';$('mx2').hidden=!PP2;
  $('mt').textContent=l+' ('+d.a.length+' baris)';
@@ -368,27 +404,27 @@ $('mc').onclick=()=>{$('md').hidden=true};$('md').onclick=ev=>{if(ev.target.id==
 document.onkeydown=ev=>{if(ev.key=='Escape')$('md').hidden=true};$('mx').onclick=()=>dl(PP.h,PP.a,PP.n,PP.sn,PP.x);
 function fitBrand(){const t=$('bt'),s=$('bs');s.style.fontSize='10px';s.style.fontSize=(10*t.offsetWidth/s.offsetWidth)+'px'}
 function lab(el){el.querySelectorAll('table').forEach(t=>{const h=[...t.querySelectorAll('th')].map(x=>x.textContent);t.querySelectorAll('tbody tr').forEach(r=>[...r.children].forEach((c,i)=>{c.dataset.l=h[i]||''}))})}
-['out','mi'].forEach(i=>new MutationObserver(()=>lab($(i))).observe($(i),{childList:true}));
+['out','mi','pOut'].forEach(i=>new MutationObserver(()=>lab($(i))).observe($(i),{childList:true}));
 fitBrand();if(document.fonts&&document.fonts.ready)document.fonts.ready.then(fitBrand);
 
-const DH_M=['No','No Laporan','Nama Area','Nama Unit','Tanggal Lapor','Tanggal Lapor Referensi','Tanggal Marking','Acuan Hitung','Durasi (menit)','Status'];
-const DH_P=['No','No Laporan','Nama Area','Nama Unit','Tanggal Lapor','Tanggal Penugasan Regu','Tanggal Return Order','Rumus Hitung','Durasi (menit)','Status'];
+const DH_M=['No','No Laporan','Nama Area','Nama Unit','User Comcen','Tanggal Lapor','Tanggal Lapor Referensi','Tanggal Marking','Acuan Hitung','Durasi (menit)','Status'];
+const DH_P=['No','No Laporan','Nama Area','Nama Unit','User Comcen','Tanggal Lapor','Tanggal Penugasan Regu','Tanggal Return Order','Rumus Hitung','Durasi (menit)','Status'];
 const RH_N=['Nama Area','Nama Unit','Jumlah No Laporan','Rata-rata (menit)','Durasi Tercepat (menit)','Durasi Terlama (menit)'];
 const dm=t=>t==null?'':fd(t),SL_N={ok:'Terhitung',auto:'Durasi negatif',belum:'Data belum lengkap'};
-const detM=(r,i)=>[i+1,r.no,r.area,r.unit,dm(r.t),dm(r.rf),dm(r.tm),r.m?r.bs:'',r.m?r.pt:'',SL_N[r.st]];
-const detP=(r,i)=>[i+1,r.no,r.area,r.unit,dm(r.t),dm(r.pg),dm(r.ro),r.m?r.bs:'',r.m?r.pt:'',SL_N[r.st]];
-const DX_M=['No','No Laporan','Nama Area','Nama Unit','ID Pelanggan','Tanggal Lapor','Tanggal Lapor Referensi','Tanggal Marking','Acuan Hitung','Durasi (detik)','Durasi (menit)','Status'];
-const DX_P=['No','No Laporan','Nama Area','Nama Unit','ID Pelanggan','Tanggal Lapor','Tanggal Penugasan Regu','Tanggal Return Order','Rumus Hitung','Durasi (detik)','Durasi (menit)','Status'];
-const detXM=(r,i)=>[i+1,r.no,r.area,r.unit,r.ip,dm(r.t),dm(r.rf),dm(r.tm),r.m?r.bs:'',r.m?r.sec:'',r.m?r.pt:'',SL_N[r.st]];
-const detXP=(r,i)=>[i+1,r.no,r.area,r.unit,r.ip,dm(r.t),dm(r.pg),dm(r.ro),r.m?r.bs:'',r.m?r.sec:'',r.m?r.pt:'',SL_N[r.st]];
+const detM=(r,i)=>[i+1,r.no,r.area,r.unit,r.by||'-',dm(r.t),dm(r.rf),dm(r.tm),r.m?r.bs:'',r.m?r.pt:'',SL_N[r.st]];
+const detP=(r,i)=>[i+1,r.no,r.area,r.unit,r.by||'-',dm(r.t),dm(r.pg),dm(r.ro),r.m?r.bs:'',r.m?r.pt:'',SL_N[r.st]];
+const DX_M=['No','No Laporan','Nama Area','Nama Unit','User Comcen','ID Pelanggan','Tanggal Lapor','Tanggal Lapor Referensi','Tanggal Marking','Acuan Hitung','Durasi (detik)','Durasi (menit)','Status'];
+const DX_P=['No','No Laporan','Nama Area','Nama Unit','User Comcen','ID Pelanggan','Tanggal Lapor','Tanggal Penugasan Regu','Tanggal Return Order','Rumus Hitung','Durasi (detik)','Durasi (menit)','Status'];
+const detXM=(r,i)=>[i+1,r.no,r.area,r.unit,r.by||'-',r.ip,dm(r.t),dm(r.rf),dm(r.tm),r.m?r.bs:'',r.m?r.sec:'',r.m?r.pt:'',SL_N[r.st]];
+const detXP=(r,i)=>[i+1,r.no,r.area,r.unit,r.by||'-',r.ip,dm(r.t),dm(r.pg),dm(r.ro),r.m?r.bs:'',r.m?r.sec:'',r.m?r.pt:'',SL_N[r.st]];
 const MENUS={
  ctt:{pre:'CTT',t:'Rekap Durasi Create CTT',p:'Durasi terbit CTT oleh Operator Command Center setelah laporan masuk ke APKT (APKT dicocokkan dengan AP2T per ID Pelanggan), diperbarui otomatis setiap 2 menit',load:loadCTT,ok:'Sudah create CTT',bad:'Belum create',okS:'create CTT',avgL:'Rata-rata durasi create CTT (menit)',DH:DH_C,SL:SL_C,det:detC,DX:DX_C,dtx:detXC,RH:RH_C,min:false},
  marking:{pre:'Marking',t:'Rekap Durasi Manual Marking',p:'Durasi Operator Command Center mengelompokkan laporan imbas padam meluas / pemadaman dengan laporan lainnya, atau laporan gangguan TM / Pemeliharaan TM (MANUAL MARKING), diperbarui otomatis setiap 2 menit',
-  load:()=>loadP2(h=>({km:col(h,['keteranganmarking'],'KETERANGAN_MARKING'),tm:col(h,['tglmarking'],'TGL_MARKING'),rf:col(h,['tgllaporreferensi'],'TGL_LAPOR_REFERENSI')}),(x,c)=>nrm(x[c.km])=='MANUAL MARKING',calcM),
-  ok:'Sudah terhitung',bad:'Belum terhitung',okS:'terhitung',avgL:'Rata-rata durasi manual marking (menit)',DH:DH_M,SL:SL_N,det:detM,DX:DX_M,dtx:detXM,RH:RH_N,min:true},
+  load:()=>loadP2(h=>({km:col(h,['keteranganmarking'],'KETERANGAN_MARKING'),tm:col(h,['tglmarking'],'TGL_MARKING'),rf:col(h,['tgllaporreferensi'],'TGL_LAPOR_REFERENSI'),by:colo(h,['markingby'])}),(x,c)=>nrm(x[c.km])=='MANUAL MARKING',calcM,'MARKING_BY'),
+  ok:'Sudah terhitung',bad:'Belum terhitung',okS:'terhitung',avgL:'Rata-rata durasi manual marking (menit)',by:'Marking',DH:DH_M,SL:SL_N,det:detM,DX:DX_M,dtx:detXM,RH:RH_N,min:true},
  dispatch:{pre:'Dispatch',t:'Rekap Durasi Manual Dispatch',p:'Durasi laporan masuk ke APKT hingga diteruskan oleh Operator Command Center ke petugas di lapangan (MANUAL COMMAND CENTER), diperbarui otomatis setiap 2 menit',
-  load:()=>loadP2(h=>({kk:col(h,['ketkirim'],'KET_KIRIM'),pg:col(h,['tglpenugasanregu'],'TGL_PENUGASAN_REGU'),ro:col(h,['tglreturnorder'],'TGL_RETURN_ORDER')}),(x,c)=>nrm(x[c.kk])=='MANUAL COMMAND CENTER',calcP),
-  ok:'Sudah terhitung',bad:'Belum terhitung',okS:'terhitung',avgL:'Rata-rata durasi manual dispatch (menit)',DH:DH_P,SL:SL_N,det:detP,DX:DX_P,dtx:detXP,RH:RH_N,min:true}};
+  load:()=>loadP2(h=>({kk:col(h,['ketkirim'],'KET_KIRIM'),pg:col(h,['tglpenugasanregu'],'TGL_PENUGASAN_REGU'),ro:col(h,['tglreturnorder'],'TGL_RETURN_ORDER'),by:colo(h,['dispatchby'])}),(x,c)=>nrm(x[c.kk])=='MANUAL COMMAND CENTER',calcP,'DISPATCH_BY'),
+  ok:'Sudah terhitung',bad:'Belum terhitung',okS:'terhitung',avgL:'Rata-rata durasi manual dispatch (menit)',by:'Dispatch',DH:DH_P,SL:SL_N,det:detP,DX:DX_P,dtx:detXP,RH:RH_N,min:true}};
 function home(){cur=null;$('home').hidden=false;$('app').hidden=true;$('cb').hidden=true;$('md').hidden=true;$('ht').textContent='Dashboard Kinerja dan Administrasi Command Center';$('hp').textContent='';document.title='Dashboard Kinerja dan Administrasi Command Center';window.scrollTo(0,0)}
 function enter(k){if(cur==k&&!$('app').hidden)return;const g=MENUS[k];cur=k;CG=g;DH=g.DH;SL=g.SL;detRow=g.det;DX=g.DX;detX=g.dtx;RH=g.RH;MM=g.min;RN=g.min?[3,4,5]:[3];
  $('ht').textContent=g.t;$('hp').textContent=g.p;document.title=g.t;$('home').hidden=true;$('app').hidden=false;$('cb').hidden=true;
