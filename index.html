@@ -211,7 +211,39 @@ main#abs{max-width:none;margin:0;padding:0}
 html.absmode{overflow:hidden;overscroll-behavior:none}html.absmode body{min-height:calc(100vh + 600px)}
 html.absmode header{background:rgba(234,236,248,.5);background:color-mix(in srgb,var(--bg) 50%,transparent);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}
 html.absmode[data-theme="dark"] header{background:rgba(26,30,45,.5);background:color-mix(in srgb,var(--bg) 50%,transparent)}
-@media(max-width:640px){#abs .abar{padding:10px 12px}}
+@media(max-width:760px),(max-aspect-ratio:29/20){#abs .abar{padding:8px 12px}#abs .abar a{display:inline-flex;align-items:center;justify-content:center;min-width:44px;min-height:40px;padding:0 14px;font-size:18px}#abs .bt{display:none}}
+/* ===== Animasi kartu menu (hover): cincin cahaya + kilau + garis judul ===== */
+@property --ang{syntax:"<angle>";inherits:false;initial-value:0deg}
+.hnote{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:4px 16px}
+.hnote .hby{margin-left:auto;text-align:right;font-weight:600}
+.mc{position:relative}
+.mc::before{content:"";position:absolute;inset:0;border-radius:inherit;padding:3px;pointer-events:none;z-index:2;opacity:0;transition:opacity .35s;
+ background:conic-gradient(from var(--ang),var(--cy),var(--cy2),var(--ye),var(--cy2),var(--cy));
+ -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;
+ mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0)}
+.mc::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:1;opacity:0;transform:translateX(-120%);mix-blend-mode:soft-light;
+ background:linear-gradient(110deg,transparent 38%,rgba(255,255,255,.95) 50%,transparent 62%)}
+.mc svg{transition:transform .6s cubic-bezier(.22,.8,.2,1)}
+.mc h2{width:fit-content;align-self:flex-start;background:linear-gradient(90deg,var(--cy),var(--ye)) no-repeat 0 100%/0 3px;padding-bottom:3px;transition:background-size .45s cubic-bezier(.22,.8,.2,1),color .3s}
+.mc .go{transition:color .3s,letter-spacing .35s cubic-bezier(.22,.8,.2,1)}
+@media(hover:hover) and (pointer:fine){
+.mc:not(.off){transition:transform .35s cubic-bezier(.22,.8,.2,1),box-shadow .45s}
+.mc:not(.off):hover,.mc:not(.off):focus-visible{transform:translateY(-6px);box-shadow:var(--raise),0 20px 36px -16px rgba(82,195,220,.55),0 8px 22px -14px rgba(248,196,32,.5)}
+.mc:not(.off):hover::before,.mc:not(.off):focus-visible::before{opacity:1;animation:mcSpin 3.2s linear infinite}
+.mc:not(.off):hover::after{opacity:1;transform:translateX(120%);transition:transform .9s cubic-bezier(.4,0,.2,1)}
+.mc:not(.off):hover svg{transform:scale(1.05)}
+.mc:not(.off):hover h2{background-size:100% 3px}
+.mc:not(.off):hover .go{color:var(--cyt);letter-spacing:.04em}
+}
+.mc:not(.off):active{transform:translateY(-1px) scale(.985);box-shadow:var(--inset)}
+.mc.press{transform:scale(.97)!important;box-shadow:var(--inset)!important;transition:transform .15s,box-shadow .15s}
+.mc.ping::before{animation:mcPing .9s ease-out}
+@keyframes mcSpin{to{--ang:360deg}}
+@keyframes mcPing{0%{opacity:1}100%{opacity:0}}
+/* ===== Transisi morph: iris warna dari kartu <-> halaman menu ===== */
+.mph{position:fixed;inset:0;z-index:60;pointer-events:none;display:grid;place-items:center;will-change:clip-path;background:linear-gradient(135deg,var(--cy) 0%,var(--cy2) 48%,var(--ye) 100%)}
+.mph-t{max-width:86vw;text-align:center;font:800 clamp(26px,6vw,56px)/1.15 Montserrat,"Segoe UI",system-ui,sans-serif;color:var(--on-cy);opacity:0}
+@media(prefers-reduced-motion:reduce){.mc::before,.mc::after{animation:none!important;transition:none!important}.mc:hover{transform:none!important}}
 </style></head><body>
 <header><div class="hero" id="hr"><video id="hv" src="journey.webm" poster="journey-poster.png" autoplay muted loop playsinline preload="auto" disablepictureinpicture disableremoteplayback aria-hidden="true" tabindex="-1"></video></div><div class="brand"><b id="bt">Command Center</b><span id="bs">UIW Papua dan Papua Barat</span></div><h1 id="ht">Dashboard Kinerja dan Administrasi Command Center</h1><p id="hp"></p></header>
 <div id="fl" aria-hidden="true"></div>
@@ -225,7 +257,7 @@ html.absmode[data-theme="dark"] header{background:rgba(26,30,45,.5);background:c
 <a class="mc off" tabindex="0" role="button" aria-disabled="true"><svg viewBox="0 0 320 180" role="img" aria-label="Monitoring cuti: kalender dengan hari cuti ditandai, koper dan matahari"><rect width="320" height="180" fill="#efdcae"/><path d="M0 45H320M0 90H320M0 135H320M80 0V180M160 0V180M240 0V180" stroke="#c8ae7e" stroke-width="1" opacity=".5"/><g stroke="#3a2a1c" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"><rect x="30" y="26" width="146" height="128" rx="6" fill="#fbf2dc"/><rect x="30" y="26" width="146" height="24" rx="6" fill="#3a2a1c"/><path d="M62 18V34M144 18V34" fill="none" stroke-width="5"/><rect x="42" y="66" width="20" height="14" rx="2" fill="#efdcae" stroke="#c8ae7e" stroke-width="2"/><rect x="68" y="66" width="20" height="14" rx="2" fill="#efdcae" stroke="#c8ae7e" stroke-width="2"/><rect x="94" y="66" width="20" height="14" rx="2" fill="#efdcae" stroke="#c8ae7e" stroke-width="2"/><rect x="120" y="66" width="20" height="14" rx="2" fill="#efdcae" stroke="#c8ae7e" stroke-width="2"/><rect x="146" y="66" width="20" height="14" rx="2" fill="#efdcae" stroke="#c8ae7e" stroke-width="2"/><rect x="42" y="86" width="20" height="14" rx="2" fill="#efdcae" stroke="#c8ae7e" stroke-width="2"/><rect x="68" y="86" width="20" height="14" rx="2" fill="#5f6535"/><rect x="94" y="86" width="20" height="14" rx="2" fill="#5f6535"/><rect x="120" y="86" width="20" height="14" rx="2" fill="#5f6535"/><rect x="146" y="86" width="20" height="14" rx="2" fill="#efdcae" stroke="#c8ae7e" stroke-width="2"/><rect x="42" y="106" width="20" height="14" rx="2" fill="#5f6535"/><rect x="68" y="106" width="20" height="14" rx="2" fill="#5f6535"/><rect x="94" y="106" width="20" height="14" rx="2" fill="#efdcae" stroke="#c8ae7e" stroke-width="2"/><rect x="120" y="106" width="20" height="14" rx="2" fill="#efdcae" stroke="#c8ae7e" stroke-width="2"/><rect x="146" y="106" width="20" height="14" rx="2" fill="#efdcae" stroke="#c8ae7e" stroke-width="2"/><rect x="42" y="126" width="20" height="14" rx="2" fill="#efdcae" stroke="#c8ae7e" stroke-width="2"/><rect x="68" y="126" width="20" height="14" rx="2" fill="#efdcae" stroke="#c8ae7e" stroke-width="2"/><rect x="94" y="126" width="20" height="14" rx="2" fill="#efdcae" stroke="#c8ae7e" stroke-width="2"/><rect x="120" y="126" width="20" height="14" rx="2" fill="#efdcae" stroke="#c8ae7e" stroke-width="2"/><rect x="146" y="126" width="20" height="14" rx="2" fill="#efdcae" stroke="#c8ae7e" stroke-width="2"/><path d="M118 112l5 5 10-11" fill="none" stroke="#fbf2dc" stroke-width="3"/></g><circle cx="270" cy="40" r="15" fill="#d49a2a" stroke="#3a2a1c" stroke-width="3"/><path d="M270 14V8M270 66V72M244 40H238M296 40H302M252 22l-4-4M288 22l4-4M252 58l-4 4M288 58l4 4" stroke="#d49a2a" stroke-width="3" stroke-linecap="round"/><g stroke="#3a2a1c" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"><path d="M230 96V88A6 6 0 0 1 236 82H262A6 6 0 0 1 268 88V96" fill="none"/><rect x="198" y="96" width="100" height="62" rx="8" fill="#9c3f22"/><path d="M226 96V158M270 96V158" fill="none" stroke="#fbf2dc" stroke-width="4"/><rect x="241" y="120" width="16" height="12" rx="2" fill="#d49a2a"/></g></svg><div class="mb"><h2>Monitoring Cuti</h2><p>Pantau cuti pegawai Command Center.</p><span class="go">Dalam pengembangan</span></div><div class="soon">Dalam Tahap Pengembangan</div></a>
 <a class="mc" href="#absensi"><svg viewBox="0 0 320 180" role="img" aria-label="Rekap absensi dan lembur: daftar hadir, jam dinding dan bulan penanda lembur malam"><rect width="320" height="180" fill="#efdcae"/><path d="M0 45H320M0 90H320M0 135H320M80 0V180M160 0V180M240 0V180" stroke="#c8ae7e" stroke-width="1" opacity=".5"/><g stroke="#3a2a1c" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"><rect x="26" y="22" width="108" height="140" rx="6" fill="#fbf2dc"/><rect x="58" y="14" width="44" height="16" rx="5" fill="#d49a2a"/><circle cx="52" cy="52" r="8" fill="#5f6535"/><path d="M48 52l3 3 6-7" fill="none" stroke="#fbf2dc" stroke-width="2.5"/><path d="M72 52H118" fill="none"/><circle cx="52" cy="76" r="8" fill="#5f6535"/><path d="M48 76l3 3 6-7" fill="none" stroke="#fbf2dc" stroke-width="2.5"/><path d="M72 76H118" fill="none"/><circle cx="52" cy="100" r="8" fill="#fbf2dc"/><path d="M72 100H118" fill="none"/><circle cx="52" cy="124" r="8" fill="#5f6535"/><path d="M48 124l3 3 6-7" fill="none" stroke="#fbf2dc" stroke-width="2.5"/><path d="M72 124H118" fill="none"/></g><g stroke="#3a2a1c" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"><circle cx="220" cy="92" r="52" fill="#fbf2dc"/><circle cx="220" cy="92" r="42" fill="#efdcae" stroke-width="2"/><path d="M220 92V62M220 92L242 104" fill="none" stroke-width="4"/><circle cx="220" cy="92" r="4" fill="#3a2a1c"/><path d="M220 54v5M220 125v5M182 92h5M253 92h5" fill="none" stroke-width="2.5"/></g><path d="M276 28a20 20 0 1 0 22 26a16 16 0 0 1-22-26Z" fill="#d49a2a" stroke="#3a2a1c" stroke-width="3" stroke-linejoin="round"/><circle cx="170" cy="140" r="14" fill="#9c3f22" stroke="#3a2a1c" stroke-width="3"/><path d="M170 133V147M163 140H177" stroke="#fbf2dc" stroke-width="3.5" stroke-linecap="round"/></svg><div class="mb"><h2>Rekap Absensi dan Lembur</h2><p>Rekap absensi dan lembur pegawai.</p><span class="go">Buka rekap →</span></div></a>
 </div>
-<p class="hnote">sumber data : APKT-EIS-VCC by @K.I.T.A</p>
+<p class="hnote"><span>sumber data : APKT-EIS-VCC</span><span class="hby">made by : K.I.T.A</span></p>
 </main>
 <main id="app" hidden>
 <div class="row" style="margin-bottom:12px"><a class="btnlink" href="#">← Kembali ke Beranda</a></div>
@@ -266,7 +298,7 @@ html.absmode[data-theme="dark"] header{background:rgba(26,30,45,.5);background:c
 <div class="clg cbn"><span><b>Total Lapor</b> = laporan di EIS</span><span><b>Percobaan Telp</b> = panggilan keluar (nomor ganda tetap dihitung)</span><span><b>Plgn Dihubungi</b> = nomor sama dalam jeda singkat dihitung 1 kali</span><span><b>% Dihubungi</b> = Plgn Dihubungi ÷ Total Lapor</span></div></div>
 </main>
 <main id="abs" hidden>
-<div class="row abar"><a class="btnlink" href="#">← Kembali ke Beranda</a></div>
+<div class="row abar"><a class="btnlink" href="#" aria-label="Kembali ke Beranda"><span class="bk">←</span><span class="bt"> Kembali ke Beranda</span></a></div>
 <div id="absBox"></div>
 <div id="absSrc" hidden data-html="<!DOCTYPE html>
 <html lang=&quot;id&quot;><head><meta charset=&quot;utf-8&quot;><meta name=&quot;viewport&quot; content=&quot;width=device-width,initial-scale=1,viewport-fit=cover,interactive-widget=resizes-content&quot;>
@@ -2256,7 +2288,7 @@ const FIT='html,body{overscroll-behavior:none}'+
  'body:not(.onLanding){padding-top:calc(16px + var(--abs-top,0px))!important}'+
  '@media(min-width:761px) and (min-aspect-ratio:2901/2000){.sc{top:calc((100cqh - var(--W)/2.0656)*.15 + max(0px, var(--abs-top,0px) + 14px - var(--W)*.045))!important}body.onLanding .top{top:calc(var(--hb,0px) + 10px)!important}.sc{overflow:visible!important}.sc>svg.mir{display:block!important;left:0!important;top:auto!important;bottom:100%!important;width:100%!important;height:100%!important;transform:scaleY(-1);pointer-events:none}}'+
  '.sc>svg.mir{display:none}'+
- '@media(max-width:760px),(max-aspect-ratio:29/20){body.onLanding .top{top:calc(var(--abs-top,0px) + 2px)!important}.ui{padding-top:calc(var(--abs-top,0px) + 56px)!important}}';
+ '@media(max-width:760px),(max-aspect-ratio:29/20){body.onLanding .top{top:calc(var(--hb,0px) + 9px)!important;left:calc(max(12px,env(safe-area-inset-left)) + 52px)!important}.top .tools{justify-content:flex-end!important;gap:8px}.ui{bottom:calc(var(--mh)*.45)!important;padding-top:calc(var(--abs-top,0px) + 6px)!important}}';
 function place(){if(!fr||abs.hidden)return;let d;try{d=fr.contentDocument}catch(x){return}if(!d||!d.documentElement)return;
  if(!d.getElementById('absFit')&&d.head){const st=d.createElement('style');st.id='absFit';st.textContent=FIT;d.head.appendChild(st);d.querySelectorAll('.sc>svg').forEach(v=>{const c=v.cloneNode(true);c.classList.add('mir');c.setAttribute('aria-hidden','true');v.parentNode.insertBefore(c,v)})}
  const hb=document.querySelector('header').getBoundingClientRect().bottom,br=abs.querySelector('.abar');br.style.top=Math.max(0,Math.round(hb))+'px';const ab=br.getBoundingClientRect().bottom;
@@ -2290,6 +2322,45 @@ function saved(){try{const v=localStorage.getItem(KEY);return v==='light'||v==='
 paint(root.getAttribute('data-theme')==='dark'?'dark':'light');
 btn.addEventListener('click',()=>{const n=root.getAttribute('data-theme')==='dark'?'light':'dark';paint(n);try{localStorage.setItem(KEY,n)}catch(e){}});
 if(mq&&mq.addEventListener)mq.addEventListener('change',ev=>{if(!saved())paint(ev.matches?'dark':'light')});
+})();
+</script>
+<script>
+/* Animasi: transisi iris warna dari kartu menu -> halaman menu (dan sebaliknya) */
+(function(){
+const $=id=>document.getElementById(id),rm=matchMedia('(prefers-reduced-motion:reduce)'),EASE='cubic-bezier(.65,0,.25,1)',OUT='cubic-bezier(.22,.8,.2,1)';let busy=false;
+const raf2=f=>requestAnimationFrame(()=>requestAnimationFrame(f));
+const rad=(x,y)=>Math.hypot(Math.max(x,innerWidth-x),Math.max(y,innerHeight-y))+12;
+const circ=(r,x,y)=>`circle(${r.toFixed(1)}px at ${x.toFixed(1)}px ${y.toFixed(1)}px)`;
+const mid=el=>{const r=el.getBoundingClientRect();return[r.left+r.width/2,r.top+r.height/2]};
+function mkOv(label){const o=document.createElement('div');o.className='mph';o.setAttribute('aria-hidden','true');const t=document.createElement('div');t.className='mph-t';t.textContent=label||'';o.appendChild(t);document.body.appendChild(o);return o}
+function done(ov){ov.remove();busy=false}
+function showMenu(){const m=['app','cb','abs'].map($).find(x=>x&&!x.hidden);if(!m)return;
+ const f=m.id==='abs'?[{opacity:0},{opacity:1}]:[{opacity:0,transform:'translateY(22px)'},{opacity:1,transform:'none'}];
+ m.animate(f,{duration:560,delay:140,easing:OUT,fill:'backwards'})}
+function morphIn(card,hash){busy=true;const [cx,cy]=mid(card),R=rad(cx,cy),h2=card.querySelector('h2'),ov=mkOv(h2?h2.textContent:''),t=ov.firstChild;
+ card.classList.add('press');ov.style.clipPath=circ(0,cx,cy);
+ t.animate([{opacity:0,transform:'translateY(14px)'},{opacity:1,transform:'none'}],{duration:320,delay:260,easing:OUT,fill:'forwards'});
+ ov.animate([{clipPath:circ(0,cx,cy)},{clipPath:circ(R,cx,cy)}],{duration:540,easing:EASE,fill:'forwards'}).finished.then(()=>{
+  location.hash=hash;card.classList.remove('press');
+  raf2(()=>{const hd=$('ht'),[tx,ty]=hd?[hd.getBoundingClientRect().left+24,hd.getBoundingClientRect().top+hd.offsetHeight/2]:[60,40];
+   t.animate([{opacity:1},{opacity:0}],{duration:200,fill:'forwards'});showMenu();
+   ov.animate([{clipPath:circ(R,cx,cy)},{clipPath:circ(0,tx,ty)}],{duration:640,easing:EASE,fill:'forwards'}).finished.then(()=>done(ov),()=>done(ov))})},()=>{card.classList.remove('press');done(ov)})}
+function morphOut(back){busy=true;const prev=location.hash.slice(1),[cx,cy]=mid(back),R=rad(cx,cy),ov=mkOv('');ov.style.clipPath=circ(0,cx,cy);
+ ov.animate([{clipPath:circ(0,cx,cy)},{clipPath:circ(R,cx,cy)}],{duration:480,easing:EASE,fill:'forwards'}).finished.then(()=>{
+  location.hash='';
+  raf2(()=>{const card=document.querySelector('.cards a.mc[href="#'+prev+'"]');
+   if(!card){ov.animate([{opacity:1},{opacity:0}],{duration:300,fill:'forwards'}).finished.then(()=>done(ov),()=>done(ov));return}
+   card.scrollIntoView({block:'center'});const [kx,ky]=mid(card);
+   ov.animate([{clipPath:circ(R,cx,cy)},{clipPath:circ(0,kx,ky)}],{duration:600,easing:EASE,fill:'forwards'}).finished.then(()=>{
+    card.classList.add('ping');card.animate([{transform:'scale(.94)'},{transform:'scale(1)'}],{duration:460,easing:'cubic-bezier(.34,1.56,.64,1)'});
+    setTimeout(()=>card.classList.remove('ping'),950);done(ov)},()=>done(ov))})},()=>done(ov))}
+document.addEventListener('click',e=>{if(e.defaultPrevented||e.button||e.metaKey||e.ctrlKey||e.shiftKey||e.altKey)return;
+ const t=e.target.closest?e.target:e.target.parentElement,card=t&&t.closest('.cards a.mc[href^="#"]'),back=!card&&t&&t.closest('a[href="#"]');
+ if(!card&&!(back&&location.hash.length>1))return;
+ if(busy){e.preventDefault();return}
+ if(rm.matches||!Element.prototype.animate)return;
+ e.preventDefault();card?morphIn(card,card.getAttribute('href').slice(1)):morphOut(back)},true);
+setInterval(()=>{if(busy&&!document.querySelector('.mph')){busy=false}},1500);
 })();
 </script>
 </body></html>
