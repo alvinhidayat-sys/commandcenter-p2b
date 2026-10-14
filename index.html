@@ -2237,8 +2237,11 @@ function pick(){
 }
 function used(p,y){return all().filter(r=>N(r.nama)==N(p.nama)&amp;&amp;/tahun/i.test(r.ket||'tahunan')&amp;&amp;r.yr==String(y)).reduce((a,r)=>a+(+r.jumlah||0),0)}
 const isTahunan=()=>/tahun/i.test($('#fKet').value||'');
+/* Cuti Melahirkan: 90 hari kalender (termasuk Sabtu/Minggu/libur) dihitung otomatis dari tanggal awal yang diklik */
+const MLH=90;
+const isMlh=()=>/melahirkan|bersalin|hamil/i.test($('#fKet').value||'');
 function sisaNow(){return S.p?Math.max(0,JATAH-used(S.p,S.view.y)):JATAH}
-function limit(){if(isTahunan())return Math.min(JATAH,sisaNow());return /melahirkan|bersalin/i.test($('#fKet').value)?90:JATAH}
+function limit(){if(isTahunan())return Math.min(JATAH,sisaNow());return isMlh()?MLH:JATAH}
 function info(){
   const el=$('#info');
   if(!S.p){el.classList.remove('rich');el.textContent='Pilih petugas untuk melihat sisa jatah cuti.';return}
@@ -2265,12 +2268,13 @@ function locked(d){const t=new Set(S.sel);t.add(iso(d));return !validShift(t)}
 function status(d){
   const k=iso(d);
   if(S.sel.has(k))return'sel';
+  if(isMlh())return'ok';
   if(!shift()){const wk=d.getDay()==0||d.getDay()==6;if(wk||hday(k))return'off';return'ok'}
   return locked(d)?'lock':'ok';
 }
 function renderCal(){
   const{y,m}=S.view;ensureYear(y);
-  if(!shift()){[...S.sel].forEach(k=>{const d=dt(k),w=d.getDay();if(w==0||w==6||hday(k))S.sel.delete(k)})}
+  if(!shift()&amp;&amp;!isMlh()){[...S.sel].forEach(k=>{const d=dt(k),w=d.getDay();if(w==0||w==6||hday(k))S.sel.delete(k)})}
   $('#calT').textContent=BLN[m]+' '+y;$('#mSel').value=m;$('#ySel').value=y;
   const first=new Date(y,m,1),start=add(first,-((first.getDay()+6)%7));
   let h=['Sen','Sel','Rab','Kam','Jum','Sab','Min'].map((x,i)=>`<div class=&quot;dow ${i>4?'w':''}&quot;>${x}</div>`).join('');
@@ -2284,12 +2288,12 @@ function renderCal(){
   }
   $('#cal').innerHTML=h;
   const pre=y+'-'+p2(m+1),hm=holMap(y),hl=Object.keys(hm).filter(k=>k.startsWith(pre)).sort().map(k=>`<b>${dt(k).getDate()} ${BS[m]}</b> ${esc(hm[k][0])}${hm[k][1]=='f'?' (fakultatif)':''}`);
-  $('#holList').innerHTML='Libur &amp;amp; cuti bersama '+BLN[m]+' (kebijakan '+provOf(S.p)+'): '+(hl.length?hl.join(' · '):'tidak ada')+(shift()?' <i>(tetap bisa dipilih untuk shift)</i>':' <i>(tidak bisa dipilih untuk nonshift)</i>')+(holPartial(y)?'<br>⚠ Libur keagamaan &amp;amp; cuti bersama '+y+(HOLP[y]?' sedang diambil…':' belum tersedia (hanya libur tetap yang tampil); isi lewat HOLX di kode.'):'');
-  $('#lkN').textContent=lk;$('#lkLeg').style.display=shift()?'':'none';
-  $('#offLeg').style.display=shift()?'none':'';
-  $('#tot').innerHTML=`Total terpilih: ${S.sel.size} hari kerja <small>(maks. ${limit()} hari)</small>`;
+  $('#holList').innerHTML='Libur &amp;amp; cuti bersama '+BLN[m]+' (kebijakan '+provOf(S.p)+'): '+(hl.length?hl.join(' · '):'tidak ada')+(isMlh()?' <i>(Cuti Melahirkan dihitung 90 hari kalender; libur &amp;amp; akhir pekan ikut terhitung)</i>':shift()?' <i>(tetap bisa dipilih untuk shift)</i>':' <i>(tidak bisa dipilih untuk nonshift)</i>')+(holPartial(y)?'<br>⚠ Libur keagamaan &amp;amp; cuti bersama '+y+(HOLP[y]?' sedang diambil…':' belum tersedia (hanya libur tetap yang tampil); isi lewat HOLX di kode.'):'');
+  $('#lkN').textContent=lk;$('#lkLeg').style.display=shift()&amp;&amp;!isMlh()?'':'none';
+  $('#offLeg').style.display=shift()||isMlh()?'none':'';
+  $('#tot').innerHTML=`Total terpilih: ${S.sel.size} hari ${isMlh()?'kalender':'kerja'} <small>(maks. ${limit()} hari)</small>`;
   $('#tot').style.setProperty('--p',Math.min(100,S.sel.size/Math.max(1,limit())*100));
-  const rg=ranges();$('#lama').innerHTML=rg.length?`<b>Lamanya cuti:</b> ${rg.map(esc).join(', ')}<br><b>Jumlah:</b> ${S.sel.size} hari`:'Lamanya cuti: belum ada tanggal dipilih. Klik tanggal pada kalender untuk memilih / membatalkan.';
+  const rg=ranges();$('#lama').innerHTML=rg.length?`<b>Lamanya cuti:</b> ${rg.map(esc).join(', ')}<br><b>Jumlah:</b> ${S.sel.size} hari${isMlh()?' kalender':''}`:(isMlh()?'Cuti Melahirkan: klik <b>tanggal awal</b> pada kalender, 90 hari kalender dihitung otomatis. Klik tanggal lain untuk mengganti tanggal awal, atau klik tanggal awal sekali lagi untuk membatalkan.':'Lamanya cuti: belum ada tanggal dipilih. Klik tanggal pada kalender untuk memilih / membatalkan.');
 }
 function trySel(d,quiet){
   const k=iso(d),st=status(d);
@@ -2301,6 +2305,11 @@ function trySel(d,quiet){
 $('#cal').addEventListener('click',e=>{
   const c=e.target.closest('.day');if(!c||c.classList.contains('oth'))return;
   const k=c.dataset.k;
+  if(isMlh()){
+    if(!S.p||S.p.gender!='P'){toast('Cuti Melahirkan hanya untuk petugas perempuan.');return}
+    if(S.sel.size&amp;&amp;[...S.sel].sort()[0]==k){S.sel.clear();renderCal();return}
+    S.sel.clear();const d0=dt(k);for(let i=0;i<MLH;i++)S.sel.add(iso(add(d0,i)));
+    renderCal();toast('Cuti Melahirkan: '+MLH+' hari kalender, '+fmt(k)+' s/d '+fmt(iso(add(d0,MLH-1)))+'.');return}
   if(S.sel.has(k))S.sel.delete(k);else if(!trySel(dt(k)))return;
   renderCal();
 });
@@ -2315,7 +2324,7 @@ $('#mSel').onchange=e=>{S.view.m=+e.target.value;renderCal()};
 $('#ySel').onchange=e=>{S.view.y=+e.target.value;renderCal();info()};
 $('#fUnit').onchange=fillNama;$('#fNama').onchange=pick;
 $('#fPola').onchange=()=>{S.sel.clear();renderCal()};
-$('#fKet').onchange=()=>{renderCal()};
+$('#fKet').onchange=()=>{S.sel.clear();renderCal()};
 $('#clr').onclick=()=>{S.sel.clear();renderCal()};
 
 /* ================== PDF ================== */
