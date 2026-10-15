@@ -245,8 +245,8 @@ html.absmode[data-theme="dark"] header{background:rgba(26,30,45,.5);background:c
 .mph{position:fixed;inset:0;z-index:60;pointer-events:none;display:grid;place-items:center;will-change:clip-path;background:linear-gradient(135deg,var(--cy) 0%,var(--cy2) 48%,var(--ye) 100%)}
 .mph-t{max-width:86vw;text-align:center;font:800 clamp(26px,6vw,56px)/1.15 Montserrat,"Segoe UI",system-ui,sans-serif;color:var(--on-cy);opacity:0}
 @media(prefers-reduced-motion:reduce){.mc::before,.mc::after{animation:none!important;transition:none!important}.mc:hover{transform:none!important}}
-/* ===== Revisi: morph lebih transparan; tombol kembali di header (mode Pengajuan Cuti) ===== */
-.mph{opacity:.55}
+/* ===== Revisi: morph solid 100% (warna mengikuti latar tema tiap menu); tombol kembali di header (mode Pengajuan Cuti) ===== */
+.mph{opacity:1}
 .hback{position:absolute;top:0;left:22px;z-index:3;display:none;padding:7px 14px;min-height:0;white-space:nowrap}
 html.hmenu .hback{display:inline-flex}
 html.hmenu header p{display:none}
@@ -3179,12 +3179,21 @@ const raf2=f=>requestAnimationFrame(()=>requestAnimationFrame(f));
 const rad=(x,y)=>Math.hypot(Math.max(x,innerWidth-x),Math.max(y,innerHeight-y))+12;
 const circ=(r,x,y)=>`circle(${r.toFixed(1)}px at ${x.toFixed(1)}px ${y.toFixed(1)}px)`;
 const mid=el=>{const r=el.getBoundingClientRect();return[r.left+r.width/2,r.top+r.height/2]};
-function mkOv(label){const o=document.createElement('div');o.className='mph';o.setAttribute('aria-hidden','true');const t=document.createElement('div');t.className='mph-t';t.textContent=label||'';o.appendChild(t);document.body.appendChild(o);return o}
+/* Warna morph = warna latar tema halaman menu tujuan (terang/gelap ikut tema yang sedang dipakai menu tsb) */
+const prefMq=q=>{try{return matchMedia(q).matches}catch(e){return false}};
+function frDark(id,key,def){let t=null;try{const f=document.querySelector('#'+id+' iframe');t=f&&f.contentDocument&&f.contentDocument.documentElement.getAttribute('data-theme')}catch(e){}
+ if(t!=='dark'&&t!=='light'){try{t=localStorage.getItem(key)}catch(e){t=null}}
+ if(t!=='dark'&&t!=='light')t=def;return t==='dark'}
+function tone(h){
+ if(h==='absensi')return frDark('abs','tema',prefMq('(prefers-color-scheme: dark)')?'dark':'light')?{bg:'linear-gradient(#0b1620,#142530)',ink:'#e4f3fa'}:{bg:'#fff',ink:'#12313c'};
+ if(h==='cuti')return frDark('cut','cuti_theme',prefMq('(prefers-color-scheme: light)')?'light':'dark')?{bg:'linear-gradient(160deg,#293865 0%,#171D2E 78%)',ink:'#F3F5FF'}:{bg:'linear-gradient(160deg,#F2F5FD 0%,#D8DFF2 80%)',ink:'#1D253B'};
+ return{bg:'linear-gradient(160deg,var(--bg2),var(--bg))',ink:'var(--ink)'}}
+function mkOv(label,hash){const o=document.createElement('div');o.className='mph';o.setAttribute('aria-hidden','true');const k=tone(hash);o.style.background=k.bg;const t=document.createElement('div');t.className='mph-t';t.style.color=k.ink;t.textContent=label||'';o.appendChild(t);document.body.appendChild(o);return o}
 function done(ov){ov.remove();busy=false}
 function showMenu(){const m=['app','cb','abs','cut'].map($).find(x=>x&&!x.hidden);if(!m)return;
  const f=(m.id==='abs'||m.id==='cut')?[{opacity:0},{opacity:1}]:[{opacity:0,transform:'translateY(22px)'},{opacity:1,transform:'none'}];
  m.animate(f,{duration:560,delay:140,easing:OUT,fill:'backwards'})}
-function morphIn(card,hash){busy=true;const [cx,cy]=mid(card),R=rad(cx,cy),h2=card.querySelector('h2'),ov=mkOv(h2?h2.textContent:''),t=ov.firstChild;
+function morphIn(card,hash){busy=true;const [cx,cy]=mid(card),R=rad(cx,cy),h2=card.querySelector('h2'),ov=mkOv(h2?h2.textContent:'',hash),t=ov.firstChild;
  card.classList.add('press');ov.style.clipPath=circ(0,cx,cy);
  t.animate([{opacity:0,transform:'translateY(14px)'},{opacity:1,transform:'none'}],{duration:320,delay:260,easing:OUT,fill:'forwards'});
  ov.animate([{clipPath:circ(0,cx,cy)},{clipPath:circ(R,cx,cy)}],{duration:540,easing:EASE,fill:'forwards'}).finished.then(()=>{
@@ -3192,7 +3201,7 @@ function morphIn(card,hash){busy=true;const [cx,cy]=mid(card),R=rad(cx,cy),h2=ca
   raf2(()=>{const hd=$('ht'),[tx,ty]=hd?[hd.getBoundingClientRect().left+24,hd.getBoundingClientRect().top+hd.offsetHeight/2]:[60,40];
    t.animate([{opacity:1},{opacity:0}],{duration:200,fill:'forwards'});showMenu();
    ov.animate([{clipPath:circ(R,cx,cy)},{clipPath:circ(0,tx,ty)}],{duration:640,easing:EASE,fill:'forwards'}).finished.then(()=>done(ov),()=>done(ov))})},()=>{card.classList.remove('press');done(ov)})}
-function morphOut(back){busy=true;const prev=location.hash.slice(1),[cx,cy]=mid(back),R=rad(cx,cy),ov=mkOv('');ov.style.clipPath=circ(0,cx,cy);
+function morphOut(back){busy=true;const prev=location.hash.slice(1),[cx,cy]=mid(back),R=rad(cx,cy),ov=mkOv('',prev);ov.style.clipPath=circ(0,cx,cy);
  ov.animate([{clipPath:circ(0,cx,cy)},{clipPath:circ(R,cx,cy)}],{duration:480,easing:EASE,fill:'forwards'}).finished.then(()=>{
   location.hash='';
   raf2(()=>{const card=document.querySelector('.cards a.mc[href="#'+prev+'"]');
