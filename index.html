@@ -2116,9 +2116,9 @@ tr.pick td{background:rgba(0,143,199,.2)}
 <!-- ============ MONITORING ============ -->
 <section id=&quot;v-mon&quot; class=&quot;hide&quot;>
   <h1>Monitoring Cuti</h1>
-  <p class=&quot;sub&quot;>Klik batang pada grafik unit untuk menyaring petugas. Klik lagi untuk melepas saringan.</p>
+  <p class=&quot;sub&quot;>Saring berdasarkan tahun, bulan (tanggal mulai cuti), divisi, kategori cuti, atau nama petugas. Klik batang pada grafik unit untuk menyaring petugas; klik lagi untuk melepas saringan.</p>
   <div class=&quot;bar&quot;>
-    <select id=&quot;mYear&quot;></select><select id=&quot;mDiv&quot;></select>
+    <select id=&quot;mYear&quot; title=&quot;Tahun (berdasarkan tanggal mulai cuti)&quot;></select><select id=&quot;mMon&quot; title=&quot;Bulan (berdasarkan tanggal mulai cuti)&quot;></select><select id=&quot;mDiv&quot;></select><select id=&quot;mKat&quot; title=&quot;Kategori cuti&quot;></select>
     <input id=&quot;mQ&quot; placeholder=&quot;Cari nama petugas…&quot;>
     <span class=&quot;tag hide&quot; id=&quot;mTag&quot;></span>
     <button class=&quot;btn sec&quot; id=&quot;xls&quot; style=&quot;margin-left:auto&quot;>Ekspor Excel</button>
@@ -2621,14 +2621,17 @@ function reconcile(){
   S.local=S.local.filter(r=>{const k2=rt(r);if(a.has(rk(r))||(k2&amp;&amp;b.has(k2))){r.seen=1;return true}return !(r.seen||t-(+r.id||0)>300000)});
   lsSet('cuti_rekap_v1',S.local);
 }
-const all=()=>{const seen=new Set(),out=[];[...S.local,...S.remote].forEach(r=>{const k=rk(r);if(seen.has(k))return;seen.add(k);out.push({...r,unit:r.unit||r.divisi||'-',divisi:r.divisi||r.unit||'-',yr:(r.mulai||r.tglAjuan||'').slice(0,4)||String(now.getFullYear()),mo:r.mulai?+r.mulai.slice(5,7)-1:-1})});return out};
+const all=()=>{const seen=new Set(),out=[];[...S.local,...S.remote].forEach(r=>{const k=rk(r);if(seen.has(k))return;seen.add(k);out.push({...r,unit:r.unit||r.divisi||'-',divisi:r.divisi||r.unit||'-',yr:(r.mulai||r.tglAjuan||'').slice(0,4)||String(now.getFullYear()),mo:r.mulai?+r.mulai.slice(5,7)-1:-1,kat:(ruleOf(r.ket)||{}).name||r.ket||'Cuti Tahunan'})});return out};
 function mon(){
   const A=all(),yrs=uniq(A.map(r=>r.yr).concat(String(now.getFullYear()))).sort();
   const cy=$('#mYear').value||String(now.getFullYear());
   opt($('#mYear'),yrs);$('#mYear').value=yrs.includes(cy)?cy:String(now.getFullYear());
   const cd=$('#mDiv').value;opt($('#mDiv'),uniq(A.map(r=>r.divisi)).sort(),'Semua divisi');$('#mDiv').value=cd;
-  const y=$('#mYear').value,dv=$('#mDiv').value,q=N($('#mQ').value);
-  const base=A.filter(r=>r.yr==y&amp;&amp;(!dv||r.divisi==dv)&amp;&amp;(!q||N(r.nama).includes(q)));
+  const cm=$('#mMon').value;$('#mMon').innerHTML='<option value=&quot;&quot;>Semua bulan</option>'+BLN.map((b,i)=>`<option value=&quot;${i}&quot;>${b}</option>`).join('');$('#mMon').value=cm;
+  const ck=$('#mKat').value,kats=uniq(A.map(r=>r.kat)).sort();opt($('#mKat'),kats,'Semua kategori cuti');$('#mKat').value=kats.includes(ck)?ck:'';
+  const y=$('#mYear').value,dv=$('#mDiv').value,q=N($('#mQ').value),bm=$('#mMon').value,kt=$('#mKat').value;
+  const pre=A.filter(r=>r.yr==y&amp;&amp;(!dv||r.divisi==dv)&amp;&amp;(!kt||r.kat==kt)&amp;&amp;(!q||N(r.nama).includes(q)));
+  const base=pre.filter(r=>bm===''||r.mo==+bm);
   const rows=base.filter(r=>!S.fUnit||r.unit==S.fUnit);
   // agregasi
   const grp=(arr,f)=>{const m=new Map();arr.forEach(r=>{const k=f(r);const o=m.get(k)||{k,hari:0,n:0,p:new Set()};o.hari+=+r.jumlah;o.n++;o.p.add(r.nama);m.set(k,o)});return[...m.values()]};
@@ -2645,8 +2648,8 @@ function mon(){
   const mk=(id,cfg)=>{if(S.charts[id])S.charts[id].destroy();S.charts[id]=new Chart($('#'+id),cfg)};
   const common={responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}}};
   mk('cUnit',{type:'bar',data:{labels:byU.map(x=>x.k),datasets:[{label:'Total hari',data:byU.map(x=>x.hari),backgroundColor:c=>S.fUnit&amp;&amp;byU[c.dataIndex].k!=S.fUnit?cv('--dim'):gr(cv('--mint2'),cv('--mint1'))(c),borderRadius:6}]},options:{...common,onClick:(e,els)=>{if(!els.length)return;const k=byU[els[0].index].k;S.fUnit=S.fUnit==k?'':k;mon()},onHover:(e,els)=>{e.native.target.style.cursor=els.length?'pointer':'default'},plugins:{legend:{display:false},tooltip:{callbacks:{afterLabel:c=>`${byU[c.dataIndex].n} pengajuan · ${byU[c.dataIndex].p.size} petugas`}}},scales:{y:{beginAtZero:true,ticks:{precision:0}},x:{ticks:{maxRotation:55,autoSkip:false,font:{size:10}}}}}});
-  const bln=Array(12).fill(0);rows.forEach(r=>{if(r.mo>=0)bln[r.mo]+=+r.jumlah});
-  mk('cBln',{type:'line',data:{labels:BS,datasets:[{label:'Hari cuti',data:bln,borderColor:cv('--acc'),backgroundColor:gr('rgba(0,143,199,0)','rgba(120,219,173,.4)'),fill:true,tension:.35,pointRadius:4,pointBackgroundColor:cv('--mint1'),pointBorderColor:cv('--pan-solid')}]},options:{...common,scales:{y:{beginAtZero:true,ticks:{precision:0}}}}});
+  const bln=Array(12).fill(0);pre.filter(r=>!S.fUnit||r.unit==S.fUnit).forEach(r=>{if(r.mo>=0)bln[r.mo]+=+r.jumlah});
+  mk('cBln',{type:'line',data:{labels:BS,datasets:[{label:'Hari cuti',data:bln,borderColor:cv('--acc'),backgroundColor:gr('rgba(0,143,199,0)','rgba(120,219,173,.4)'),fill:true,tension:.35,pointRadius:c=>bm!==''&amp;&amp;c.dataIndex==+bm?8:4,pointBackgroundColor:cv('--mint1'),pointBorderColor:cv('--pan-solid')}]},options:{...common,scales:{y:{beginAtZero:true,ticks:{precision:0}}}}});
   const top=byP.slice(0,15);
   mk('cPet',{type:'bar',data:{labels:top.map(x=>x.k),datasets:[{label:'Total hari',data:top.map(x=>x.hari),backgroundColor:gr(cv('--vio2'),cv('--vio1')),borderRadius:6}]},options:{...common,scales:{y:{beginAtZero:true,ticks:{precision:0}},x:{ticks:{autoSkip:false,maxRotation:50,font:{size:10}}}}}});
   // tabel
@@ -2664,7 +2667,7 @@ $('#tHis').onclick=e=>{
   if(b.dataset.pdf){const r=S.local.find(x=>x.id==b.dataset.pdf);if(r)evGet(r.id).then(v=>{const it=v&amp;&amp;v.items||[];if(r.evN&amp;&amp;!it.length)toast('Lampiran eviden tidak ditemukan di perangkat ini; PDF diunduh tanpa lampiran.');makePDF(r,it)})}
   if(b.dataset.del&amp;&amp;confirm('Hapus pengajuan ini dari riwayat di peramban? (Data di Google Sheet tidak ikut terhapus)')){evDel(b.dataset.del);S.local=S.local.filter(x=>x.id!=b.dataset.del);lsSet('cuti_rekap_v1',S.local);mon();info()}
 };
-['#mYear','#mDiv'].forEach(s=>$(s).onchange=()=>{S.fUnit='';mon()});$('#mQ').oninput=mon;
+['#mYear','#mMon','#mDiv','#mKat'].forEach(s=>$(s).onchange=()=>{S.fUnit='';mon()});$('#mQ').oninput=mon;
 $('#xls').onclick=()=>{
   if(!window.XLSX){toast('Pustaka Excel belum termuat. Periksa koneksi internet lalu muat ulang halaman.');return}
   const rows=mon.rows||[];
