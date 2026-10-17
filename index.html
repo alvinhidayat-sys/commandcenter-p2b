@@ -3571,6 +3571,10 @@ all()})();
 (function(){
 const $=id=>document.getElementById(id),abs=$('abs'),root=document.documentElement;let fr=null,tm=[];
 const FIT='html,body{overscroll-behavior:none}'+
+ /* Pop up SPKL (menu Lembur): turun di bawah header, tinggi menyesuaikan sisa layar */
+ '#sp{padding-top:calc(var(--hb,72px) + 12px)!important;padding-bottom:12px!important}'+
+ '#sp .box{max-height:calc(100vh - var(--hb,72px) - 24px)!important;max-height:calc(100dvh - var(--hb,72px) - 24px)!important;overflow:auto}'+
+ '#sp .spv{flex:1 1 auto;min-height:140px;max-height:none!important}'+
  'body:not(.onLanding){padding-top:calc(16px + var(--abs-top,0px))!important}'+
  '@media(min-width:761px) and (min-aspect-ratio:2901/2000){.sc{top:calc((100cqh - var(--W)/2.0656)*.15 + max(0px, var(--abs-top,0px) + 14px - var(--W)*.045))!important}body.onLanding .top{top:calc(var(--hb,0px) + 10px)!important}.sc{overflow:visible!important}.sc>svg.mir{display:block!important;left:0!important;top:auto!important;bottom:100%!important;width:100%!important;height:100%!important;transform:scaleY(-1);pointer-events:none}}'+
  '.sc>svg.mir{display:none}'+
