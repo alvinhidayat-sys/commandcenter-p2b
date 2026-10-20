@@ -321,7 +321,7 @@ header::after{content:"";position:absolute;left:0;right:0;bottom:0;height:6px;po
 <div id="absBox"></div>
 <div id="absSrc" hidden data-html="<!DOCTYPE html>
 <html lang=&quot;id&quot;><head><meta charset=&quot;utf-8&quot;><meta name=&quot;viewport&quot; content=&quot;width=device-width,initial-scale=1,viewport-fit=cover,interactive-widget=resizes-content&quot;>
-<title>Rekap Absensi &amp;amp; Lembur CC-DCC</title>
+<title>Rekap Absensi &amp;amp; Lembur Admin</title>
 <meta name=&quot;theme-color&quot; content=&quot;#f3f4f8&quot;>
 <script>(function(){var t;try{t=localStorage.getItem('tema');}catch(e){}if(t!=='dark'&amp;&amp;t!=='light')t=(window.matchMedia&amp;&amp;matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';document.documentElement.setAttribute('data-theme',t);})();</script>
 <script src=&quot;https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js&quot;></script>
@@ -725,7 +725,7 @@ select:disabled,input:disabled{opacity:.6}
  <div class=&quot;bar&quot;>
   <b id=&quot;actx&quot;></b><button id=&quot;aFil&quot;>Ubah Filter</button><span class=&quot;sp&quot;></span>
   <button class=&quot;pr&quot; id=&quot;aRev&quot;>INPUT ABSEN</button>
-  <button id=&quot;aImp&quot; hidden title=&quot;Import absensi + lembur dari file Excel (.xls / .xlsx) — khusus CC-DCC&quot;>Import</button>
+  <button id=&quot;aImp&quot; hidden title=&quot;Import absensi + lembur dari file Excel (.xls / .xlsx) — khusus Admin&quot;>Import</button>
   <button id=&quot;aTpl&quot; hidden title=&quot;Unduh template import absensi + lembur beserta petunjuk pengisian&quot; style=&quot;display:inline-flex;align-items:center;gap:6px&quot;><svg width=&quot;15&quot; height=&quot;15&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;2.2&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot; aria-hidden=&quot;true&quot;><path d=&quot;M12 3v12m0 0l-4.5-4.5M12 15l4.5-4.5M4 20h16&quot;/></svg>Template</button>
   <input type=&quot;file&quot; id=&quot;aImpF&quot; accept=&quot;.xls,.xlsx,.csv&quot; hidden>
   <button id=&quot;aEx&quot;>Export Excel</button>
@@ -874,9 +874,9 @@ const pad=n=>String(n).padStart(2,'0');
 const isOpen=id=>$(id).style.display==='flex',show=id=>$(id).style.display='flex',hide=id=>$(id).style.display='none';
 const anyForm=()=>isOpen('modal')||isOpen('mA')||isOpen('mU');
 const menuBtns=on=>['bAbs','bStart','bRk'].forEach(i=>{$(i).hidden=!on;$(i).disabled=!on;});
-const LOCK_PAST=true;   // tanggal sebelum hari ini terkunci; backdate (input/revisi/import/export) hanya untuk role CC-DCC
+const LOCK_PAST=true;   // tanggal sebelum hari ini terkunci; backdate (input/revisi/import/export) hanya untuk role Admin
 const pastLocked=(y,m,d)=>{if(!LOCK_PAST||IS_ADMIN)return false;const t=new Date();return new Date(y,m-1,d)<new Date(t.getFullYear(),t.getMonth(),t.getDate());};
-const LOCKNOTE={toString(){return (LOCK_PAST&amp;&amp;!IS_ADMIN)?' · <b style=&quot;color:#d33&quot;>Tanggal sebelum hari ini terkunci (backdate hanya role CC-DCC)</b>':'';}};
+const LOCKNOTE={toString(){return (LOCK_PAST&amp;&amp;!IS_ADMIN)?' · <b style=&quot;color:#d33&quot;>Tanggal sebelum hari ini terkunci (backdate hanya role Admin)</b>':'';}};
 const toast=(t,ms=2500)=>{const e=$('toast');e.textContent=t;e.style.display='block';clearTimeout(e._t);e._t=setTimeout(()=>e.style.display='none',ms);};
 
 /* ================= INDIKATOR SINKRON ================= */
@@ -999,7 +999,7 @@ async function init(){
 }
 const roleLabel=()=>IS_ADMIN?'Admin':'Koord · '+(META&amp;&amp;META.unit||'');
 /* role: Admin = semua fitur &amp; semua unit. Koord = hanya unit sendiri, tanpa export / cetak PDF (SPKL hanya preview). */
-function isCCRole(r){r=String(r||'').toLowerCase().replace(/[^a-z]/g,'');return r==='admin'||r==='ccdcc'||r==='cc';}   // Admin = role CC-DCC
+function isCCRole(r){r=String(r||'').toLowerCase().replace(/[^a-z]/g,'');return r==='admin'||r==='ccdcc'||r==='cc';}   // Admin = role Admin
 function applyRole(){['bPr','bEx','spPr','spXls','spDoc','lgXls','rkXls','aEx','raXls','aImp','aTpl'].forEach(id=>{$(id).hidden=!IS_ADMIN;});
  try{if(IS_ADMIN)parent.CCROLE={cc:true,nama:(META&amp;&amp;(META.nama||META.user))||''};}catch(e){}}   // dibagikan ke halaman Pengajuan Cuti (satu sesi dashboard)
 async function start(nm){
@@ -1084,7 +1084,7 @@ function loadEditor(){
  if(!td){$('eInfo').textContent='Klik sel pada tabel';$('eTipe').innerHTML='';$('eKode').innerHTML='';$('eTipe').disabled=$('eKode').disabled=$('eDel').disabled=true;$('lJam').hidden=$('lAls').hidden=true;$('det').textContent='Pilih sel, lalu pilih Tipe Lembur → Kode untuk melihat jam masuk/keluar.';return;}
  const no=td.dataset.n,d=+td.dataset.d,p=LIST.find(x=>x.noInduk===no),v=(DRAFT[no]||{})[d]||'',pc=parseCode(u,v);
  {const {y,m}=cur();if(pastLocked(y,m,d)){$('eInfo').textContent=`${p.nama} · tgl ${d}`;$('eTipe').innerHTML='';$('eKode').innerHTML='';$('eTipe').disabled=$('eKode').disabled=$('eDel').disabled=true;$('lJam').hidden=$('lAls').hidden=true;
-  $('det').innerHTML=`<b>${esc(p.nama)}</b> · tgl ${d}${v?' · Kode <b>'+esc(v)+'</b>':''}<br><span style=&quot;color:#d33&quot;>Tanggal sebelum hari ini terkunci — backdate hanya untuk role CC-DCC.</span>`;return;}}
+  $('det').innerHTML=`<b>${esc(p.nama)}</b> · tgl ${d}${v?' · Kode <b>'+esc(v)+'</b>':''}<br><span style=&quot;color:#d33&quot;>Tanggal sebelum hari ini terkunci — backdate hanya untuk role Admin.</span>`;return;}}
  const kd=pc&amp;&amp;kodeU(u).find(x=>x.kode===pc.k);
  $('eInfo').textContent=`${p.nama} · tgl ${d}`;
  $('eTipe').innerHTML='<option value=&quot;&quot;>— pilih Tipe Lembur —</option>'+tipesU(u).map(t=>`<option value=&quot;${esc(t)}&quot;${kd&amp;&amp;kd.tipe===t?' selected':''}>${esc(t)}</option>`).join('');
@@ -1096,7 +1096,7 @@ function loadEditor(){
 }
 function setCell(val){
  const td=SEL;if(!td)return;const no=td.dataset.n,d=+td.dataset.d;
- {const {y,m}=cur();if(pastLocked(y,m,d)){toast('Tanggal sebelum hari ini terkunci — backdate hanya untuk role CC-DCC');return;}}
+ {const {y,m}=cur();if(pastLocked(y,m,d)){toast('Tanggal sebelum hari ini terkunci — backdate hanya untuk role Admin');return;}}
  DRAFT[no]=DRAFT[no]||{};if(val)DRAFT[no][d]=val;else{delete DRAFT[no][d];if(DRAFTA[no])delete DRAFTA[no][d];}
  DIRTY=true;paintCell(td);paintTot(no);showDet();paintSync();
 }
@@ -1633,7 +1633,7 @@ function loadEditorA(){
  const no=td.dataset.n,d=+td.dataset.d,p=LISTA.find(x=>x.noInduk===no),v=(DRAFTB[no]||{})[d]||'',cs=codesA(v),ke=(DRAFTK[no]||{})[d]||'';
  $('aeInfo').textContent=`${p.nama} · tgl ${d}`;
  {const {y,m}=curA();if(pastLocked(y,m,d)){$('aeKode').innerHTML='';$('aeExtra').innerHTML='';$('aeKode').disabled=$('aeDel').disabled=ad.disabled=true;$('alKet').hidden=true;
-  $('adet').innerHTML=`<b>${esc(p.nama)}</b> · tgl ${d}${v?' · Kode <b>'+esc(v)+'</b>':''}<br><span style=&quot;color:#d33&quot;>Tanggal sebelum hari ini terkunci — backdate hanya untuk role CC-DCC.</span>`;return;}}
+  $('adet').innerHTML=`<b>${esc(p.nama)}</b> · tgl ${d}${v?' · Kode <b>'+esc(v)+'</b>':''}<br><span style=&quot;color:#d33&quot;>Tanggal sebelum hari ini terkunci — backdate hanya untuk role Admin.</span>`;return;}}
  const usedI=Object.keys(DRAFTB[no]||{}).some(x=>+x!==d&amp;&amp;DRAFTB[no][x]==='I');   // Ijin hanya 1x per bulan
  const ex=cs.slice(1);
  $('aeKode').innerHTML='<option value=&quot;&quot;>— pilih Kode —</option>'+ABS.map(k=>{const off=(k==='I'&amp;&amp;usedI)||ex.includes(k);return `<option value=&quot;${k}&quot;${k===cs[0]?' selected':''}${off?' disabled':''}>${k} — ${ABN[k]}${k==='I'&amp;&amp;usedI?' (sudah dipakai bulan ini)':''}</option>`;}).join('');
@@ -1649,7 +1649,7 @@ function loadEditorA(){
 }
 function setCellA(val,ket){
  const td=SELA;if(!td)return;const no=td.dataset.n,d=+td.dataset.d;
- {const {y,m}=curA();if(pastLocked(y,m,d)){toast('Tanggal sebelum hari ini terkunci — backdate hanya untuk role CC-DCC');return;}}
+ {const {y,m}=curA();if(pastLocked(y,m,d)){toast('Tanggal sebelum hari ini terkunci — backdate hanya untuk role Admin');return;}}
  DRAFTB[no]=DRAFTB[no]||{};DRAFTK[no]=DRAFTK[no]||{};
  if(val){DRAFTB[no][d]=val;if(val==='Skt'){if(ket)DRAFTK[no][d]=ket;else delete DRAFTK[no][d];}else delete DRAFTK[no][d];}
  else{delete DRAFTB[no][d];delete DRAFTK[no][d];}
@@ -1938,7 +1938,7 @@ function renderEditorU(){
  if(!td){dis();$('uInfo').textContent='Klik sel pada tabel';$('udet').textContent='Pilih sel, isi Absensi dan/atau Lembur, lalu klik Simpan Shift pada bagian yang diisi.';return;}
  const {y,m,u}=UF,no=td.dataset.n,d=+td.dataset.d,p=UL.find(x=>x.noInduk===no),c=peekU(no,d);
  $('uInfo').textContent=`${p.nama} · tgl ${d}`;
- if(pastLocked(y,m,d)){dis();$('udet').innerHTML=`<b>${esc(p.nama)}</b> · tgl ${d}${c.a.length||c.l?' · '+esc(cellText(u,c)):''}<br><span style=&quot;color:#d33&quot;>Tanggal sebelum hari ini terkunci — backdate hanya untuk role CC-DCC.</span>`;return;}
+ if(pastLocked(y,m,d)){dis();$('udet').innerHTML=`<b>${esc(p.nama)}</b> · tgl ${d}${c.a.length||c.l?' · '+esc(cellText(u,c)):''}<br><span style=&quot;color:#d33&quot;>Tanggal sebelum hari ini terkunci — backdate hanya untuk role Admin.</span>`;return;}
  const li0=c.l?lemInfo(u,c.l,c):null,pkR=li0&amp;&amp;li0.pk?li0.pr:null,clash=k=>{if(!pkR||!SHF.includes(k))return false;const sr=shRange(u,k);return !!(sr&amp;&amp;ovl(sr,pkR));};
  const cs=c.a,Ls=lemShift(u,c),usedI=Object.keys(U[no]||{}).some(x=>+x!==d&amp;&amp;(U[no][x].a||[])[0]==='I');
  // --- absensi (shift reguler; shift yang berstatus lembur dikelola di bagian Lembur)
@@ -1976,7 +1976,7 @@ function showDetU(){
  $('udet').innerHTML=t;
 }
 function afterEditU(no,d,note){gcU(no,d);DIRTY=true;repaintU(no,d);loadEditorU();paintSync();if(note&amp;&amp;note.length)toast(note.join(' · '),3500);}
-const uCtx=()=>{const td=USEL;if(!td)return null;const no=td.dataset.n,d=+td.dataset.d,{y,m,u}=UF;if(pastLocked(y,m,d)){toast('Tanggal sebelum hari ini terkunci — backdate hanya untuk role CC-DCC');return null;}return {no,d,u,c:cellU(no,d)};};
+const uCtx=()=>{const td=USEL;if(!td)return null;const no=td.dataset.n,d=+td.dataset.d,{y,m,u}=UF;if(pastLocked(y,m,d)){toast('Tanggal sebelum hari ini terkunci — backdate hanya untuk role Admin');return null;}return {no,d,u,c:cellU(no,d)};};
 // -- Absensi
 $('uKode').onchange=()=>{SA.k=$('uKode').value;if(!isHadir(SA.k))SA.ex=[];SA.ex=SA.ex.filter(x=>x!==SA.k);SA.add=false;renderEditorU();if(SA.k==='Skt'&amp;&amp;!SA.ket)$('uKet').focus();};
 $('uKet').onchange=()=>{SA.ket=$('uKet').value;stageBtnsU();};
@@ -2039,19 +2039,19 @@ $('ubS').onclick=async()=>{
 };
 
 
-/* ================= IMPORT ABSENSI + LEMBUR &amp; TEMPLATE (khusus role CC-DCC) =================
+/* ================= IMPORT ABSENSI + LEMBUR &amp; TEMPLATE (khusus role Admin) =================
    Aturan sistem: 1 hari = 1 shift terjadwal (sheet &quot;Absensi&quot;) + maks 1 lembur (sheet &quot;Lembur&quot;, 1 baris = 1 lembur). Tidak ada shift ganda. */
 const normT=v=>{const t=String(v==null?'':v).trim();let q=/^(\d{1,2})[:.](\d{2})(?::\d{2})?\s*([AaPp][Mm])?$/.exec(t);if(!q){const q2=/^(\d{2})(\d{2})$/.exec(t);if(!q2)return null;q=[t,q2[1],q2[2]];}let h=+q[1];const mi=+q[2];if(q[3]){const pm=/p/i.test(q[3]);if(pm&amp;&amp;h<12)h+=12;if(!pm&amp;&amp;h===12)h=0;}if(h>23||mi>59)return null;return pad(h)+':'+pad(mi);};
 const IMP_MAP={p:'P',pagi:'P',s:'S',siang:'S',m:'M',malam:'M',skt:'Skt',sakit:'Skt','skt*':'Skt*','sakit*':'Skt*',i:'I',ijin:'I',izin:'I',alpa:'Alpa',alfa:'Alpa',a:'Alpa'};
 async function xlsTemplateA(){
- if(!IS_ADMIN)return toast('Template import hanya untuk role CC-DCC');
+ if(!IS_ADMIN)return toast('Template import hanya untuk role Admin');
  const {y,m,u}=curA();if(!u||!y)return toast('Pilih periode dan unit dulu (Ubah Filter)');
  const n=days(y,m),P=META.petugas.filter(p=>p.unit===u),wb=new ExcelJS.Workbook(),KU=kodeU(u),tipes=tipesU(u);
  const wi=wb.addWorksheet('Petunjuk',{views:[{showGridLines:false}]});wi.getColumn(1).width=3;wi.getColumn(2).width=28;wi.getColumn(3).width=90;
  let r=1;const put=(a,b,o={})=>{const ra=wi.getRow(r++);ra.getCell(2).value=a;if(b!==undefined)ra.getCell(3).value=b;ra.getCell(2).font={bold:o.b!==0,size:o.s||11};ra.getCell(3).font={size:11};
   ra.getCell(3).alignment={wrapText:true,vertical:'top'};ra.getCell(2).alignment={wrapText:true,vertical:'top'};if(o.f){ra.getCell(2).fill=fill(o.f);ra.getCell(3).fill=fill(o.f);}return ra;};
  const H='FFDBEAFE';
- put('PETUNJUK PENGISIAN TEMPLATE IMPORT ABSENSI &amp; LEMBUR',undefined,{s:14});put('Project','COMMAND CENTER - DCC P2B',{b:0});put('Unit / Periode',`${u} · ${BLN[m-1]} ${y}`,{b:0});put('Hak akses','Import dan template hanya untuk role CC-DCC.',{b:0});r++;
+ put('PETUNJUK PENGISIAN TEMPLATE IMPORT ABSENSI &amp; LEMBUR',undefined,{s:14});put('Project','COMMAND CENTER - DCC P2B',{b:0});put('Unit / Periode',`${u} · ${BLN[m-1]} ${y}`,{b:0});put('Hak akses','Import dan template hanya untuk role Admin.',{b:0});r++;
  put('PRINSIP',undefined,{f:H});
  put('1 hari = 1 shift + 1 lembur','Setiap petugas pada satu tanggal hanya memiliki 1 shift terjadwal (sheet &quot;Absensi&quot;) dan maksimal 1 kode lembur (sheet &quot;Lembur&quot;). Shift ganda (mis. P+S) TIDAK didukung.',{b:0});
  put('Pemisahan kode','Kode di sheet &quot;Absensi&quot; = status / shift terjadwal. Kode di sheet &quot;Lembur&quot; = kode lembur dari daftar sheet &quot;Kode Lembur&quot;. Kedua kode tidak dicampur dalam satu sel.',{b:0});r++;
@@ -2073,7 +2073,7 @@ async function xlsTemplateA(){
  put('Sinkron shift lembur','Sama seperti form Input Absen: kode lembur yang terkait shift (mis. P-OT2 → P) otomatis menambahkan shift tersebut ke absensi hari itu bila belum ada.',{b:0});
  put('Tidak boleh lembur','Petugas berstatus Skt / I / Alpa pada tanggal itu tidak dapat diberi lembur. Baris / sel yang melanggar aturan (termasuk kombinasi shift yang tidak sinkron) dilewati dan dilaporkan.',{b:0});
  put('Pencocokan petugas','Berdasarkan NO INDUK; jika kosong berdasarkan NAMA. Baris yang tidak cocok dengan petugas unit ini dilewati.',{b:0});
- put('Periode','Bulan / tahun / unit pada file harus sama dengan filter. Import tidak dapat dilakukan untuk bulan mendatang; untuk bulan lalu, role CC-DCC dapat mengimport (backdate).',{b:0});
+ put('Periode','Bulan / tahun / unit pada file harus sama dengan filter. Import tidak dapat dilakukan untuk bulan mendatang; untuk bulan lalu, role Admin dapat mengimport (backdate).',{b:0});
  put('Contoh','Sheet Absensi: sel tgl 5 diisi  P  |  sel tgl 6 diisi  Skt*\nSheet Lembur: NO INDUK 1234567 · TANGGAL 5 · KODE LEMBUR P-OT2 · ALASAN (sesuai daftar)\nSheet Lembur (PK): NO INDUK 1234567 · TANGGAL 7 · KODE LEMBUR PK · JAM MULAI 16:00 · JAM SELESAI 21:30 · ALASAN (sesuai daftar)',{b:0});
 
  // ---- sheet Absensi ----
@@ -2115,7 +2115,7 @@ async function xlsTemplateA(){
  await dl(wb,`Template_Import_Absensi_Lembur_${u.replace(/[^\w]+/g,'_')}_${BLN[m-1]}_${y}.xlsx`);toast('Template diunduh');
 }
 async function importAbs(file){
- if(!IS_ADMIN)return toast('Import hanya untuk role CC-DCC');
+ if(!IS_ADMIN)return toast('Import hanya untuk role Admin');
  const {y,m,u}=curA();if(!u||!y)return toast('Pilih periode dan unit dulu (Ubah Filter)');
  if(typeof XLSX==='undefined')return alert('Pustaka pembaca Excel belum termuat. Periksa koneksi internet lalu muat ulang halaman.');
  const now=new Date();if(y>now.getFullYear()||(y===now.getFullYear()&amp;&amp;m>now.getMonth()+1))return alert('Import tidak dapat dilakukan untuk periode mendatang.');
@@ -2223,7 +2223,7 @@ async function importAbs(file){
  }catch(e){alert('Error: '+e);}
 }
 $('aTpl').onclick=()=>xlsTemplateA().catch(e=>alert('Gagal membuat template: '+e));
-$('aImp').onclick=()=>{if(!IS_ADMIN)return toast('Import hanya untuk role CC-DCC');if(!curA().u)return toast('Pilih periode dan unit dulu (Ubah Filter)');$('aImpF').value='';$('aImpF').click();};
+$('aImp').onclick=()=>{if(!IS_ADMIN)return toast('Import hanya untuk role Admin');if(!curA().u)return toast('Pilih periode dan unit dulu (Ubah Filter)');$('aImpF').value='';$('aImpF').click();};
 $('aImpF').onchange=e=>{const f=e.target.files&amp;&amp;e.target.files[0];if(f)importAbs(f);};
 
 /* ================= REKAPITULASI &amp; CHART ABSENSI ================= */
@@ -2636,7 +2636,7 @@ tr.pick td{background:rgba(0,143,199,.2)}
 
 <main>
 <div class=&quot;topr&quot;><div class=&quot;brandr&quot;><b id=&quot;brT&quot;>Command Center - DCC</b><span id=&quot;brS&quot;>UIW Papua dan Papua Barat</span></div>
-  <button class=&quot;btn sec&quot; id=&quot;ccBtn&quot; type=&quot;button&quot; style=&quot;padding:6px 12px;font-size:12px;white-space:nowrap&quot;>🔑 Login CC-DCC</button>
+  <button class=&quot;btn sec&quot; id=&quot;ccBtn&quot; type=&quot;button&quot; style=&quot;padding:6px 12px;font-size:12px;white-space:nowrap&quot;>🔑 Login Admin</button>
   <button class=&quot;rbtn&quot; id=&quot;theme&quot; type=&quot;button&quot; title=&quot;Ganti tema&quot; aria-label=&quot;Ganti tema terang atau gelap&quot;>
     <svg class=&quot;i-sun&quot; width=&quot;20&quot; height=&quot;20&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;1.8&quot; stroke-linecap=&quot;round&quot;><circle cx=&quot;12&quot; cy=&quot;12&quot; r=&quot;4&quot;/><path d=&quot;M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6&quot;/></svg>
     <svg class=&quot;i-moon&quot; width=&quot;20&quot; height=&quot;20&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;1.8&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;><path d=&quot;M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z&quot;/></svg>
@@ -2721,7 +2721,7 @@ tr.pick td{background:rgba(0,143,199,.2)}
 </dialog>
 <div id=&quot;toast&quot;></div>
 
-<div id=&quot;ccM&quot; class=&quot;hide&quot;><form class=&quot;cc&quot; id=&quot;ccF&quot; autocomplete=&quot;off&quot;><b>Login CC-DCC</b><small style=&quot;color:var(--mut)&quot;>Role CC-DCC dapat input backdate dan ekspor data.</small>
+<div id=&quot;ccM&quot; class=&quot;hide&quot;><form class=&quot;cc&quot; id=&quot;ccF&quot; autocomplete=&quot;off&quot;><b>Login Admin</b><small style=&quot;color:var(--mut)&quot;>Role Admin dapat input backdate dan ekspor data.</small>
 <input id=&quot;ccU&quot; placeholder=&quot;Username&quot; autocomplete=&quot;username&quot;><input id=&quot;ccP&quot; type=&quot;password&quot; placeholder=&quot;Password&quot; autocomplete=&quot;current-password&quot;><div class=&quot;er&quot; id=&quot;ccErr&quot;></div>
 <div style=&quot;display:flex;gap:8px;justify-content:space-between&quot;><button type=&quot;button&quot; class=&quot;btn sec&quot; id=&quot;ccX&quot;>Batal</button><button class=&quot;btn&quot; id=&quot;ccGo&quot; type=&quot;submit&quot;>Masuk</button></div></form></div>
 <script>
@@ -2782,22 +2782,22 @@ const fmt=s=>{const d=dt(s);return d.getDate()+' '+BLN[d.getMonth()]+' '+d.getFu
 const esc=s=>String(s==null?'':s).replace(/[&amp;<>&quot;]/g,c=>({'&amp;':'&amp;amp;','<':'&amp;lt;','>':'&amp;gt;','&quot;':'&amp;quot;'}[c]));
 function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove('on'),3200)}
 
-/* ===== Role CC-DCC: backdate, ekspor ===== */
-const PASTMSG='Tanggal sebelum hari ini terkunci. Input backdate hanya untuk role CC-DCC.';
+/* ===== Role Admin: backdate, ekspor ===== */
+const PASTMSG='Tanggal sebelum hari ini terkunci. Input backdate hanya untuk role Admin.';
 const CC_API='https://script.google.com/macros/s/AKfycbz0xOsSPQYjMozCC2wWEiWeUkU9l2pUeGwBClJY8_JD7P8SEP6YF8UOExFt83pV5gYMMA/exec';
 const isCC=()=>{try{return !!(window.parent&amp;&amp;window.parent.CCROLE&amp;&amp;window.parent.CCROLE.cc)}catch(e){return false}};
 const isPast=k=>!isCC()&amp;&amp;k<iso(new Date());
 async function ccCall(fn,...a){const r=await fetch(CC_API,{method:'POST',body:JSON.stringify({fn,args:a})}),t=await r.text();let j;try{j=JSON.parse(t)}catch(e){throw new Error('Respon server tidak valid')}if(j.error)throw new Error(j.error);return j.data}
-function paintCC(){const ok=isCC(),b=$('#ccBtn');b.textContent=ok?'✔ CC-DCC · Keluar':'🔑 Login CC-DCC';b.title=ok?'Klik untuk keluar dari role CC-DCC':'Login CC-DCC untuk backdate dan ekspor';$('#xls').style.display=ok?'':'none';try{renderCal()}catch(e){}}
-$('#ccBtn').onclick=()=>{if(isCC()){try{parent.CCROLE=null}catch(e){}paintCC();toast('Anda keluar dari role CC-DCC.');return}$('#ccErr').textContent='';$('#ccP').value='';$('#ccM').classList.remove('hide');setTimeout(()=>$('#ccU').focus(),50)};
+function paintCC(){const ok=isCC(),b=$('#ccBtn'),nm=ok?((window.parent.CCROLE&amp;&amp;window.parent.CCROLE.nama)||'Admin'):'';b.textContent=ok?'✔ '+nm:'🔑 Login Admin';b.title=ok?'Login sebagai '+nm+' (Admin) — klik untuk keluar':'Login Admin untuk backdate dan ekspor';$('#xls').style.display=ok?'':'none';try{renderCal()}catch(e){}}
+$('#ccBtn').onclick=()=>{if(isCC()){try{parent.CCROLE=null}catch(e){}paintCC();toast('Anda telah keluar.');return}$('#ccErr').textContent='';$('#ccP').value='';$('#ccM').classList.remove('hide');setTimeout(()=>$('#ccU').focus(),50)};
 $('#ccX').onclick=()=>$('#ccM').classList.add('hide');
 $('#ccF').onsubmit=async e=>{e.preventDefault();const u=$('#ccU').value.trim(),p=$('#ccP').value,b=$('#ccGo');if(!u||!p){$('#ccErr').textContent='Isi username dan password.';return}
  b.disabled=true;b.textContent='Memeriksa…';$('#ccErr').textContent='';
  try{const r=await ccCall('login',u,p);if(!r||!r.ok)throw new Error((r&amp;&amp;r.error)||'Username atau password salah');
   const mt=await ccCall('getMeta',r.token),rl=String(mt&amp;&amp;mt.role||'').toLowerCase().replace(/[^a-z]/g,'');
-  if(!(rl==='admin'||rl==='ccdcc'||rl==='cc'))throw new Error('Akun ini bukan role CC-DCC.');
+  if(!(rl==='admin'||rl==='ccdcc'||rl==='cc'))throw new Error('Akun ini bukan role Admin.');
   try{parent.CCROLE={cc:true,nama:mt.nama||r.nama||u}}catch(x){throw new Error('Sesi role tidak dapat disimpan.')}
-  $('#ccP').value='';$('#ccM').classList.add('hide');paintCC();toast('Login CC-DCC berhasil. Backdate dan ekspor aktif.');
+  $('#ccP').value='';$('#ccM').classList.add('hide');paintCC();toast('Login berhasil. Selamat datang, '+((window.parent.CCROLE&amp;&amp;window.parent.CCROLE.nama)||'Admin')+'!');
  }catch(err){$('#ccErr').textContent=String(err.message||err).replace(/^Error:\s*/,'')}
  b.disabled=false;b.textContent='Masuk'};
 setTimeout(paintCC,0);let _ccL=isCC();setInterval(()=>{const v=isCC();if(v!==_ccL){_ccL=v;paintCC()}},1500);
@@ -3257,7 +3257,7 @@ $('#tHis').onclick=e=>{
 };
 ['#mYear','#mDiv'].forEach(s=>$(s).onchange=()=>{S.fUnit='';mon()});$('#mQ').oninput=mon;
 $('#xls').onclick=()=>{
-  if(!isCC()){toast('Ekspor Excel hanya untuk role CC-DCC. Login CC-DCC terlebih dahulu.');return}
+  if(!isCC()){toast('Ekspor Excel hanya untuk role Admin. Login Admin terlebih dahulu.');return}
   if(!window.XLSX){toast('Pustaka Excel belum termuat. Periksa koneksi internet lalu muat ulang halaman.');return}
   const rows=mon.rows||[];
   const D=s=>s?dt(s):'';
