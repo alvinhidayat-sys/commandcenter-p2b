@@ -529,10 +529,10 @@ input[type=password]::-ms-reveal,input[type=password]::-ms-clear{display:none}
  #pa td.l{text-align:left}.note{font-size:9px}
 }
 /* ===== menu baru: Absensi, hub, tab Rekapitulasi, latar SVG ===== */
-.ap{background:rgba(47,111,237,.20)}.as{background:rgba(240,140,0,.24)}.am{background:rgba(90,98,107,.40)}.ak{background:rgba(12,165,165,.26)}.ai{background:rgba(134,142,150,.32)}
+.ap{background:rgba(47,111,237,.20)}.as{background:rgba(240,140,0,.24)}.am{background:rgba(90,98,107,.40)}.ak{background:rgba(12,165,165,.26)}.ai{background:rgba(134,142,150,.32)}.ac{background:rgba(142,68,173,.26)}
 .ax{background:#d33!important;color:#fff;font-weight:700}
 #afrm td:first-child,#afrm th:first-child{position:sticky;left:0;background:var(--card);z-index:1;min-width:150px}#afrm th:first-child{z-index:3;background:var(--bg)}
-#afrm tr.alt td:not(.we):not(.ap):not(.as):not(.am):not(.ak):not(.ai):not(.ax){background:var(--alt)}
+#afrm tr.alt td:not(.we):not(.ap):not(.as):not(.am):not(.ak):not(.ai):not(.ac):not(.ax){background:var(--alt)}
 #afrm tr.alt td.we{background:var(--we2)}
 .ed #aeInfo{font-weight:700;align-self:center;min-width:170px}#adet{font-size:12px;color:var(--tx);line-height:1.6;min-height:38px;max-width:none}
 #amsg{color:var(--mut);padding:10px}
@@ -733,7 +733,7 @@ select:disabled,input:disabled{opacity:.6}
  <div class=&quot;kopw&quot;><button class=&quot;homeB&quot; id=&quot;aHome&quot;><svg viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;2.6&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot; aria-hidden=&quot;true&quot;><path d=&quot;M15 18l-6-6 6-6&quot;/></svg>Beranda</button>
  <div class=&quot;kop&quot; id=&quot;akop&quot; hidden>REKAPITULASI ABSENSI<small>PROJECT : COMMAND CENTER - DCC P2B</small><small id=&quot;akper&quot;></small></div></div>
  <div class=&quot;wrap&quot;><div id=&quot;amsg&quot;>Memuat…</div><table id=&quot;atbl&quot; hidden></table></div>
- <div class=&quot;note&quot; id=&quot;afoot&quot; hidden><b>KETERANGAN :</b><br>P = Pagi · S = Siang · M = Malam · Skt = Sakit (tanda * = tanpa surat dokter) · I = Ijin (maksimal 1 kali dalam 1 bulan) · Alpa = tanpa keterangan (merah).</div>
+ <div class=&quot;note&quot; id=&quot;afoot&quot; hidden><b>KETERANGAN :</b><br>P = Pagi · S = Siang · M = Malam · Skt = Sakit (tanda * = tanpa surat dokter) · I = Ijin (maksimal 1 kali dalam 1 bulan) · Alpa = tanpa keterangan (merah) · C = Cuti.</div>
 </section>
 
 <!-- REKAPITULASI &amp; CHART ABSENSI -->
@@ -857,7 +857,7 @@ select:disabled,input:disabled{opacity:.6}
 <!-- PILIH EXPORT ABSENSI -->
 <div class=&quot;ov&quot; id=&quot;pkA&quot;><div class=&quot;box&quot;><b>Export Excel Absensi — pilih tampilan</b>
  <div class=&quot;pick&quot;>
-  <button id=&quot;pkA1&quot;>Tampilan Kode<small>Kode P, S, M, Skt, I, Alpa per tanggal + jumlah per kode</small></button>
+  <button id=&quot;pkA1&quot;>Tampilan Kode<small>Kode P, S, M, Skt, I, Alpa, C per tanggal + jumlah per kode</small></button>
   <button id=&quot;pkA2&quot;>Tampilan Total Jam Kerja<small>Jam kerja shift (Absensi) + jam Lembur per hari selama 1 bulan</small></button>
   <button id=&quot;pkAX&quot;>Batal</button>
  </div></div></div>
@@ -1539,8 +1539,8 @@ $('rkXls').onclick=async()=>{
 };
 /* ================= MENU BARU: ABSENSI, TAB REKAPITULASI ================= */
 let FM='lembur',SECT=null,LGM_INIT=0;
-const ABS=['P','S','M','Skt','I','Alpa'],ABN={P:'Pagi',S:'Siang',M:'Malam',Skt:'Sakit',I:'Ijin',Alpa:'Alpa'},KETS=['Ada Surat Dokter','Tidak Ada Surat Dokter'];
-const ACL={P:'ap',S:'as',M:'am',Skt:'ak',I:'ai',Alpa:'ax'},ACOL={P:'#2f6fed',S:'#f08c00',M:'#495057',Skt:'#0ca5a5',I:'#868e96',Alpa:'#d33'};
+const ABS=['P','S','M','Skt','I','Alpa','C'],ABN={P:'Pagi',S:'Siang',M:'Malam',Skt:'Sakit',I:'Ijin',Alpa:'Alpa',C:'Cuti'},KETS=['Ada Surat Dokter','Tidak Ada Surat Dokter'];
+const ACL={P:'ap',S:'as',M:'am',Skt:'ak',I:'ai',Alpa:'ax',C:'ac'},ACOL={P:'#2f6fed',S:'#f08c00',M:'#495057',Skt:'#0ca5a5',I:'#868e96',Alpa:'#d33',C:'#8e44ad'};
 const codesA=v=>v?String(v).split('+').filter(Boolean):[];   // satu sel boleh >1 kode, disimpan digabung dengan '+' (mis. &quot;P+S&quot;)
 const isHadir=c=>c==='P'||c==='S'||c==='M';
 const hadirN=v=>codesA(v).filter(isHadir).length;
@@ -1586,10 +1586,10 @@ async function renderA(silent,metaP){
  if(sq!==ASEQ)return false;
  ENTA=R.ent||{};KETA=R.ket||{};LEMA=R.lem||{};HKA=R.hk||{};LENTA=(RL&amp;&amp;RL.ent)||{};LISTA=META.petugas.filter(p=>p.unit===u);
  const n=days(y,m);
- let h=`<tr><th rowspan=&quot;2&quot;>NO INDUK</th><th rowspan=&quot;2&quot;>NAMA</th><th rowspan=&quot;2&quot;>JABATAN</th><th colspan=&quot;${n}&quot;>BULAN ${BLN[m-1].toUpperCase()} ${y}</th><th colspan=&quot;8&quot;>JUMLAH</th></tr><tr>`;
+ let h=`<tr><th rowspan=&quot;2&quot;>NO INDUK</th><th rowspan=&quot;2&quot;>NAMA</th><th rowspan=&quot;2&quot;>JABATAN</th><th colspan=&quot;${n}&quot;>BULAN ${BLN[m-1].toUpperCase()} ${y}</th><th colspan=&quot;${ABS.length+2}&quot;>JUMLAH</th></tr><tr>`;
  for(let d=1;d<=n;d++)h+=`<th class=&quot;${isWe(y,m,d)?'we':''}&quot;>${d}</th>`;
  ABS.forEach(k=>h+=`<th>${k}</th>`);h+='<th>LEMBUR (jam)</th><th>TOTAL JAM</th></tr>';
- LISTA.forEach(p=>{const e=ENTA[p.noInduk]||{},ke=KETA[p.noInduk]||{},le=LENTA[p.noInduk]||{},c=[0,0,0,0,0,0];let lt=0,tt=0;
+ LISTA.forEach(p=>{const e=ENTA[p.noInduk]||{},ke=KETA[p.noInduk]||{},le=LENTA[p.noInduk]||{},c=ABS.map(()=>0);let lt=0,tt=0;
   h+=`<tr><td>${esc(p.noInduk)}</td><td class=&quot;l&quot;>${esc(p.nama)}</td><td class=&quot;l&quot;>${esc(p.jabatan)}</td>`;
   for(let d=1;d<=n;d++){const v=e[d]||'',l=le[d]||'',cc={a:codesA(v),k:ke[d],l},z=calcU(u,cc);
    cc.a.forEach(x=>{const i=ABS.indexOf(x);if(i>=0)c[i]++;});lt+=z.lh;tt+=z.tot;
@@ -1616,7 +1616,7 @@ function openFormAOld(){
  DRAFTB={};Object.keys(ENTA).forEach(no=>DRAFTB[no]={...ENTA[no]});DRAFTK={};Object.keys(KETA).forEach(no=>DRAFTK[no]={...KETA[no]});DIRTY=false;SELA=null;
  const rev=Object.values(ENTA).some(o=>Object.keys(o).length);
  $('amt').textContent=`${rev?'Revisi':'Input'} Absensi — ${u} — ${BLN[m-1]} ${y}`;
- $('achips').innerHTML='<b>P</b>: Pagi · <b>S</b>: Siang · <b>M</b>: Malam · <b>Skt</b>: Sakit (pilih ada / tidak ada surat dokter) · <b>I</b>: Ijin (maks. 1 kali per bulan) · <b style=&quot;color:#d33&quot;>Alpa</b> · <b>Tambah Shift</b>: satu tanggal bisa berisi lebih dari satu kode shift (P / S / M)'+LOCKNOTE;
+ $('achips').innerHTML='<b>P</b>: Pagi · <b>S</b>: Siang · <b>M</b>: Malam · <b>Skt</b>: Sakit (pilih ada / tidak ada surat dokter) · <b>I</b>: Ijin (maks. 1 kali per bulan) · <b style=&quot;color:#d33&quot;>Alpa</b> · <b>C</b>: Cuti · <b>Tambah Shift</b>: satu tanggal bisa berisi lebih dari satu kode shift (P / S / M)'+LOCKNOTE;
  let h='<tr><th>NAMA</th>';for(let d=1;d<=n;d++)h+=`<th class=&quot;${isWe(y,m,d)?'we':''}&quot;>${d}</th>`;h+='<th>HADIR</th></tr>';
  LISTA.forEach((p,ri)=>{h+=`<tr class=&quot;${ri%2?'alt':''}&quot;><td class=&quot;l&quot;>${esc(p.nama)}</td>`;
   for(let d=1;d<=n;d++)h+=`<td tabindex=&quot;0&quot; data-n=&quot;${esc(p.noInduk)}&quot; data-d=&quot;${d}&quot;></td>`;
@@ -1665,7 +1665,8 @@ function showDetA(){
  else{x=jamTxt(v);
   if(v==='Skt')x+=' · '+(ke?`<b>${esc(ke)}</b>`:'<span style=&quot;color:#d33&quot;>pilih Ada / Tidak Ada Surat Dokter</span>');
   else if(v==='I')x+=' · hanya berlaku 1 kali dalam 1 bulan';
-  else if(v==='Alpa')x='<span style=&quot;color:#d33;font-weight:700&quot;>Alpa</span> (tanpa keterangan)';}
+  else if(v==='Alpa')x='<span style=&quot;color:#d33;font-weight:700&quot;>Alpa</span> (tanpa keterangan)';
+  else if(v==='C')x+=' · tidak ada jam kerja';}
  $('adet').innerHTML=`<b>${esc(p.nama)}</b> · tgl ${d} · Kode <b>${esc(v)}</b><br>${x}`;
 }
 $('aeKode').onchange=()=>{
@@ -1716,9 +1717,9 @@ $('pkA1').onclick=()=>doOutA('kode');$('pkA2').onclick=()=>doOutA('jam');
 async function doOutA(mode){hide('pkA');if(!IS_ADMIN)return toast('Export hanya untuk Admin');try{await xlsAbs(mode);}catch(e){alert('Gagal export Excel: '+e);}}
 const hrs2=x=>Math.round(x*100)/100;
 async function xlsAbs(mode){
- const {y,m,u}=curA(),n=days(y,m),jam=mode==='jam',NS=jam?1:6,NC=3+n+NS,R1=5,R2=6;
+ const {y,m,u}=curA(),n=days(y,m),jam=mode==='jam',NS=jam?1:ABS.length,NC=3+n+NS,R1=5,R2=6;
  const wb=new ExcelJS.Workbook(),ws=wb.addWorksheet(jam?'Total Jam Kerja':'Absensi'),line=mkLine(ws,NC);
- const FC={P:'FFDBEAFE',S:'FFFFEDD5',M:'FFE9DDFB',Skt:'FFCCF2F0',I:'FFE2E5E8',we:'FFFDEEEE',lem:'FFFFEDD5'};
+ const FC={P:'FFDBEAFE',S:'FFFFEDD5',M:'FFE9DDFB',Skt:'FFCCF2F0',I:'FFE2E5E8',C:'FFE6D9F2',we:'FFFDEEEE',lem:'FFFFEDD5'};
  line(1,jam?'TOTAL JAM KERJA (ABSENSI + LEMBUR)':'REKAPITULASI ABSENSI',{b:1,s:14});line(2,'PROJECT : COMMAND CENTER - DCC P2B',{b:1});line(3,`Unit : ${u}     Bulan : ${BLN[m-1]}     Tahun : ${y}`,{b:1});
  ['NO INDUK','NAMA','JABATAN'].forEach((t,i)=>{ws.mergeCells(R1,i+1,R2,i+1);ws.getCell(R1,i+1).value=t;});
  ws.mergeCells(R1,4,R1,3+n);ws.getCell(R1,4).value=`BULAN ${BLN[m-1].toUpperCase()} ${y}`;
@@ -1727,7 +1728,7 @@ async function xlsAbs(mode){
  else{ws.mergeCells(R1,4+n,R1,NC);ws.getCell(R1,4+n).value='JUMLAH';ABS.forEach((k,i)=>ws.getCell(R2,4+n+i).value=k);}
  for(let rr=R1;rr<=R2;rr++)for(let cc=1;cc<=NC;cc++){const c=ws.getCell(rr,cc);c.font={bold:true};c.border=BD;c.alignment={horizontal:'center',vertical:'middle',wrapText:true};
   c.fill=(rr===R2&amp;&amp;cc>3&amp;&amp;cc<4+n&amp;&amp;isWe(y,m,cc-3))?fill(FC.we):HF;}
- LISTA.forEach((p,i)=>{const rn=R2+1+i,row=ws.getRow(rn),e=ENTA[p.noInduk]||{},ke=KETA[p.noInduk]||{},lm=LEMA[p.noInduk]||{},le=LENTA[p.noInduk]||{},cnt=[0,0,0,0,0,0];let tot=0;
+ LISTA.forEach((p,i)=>{const rn=R2+1+i,row=ws.getRow(rn),e=ENTA[p.noInduk]||{},ke=KETA[p.noInduk]||{},lm=LEMA[p.noInduk]||{},le=LENTA[p.noInduk]||{},cnt=ABS.map(()=>0);let tot=0;
   [p.noInduk,p.nama,p.jabatan].forEach((v,j)=>row.getCell(j+1).value=v);
   for(let d=1;d<=n;d++){const v=e[d]||'',c=row.getCell(3+d);codesA(v).forEach(x=>{const i=ABS.indexOf(x);if(i>=0)cnt[i]++;});
    const cc={a:codesA(v),k:ke[d],l:le[d]||''},zz=calcU(u,cc),lmh=cc.l?zz.lh:(lm[d]||0);
@@ -1744,10 +1745,10 @@ async function xlsAbs(mode){
  line(f,'KETERANGAN :',{b:1,l:1});
  if(jam){
   line(f+1,'Total jam kerja per hari = jam shift reguler (P / S / M) + jam lembur pada tanggal yang sama. Shift yang berstatus lembur dihitung sebagai lembur saja (tidak ganda).',{l:1});
-  line(f+2,`Jam kerja per shift : P = ${hrs2(HKA.P||0)} jam, S = ${hrs2(HKA.S||0)} jam, M = ${hrs2(HKA.M||0)} jam. Skt, I, Alpa = 0 jam kerja.`,{l:1});
+  line(f+2,`Jam kerja per shift : P = ${hrs2(HKA.P||0)} jam, S = ${hrs2(HKA.S||0)} jam, M = ${hrs2(HKA.M||0)} jam. Skt, I, Alpa, C = 0 jam kerja.`,{l:1});
   line(f+3,'Sel oranye = ada lembur pada tanggal tersebut. Sel merah muda = Alpa.',{l:1});
  }else{
-  line(f+1,'P = Pagi · S = Siang · M = Malam · Skt = Sakit (tanda * = tanpa surat dokter) · I = Ijin (maks. 1 kali per bulan) · Alpa = tanpa keterangan (merah).',{l:1});
+  line(f+1,'P = Pagi · S = Siang · M = Malam · Skt = Sakit (tanda * = tanpa surat dokter) · I = Ijin (maks. 1 kali per bulan) · Alpa = tanpa keterangan (merah) · C = Cuti.',{l:1});
   line(f+2,'P+S = dua shift pada tanggal yang sama · (L) = shift berstatus lembur · OTn = lembur kelebihan jam n jam · P+PK / S+PK / M+PK = shift + lembur Permintaan PLN (jam manual) · sel oranye = ada lembur.',{l:1});
  }
  ws.views=[{state:'frozen',xSplit:3,ySplit:R2}];
@@ -1873,7 +1874,7 @@ async function openFormU(f){
  DIRTY=synced>0;USEL=null;UREA=false;
  const rev=Object.values(ENTA).some(o=>Object.keys(o).length)||Object.values(ENT).some(o=>Object.keys(o).length);
  $('umt').textContent=`${rev?'Revisi':'Input'} Absensi + Lembur — ${u} — ${BLN[m-1]} ${y}`;
- $('uchips').innerHTML='<b>P</b> Pagi · <b>S</b> Siang · <b>M</b> Malam · <b>Skt</b> Sakit · <b>I</b> Ijin · <b style=&quot;color:#d33&quot;>Alpa</b> — chip <b class=&quot;sg lm&quot; style=&quot;display:inline-block&quot;>S ᴸ</b> = shift yang berstatus lembur · <b class=&quot;sg ot&quot; style=&quot;display:inline-block&quot;>+2j</b> = lembur kelebihan jam · <b class=&quot;sg pk&quot; style=&quot;display:inline-block&quot;>PK</b> = lembur Permintaan PLN (jam mulai / selesai manual, maks 8 jam) — tampil P+PK / S+PK / M+PK'+LOCKNOTE;
+ $('uchips').innerHTML='<b>P</b> Pagi · <b>S</b> Siang · <b>M</b> Malam · <b>Skt</b> Sakit · <b>I</b> Ijin · <b style=&quot;color:#d33&quot;>Alpa</b> · <b>C</b> Cuti — chip <b class=&quot;sg lm&quot; style=&quot;display:inline-block&quot;>S ᴸ</b> = shift yang berstatus lembur · <b class=&quot;sg ot&quot; style=&quot;display:inline-block&quot;>+2j</b> = lembur kelebihan jam · <b class=&quot;sg pk&quot; style=&quot;display:inline-block&quot;>PK</b> = lembur Permintaan PLN (jam mulai / selesai manual, maks 8 jam) — tampil P+PK / S+PK / M+PK'+LOCKNOTE;
  let h='<tr><th>NAMA</th>';for(let d=1;d<=days(y,m);d++)h+=`<th class=&quot;${isWe(y,m,d)?'we':''}&quot;>${d}</th>`;h+='<th>SHIFT</th><th>LEMBUR (jam)</th><th>TOTAL JAM</th></tr>';
  UL.forEach((p,ri)=>{h+=`<tr class=&quot;${ri%2?'alt':''}&quot;><td class=&quot;l&quot;>${esc(p.nama)}</td>`;
   for(let d=1;d<=days(y,m);d++)h+=`<td tabindex=&quot;0&quot; data-n=&quot;${esc(p.noInduk)}&quot; data-d=&quot;${d}&quot;></td>`;
@@ -1967,7 +1968,7 @@ function showDetU(){
  if(!c.a.length&amp;&amp;!c.l){$('udet').innerHTML=`<b>${esc(p.nama)}</b> · tgl ${d}: isi Absensi lalu klik <b>Simpan Shift</b>; untuk lembur isi semua kolom Lembur lalu klik <b>Simpan Shift</b>`;return;}
  const z=calcU(u,c),jt=x=>{const r=absRow(u,x);return x+(r&amp;&amp;hasN(r.jam)&amp;&amp;hasN(r.keluar)?' ('+hh(r.jam)+'–'+hh(r.keluar)+')':'');};
  let t=`<b>${esc(p.nama)}</b> · tgl ${d} · <b>${esc(cellText(u,c))}</b><br>`;
- if(c.a.length&amp;&amp;!isHadir(c.a[0]))t+=`Absensi: ${ABN[c.a[0]]}${c.a[0]==='Skt'?' · '+(c.k?`<b>${esc(c.k)}</b>`:'<span style=&quot;color:#d33&quot;>pilih Ada / Tidak Ada Surat Dokter</span>'):''}<br><i>Lembur tidak dapat dipilih selama absensi Skt / I / Alpa — ubah absensi dulu.</i>`;
+ if(c.a.length&amp;&amp;!isHadir(c.a[0]))t+=`Absensi: ${ABN[c.a[0]]}${c.a[0]==='Skt'?' · '+(c.k?`<b>${esc(c.k)}</b>`:'<span style=&quot;color:#d33&quot;>pilih Ada / Tidak Ada Surat Dokter</span>'):''}<br><i>Lembur tidak dapat dipilih selama absensi Skt / I / Alpa / C — ubah absensi dulu.</i>`;
  else{t+=`Reguler: ${z.reg.length?z.reg.map(jt).join(', '):'–'} · ${fJ(z.rh)} jam`;
   if(c.l&amp;&amp;z.li){const k=z.li.kd,ot=z.li.ot,dur=z.li.pk?z.li.h:(ot?z.li.pc.h:durKode(k)),day=d+(ot&amp;&amp;k.kode[0].toUpperCase()==='M'?1:0),st=z.li.pk?(z.li.pr?z.li.pr[0]:0):(k.jam||0);
    t+=`<br>Lembur: <b>${esc(k.tipe)}</b> · ${esc(c.l)} · ${fmtDT(y,m,day,st)} s/d ${fmtDT(y,m,day,st+dur)} · ${fmtD(dur)}${z.li.excl?` <i>(shift ${z.li.sh} dihitung lembur, bukan reguler)</i>`:ot?` <i>(menyambung shift ${z.li.sh})</i>`:z.li.pk?' <i>(Penugasan PLN · jam manual)</i>':''}`;}
@@ -2042,7 +2043,7 @@ $('ubS').onclick=async()=>{
 /* ================= IMPORT ABSENSI + LEMBUR &amp; TEMPLATE (khusus role Admin) =================
    Aturan sistem: 1 hari = 1 shift terjadwal (sheet &quot;Absensi&quot;) + maks 1 lembur (sheet &quot;Lembur&quot;, 1 baris = 1 lembur). Tidak ada shift ganda. */
 const normT=v=>{const t=String(v==null?'':v).trim();let q=/^(\d{1,2})[:.](\d{2})(?::\d{2})?\s*([AaPp][Mm])?$/.exec(t);if(!q){const q2=/^(\d{2})(\d{2})$/.exec(t);if(!q2)return null;q=[t,q2[1],q2[2]];}let h=+q[1];const mi=+q[2];if(q[3]){const pm=/p/i.test(q[3]);if(pm&amp;&amp;h<12)h+=12;if(!pm&amp;&amp;h===12)h=0;}if(h>23||mi>59)return null;return pad(h)+':'+pad(mi);};
-const IMP_MAP={p:'P',pagi:'P',s:'S',siang:'S',m:'M',malam:'M',skt:'Skt',sakit:'Skt','skt*':'Skt*','sakit*':'Skt*',i:'I',ijin:'I',izin:'I',alpa:'Alpa',alfa:'Alpa',a:'Alpa'};
+const IMP_MAP={p:'P',pagi:'P',s:'S',siang:'S',m:'M',malam:'M',skt:'Skt',sakit:'Skt','skt*':'Skt*','sakit*':'Skt*',i:'I',ijin:'I',izin:'I',alpa:'Alpa',alfa:'Alpa',a:'Alpa',c:'C',cuti:'C'};
 async function xlsTemplateA(){
  if(!IS_ADMIN)return toast('Template import hanya untuk role Admin');
  const {y,m,u}=curA();if(!u||!y)return toast('Pilih periode dan unit dulu (Ubah Filter)');
@@ -2061,7 +2062,7 @@ async function xlsTemplateA(){
  put('3. Jangan ubah','Judul kolom, baris Unit / Bulan / Tahun, serta kolom NO INDUK dan NAMA pada sheet Absensi.',{b:0});
  put('4. Simpan &amp; Import','Simpan sebagai .xls / .xlsx (.csv hanya terbaca 1 sheet). Buka Input Absensi → pilih periode lewat &quot;Ubah Filter&quot; → klik &quot;Import&quot; → pilih file → cek ringkasan → OK.',{b:0});r++;
  put('KODE SHEET &quot;ABSENSI&quot;',undefined,{f:H});
- [['P','Pagi'],['S','Siang'],['M','Malam'],['Skt','Sakit DENGAN surat dokter'],['Skt*','Sakit TANPA surat dokter'],['I','Ijin (maksimal 1 kali per bulan per petugas)'],['Alpa','Alpa (boleh ditulis &quot;A&quot;)']].forEach(x=>put(x[0],x[1],{b:0}).getCell(2).font={bold:true});
+ [['P','Pagi'],['S','Siang'],['M','Malam'],['Skt','Sakit DENGAN surat dokter'],['Skt*','Sakit TANPA surat dokter'],['I','Ijin (maksimal 1 kali per bulan per petugas)'],['Alpa','Alpa (boleh ditulis &quot;A&quot;)'],['C','Cuti (boleh ditulis &quot;Cuti&quot;)']].forEach(x=>put(x[0],x[1],{b:0}).getCell(2).font={bold:true});
  r++;put('KODE SHEET &quot;LEMBUR&quot;',undefined,{f:H});
  put('Kode lembur',tipes.length?'Pilih salah satu kode pada sheet &quot;Kode Lembur&quot; (dikelompokkan per tipe lembur unit ini). Penulisan tidak membedakan huruf besar / kecil.':'Belum ada kode lembur untuk unit ini.',{b:0});
  put('Lembur PK (Permintaan PLN)','Isi KODE LEMBUR = PK, lalu JAM MULAI dan JAM SELESAI secara manual (format HH:MM, mis. 08:00 dan 14:30) sesuai penyelesaian pekerjaan. Durasi maksimal 8 jam; jam selesai lebih kecil dari jam mulai dianggap melewati tengah malam. Di tabel tampil sebagai P+PK / S+PK / M+PK (shift tetap shift reguler, bukan &quot;PL&quot;).',{b:0});
@@ -2071,7 +2072,7 @@ async function xlsTemplateA(){
  put('ALASAN','Wajib bila tipe lembur memiliki daftar alasan (lihat kolom ALASAN pada sheet &quot;Kode Lembur&quot;): tulis persis salah satu alasan tersebut. Bila tersedia &quot;Input Manual&quot;, boleh menulis alasan bebas.',{b:0});r++;
  put('ATURAN',undefined,{f:H});
  put('Sinkron shift lembur','Sama seperti form Input Absen: kode lembur yang terkait shift (mis. P-OT2 → P) otomatis menambahkan shift tersebut ke absensi hari itu bila belum ada.',{b:0});
- put('Tidak boleh lembur','Petugas berstatus Skt / I / Alpa pada tanggal itu tidak dapat diberi lembur. Baris / sel yang melanggar aturan (termasuk kombinasi shift yang tidak sinkron) dilewati dan dilaporkan.',{b:0});
+ put('Tidak boleh lembur','Petugas berstatus Skt / I / Alpa / C pada tanggal itu tidak dapat diberi lembur. Baris / sel yang melanggar aturan (termasuk kombinasi shift yang tidak sinkron) dilewati dan dilaporkan.',{b:0});
  put('Pencocokan petugas','Berdasarkan NO INDUK; jika kosong berdasarkan NAMA. Baris yang tidak cocok dengan petugas unit ini dilewati.',{b:0});
  put('Periode','Bulan / tahun / unit pada file harus sama dengan filter. Import tidak dapat dilakukan untuk bulan mendatang; untuk bulan lalu, role Admin dapat mengimport (backdate).',{b:0});
  put('Contoh','Sheet Absensi: sel tgl 5 diisi  P  |  sel tgl 6 diisi  Skt*\nSheet Lembur: NO INDUK 1234567 · TANGGAL 5 · KODE LEMBUR P-OT2 · ALASAN (sesuai daftar)\nSheet Lembur (PK): NO INDUK 1234567 · TANGGAL 7 · KODE LEMBUR PK · JAM MULAI 16:00 · JAM SELESAI 21:30 · ALASAN (sesuai daftar)',{b:0});
@@ -2079,12 +2080,12 @@ async function xlsTemplateA(){
  // ---- sheet Absensi ----
  const ws=wb.addWorksheet('Absensi',{views:[{state:'frozen',xSplit:3,ySplit:5}]}),NC=3+n,line=mkLine(ws,NC),NP=Math.max(P.length,1),meta=`Unit : ${u}     Bulan : ${BLN[m-1]}     Tahun : ${y}`;
  line(1,'TEMPLATE IMPORT ABSENSI',{b:1,s:14});line(2,'PROJECT : COMMAND CENTER - DCC P2B',{b:1});line(3,meta,{b:1});
- line(4,'Isi 1 kode per sel: P, S, M, Skt, Skt*, I, Alpa. Lembur diisi di sheet &quot;Lembur&quot;. Lihat sheet Petunjuk. Jangan ubah judul kolom, Unit, Bulan, Tahun, NO INDUK, NAMA.',{l:1});
+ line(4,'Isi 1 kode per sel: P, S, M, Skt, Skt*, I, Alpa, C. Lembur diisi di sheet &quot;Lembur&quot;. Lihat sheet Petunjuk. Jangan ubah judul kolom, Unit, Bulan, Tahun, NO INDUK, NAMA.',{l:1});
  ['NO INDUK','NAMA','JABATAN'].forEach((t,i)=>ws.getCell(5,i+1).value=t);for(let d=1;d<=n;d++)ws.getCell(5,3+d).value=d;
  for(let c=1;c<=NC;c++){const x=ws.getCell(5,c);x.font={bold:true};x.border=BD;x.alignment={horizontal:'center',vertical:'middle'};x.fill=(c>3&amp;&amp;isWe(y,m,c-3))?fill('FFFDEEEE'):HF;}
  P.forEach((p,i)=>{const row=ws.getRow(6+i);row.getCell(1).value=String(p.noInduk);row.getCell(1).numFmt='@';row.getCell(2).value=p.nama;row.getCell(3).value=p.jabatan||'';
   for(let c=1;c<=NC;c++){const x=row.getCell(c);x.border=BD;x.alignment={horizontal:c>=2&amp;&amp;c<=3?'left':'center'};
-   if(c>3){if(isWe(y,m,c-3))x.fill=fill('FFFDEEEE');x.dataValidation={type:'list',allowBlank:true,formulae:['&quot;P,S,M,Skt,Skt*,I,Alpa&quot;'],showErrorMessage:true,errorStyle:'warning',errorTitle:'Kode absensi',error:'Gunakan satu kode: P, S, M, Skt, Skt*, I, Alpa. Lembur diisi di sheet Lembur.'};}}});
+   if(c>3){if(isWe(y,m,c-3))x.fill=fill('FFFDEEEE');x.dataValidation={type:'list',allowBlank:true,formulae:['&quot;P,S,M,Skt,Skt*,I,Alpa,C&quot;'],showErrorMessage:true,errorStyle:'warning',errorTitle:'Kode absensi',error:'Gunakan satu kode: P, S, M, Skt, Skt*, I, Alpa, C. Lembur diisi di sheet Lembur.'};}}});
  ws.columns.forEach((c,i)=>{c.width=i===0?14:i===1?30:i===2?24:5.5;});
 
  // ---- sheet Lembur ----
@@ -2263,10 +2264,10 @@ function drillA(G,k){
 function paintStatA(){
  if(!STA||$('rka').hidden||!STA.rows.length)return;
  const rows=statRowsA(),G=$('raG').value,CT=$('raC').value,y=STA.tahun,m=+$('raB').value,tx=cssv('--tx'),gr=cssv('--bd');
- const by={};rows.forEach(r=>{const b=by[r[2]]=by[r[2]]||{nama:STA.petugas[r[2]][0],jab:STA.petugas[r[2]][1],unit:STA.units[r[1]],c:[0,0,0,0,0,0],tot:0};b.c[r[4]]++;b.tot++;});
- const list=Object.values(by),cnt=[0,0,0,0,0,0];rows.forEach(r=>cnt[r[4]]++);
+ const by={};rows.forEach(r=>{const b=by[r[2]]=by[r[2]]||{nama:STA.petugas[r[2]][0],jab:STA.petugas[r[2]][1],unit:STA.units[r[1]],c:ABS.map(()=>0),tot:0};b.c[r[4]]++;b.tot++;});
+ const list=Object.values(by),cnt=ABS.map(()=>0);rows.forEach(r=>cnt[r[4]]++);
  const noDok=rows.filter(r=>r[5]).length;
- $('raK').innerHTML=[['Total hari tercatat',fmtN(rows.length)],['Hadir (P + S + M)',fmtN(cnt[0]+cnt[1]+cnt[2])],['Sakit (Skt)',`${fmtN(cnt[3])}${noDok?` <small>${fmtN(noDok)} tanpa surat dokter</small>`:''}`],['Ijin (I)',fmtN(cnt[4])],['Alpa',`<span style=&quot;color:#d33&quot;>${fmtN(cnt[5])}</span>`],['Petugas tercatat',fmtN(list.length)]].map(k=>`<div class=&quot;kpi&quot;><small>${k[0]}</small><b>${k[1]}</b></div>`).join('');
+ $('raK').innerHTML=[['Total hari tercatat',fmtN(rows.length)],['Hadir (P + S + M)',fmtN(cnt[0]+cnt[1]+cnt[2])],['Sakit (Skt)',`${fmtN(cnt[3])}${noDok?` <small>${fmtN(noDok)} tanpa surat dokter</small>`:''}`],['Ijin (I)',fmtN(cnt[4])],['Alpa',`<span style=&quot;color:#d33&quot;>${fmtN(cnt[5])}</span>`],['Cuti (C)',fmtN(cnt[6])],['Petugas tercatat',fmtN(list.length)]].map(k=>`<div class=&quot;kpi&quot;><small>${k[0]}</small><b>${k[1]}</b></div>`).join('');
  $('raSub').textContent=`Tahun ${y} · ${m?BLN[m-1]:'Semua bulan'} · ${$('raU').value||'Semua unit'}${$('raKd').value?' · Kode '+$('raKd').value:''}${$('raP').value?' · '+STA.petugas[$('raP').value][0]:''}`;
  let L=[],V=[],K=[],C=[];
  if(G==='bulan'){for(let i=1;i<=12;i++){L.push(BLN[i-1]);K.push(i);V.push(0);}rows.forEach(r=>V[r[0]-1]++);}
