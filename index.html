@@ -3554,10 +3554,11 @@ addEventListener('hashchange',route);route();setInterval(sync,D.iv*60000);
 <script>
 (function(){
 /* ===== Konfigurasi sumber data (Callback Pelanggan) ===== */
-const CBC={id:'1LB4B-j3C5sSSQv7NoORODk8AG6x5gUk38hthdz9shk8',
+const _cb=['=gzaoNXO6RGa0hGOzsWVnVDe2cUQ4sGRPJ1Tv50N2F1UTNXNDNjatIENCxUM','==QMxgzM2AjNyYTM'],CBK=()=>atob(_cb[0].split('').reverse().join('')),CBG=()=>atob(_cb[1].split('').reverse().join(''));
+const CBC={px:'', /* opsional: URL proxy Apps Script (lihat callback-proxy.gs) agar ID sheet tidak ikut ke browser sama sekali */
  S:{log:[{n:'log hp operator'},{n:'log hp'},{n:'log panggilan'}],
     apkt:[{n:'data apkt'},{n:'apkt'}],
-    eis:[{n:'detail eis'},{n:'data eis'},{n:'eis'},{g:'1626063811'}],
+    eis:[{n:'detail eis'},{n:'data eis'},{n:'eis'},{g:CBG()}],
     up3:[{n:'data up3'},{n:'up3'}]},
  G:{log:'',apkt:'',eis:'',up3:''}, /* isi gid sheet bila nama sheet berubah / data terbaca tidak lengkap */
  iv:2};
@@ -3607,10 +3608,15 @@ const bEis=h=>{
  const no=rq(cf(h,NOX,['nolapor']),'No. Lapor (EIS)',h),po=rq(cf(h,POX,['posko','ulp']),'Posko (EIS)',h),st=rq(cf(h,['status','statuslaporan']),'Status (EIS)',h);
  return{no,po,st,ph:cf(h,PHX,PHI),tl:cf(h,TLX,TLX),ar:cf(h,ARX),nm:cf(h,['nama','namapelapor']),al:cf(h,['alamatpelapor','alamat']),ds:cf(h,['deskripsi']),pb:cf(h,['penyebab']),du:cf(h,['durasi'])}};
 const bUp=h=>({po:rq(cf(h,POX,['posko','ulp']),'Posko/ULP (data UP3)',h),ar:rq(cf(h,['namaup3','up3','namaarea','area'],['up3','area']),'UP3/Area (data UP3)',h)});
+async function cbLoad(n,g){
+ if(CBC.px){const u=CBC.px+(CBC.px.includes('?')?'&':'?')+'n='+encodeURIComponent(n||'')+'&g='+encodeURIComponent(g||'')+'&_='+Date.now(),
+  r=await fetch(u,{cache:'no-store'}),t=r.ok?await r.text():'';
+  if(!r.ok||/^\s*<(!doctype|html)/i.test(t))throw Error('Data tidak bisa dibaca.');return csv(t)}
+ return load(n,g,CBK())}
 async function ldS(k,build){
  const cands=(CBC.G[k]?[{g:CBC.G[k]}]:[]).concat(CBC.S[k]),tr=[];
- for(const c of cands){const nm=c.n?('"'+c.n+'"'):('gid '+c.g);
-  try{const A=await load(c.n||null,c.g||null,CBC.id),H=hdr(A,build);return{A,h:H.i,c:H.c,src:nm}}
+ for(const c of cands){const nm=c.n?('"'+c.n+'"'):'sheet cadangan';
+  try{const A=await cbLoad(c.n||null,c.g||null),H=hdr(A,build);return{A,h:H.i,c:H.c,src:nm}}
   catch(x){tr.push(nm+' → '+x.message)}}
  throw Error('Sheet '+CBC.S[k][0].n+' belum terbaca.\n'+tr.join('\n'))}
 /* ===== bangun data: gabung log HP + APKT + EIS ===== */
@@ -3684,7 +3690,10 @@ function agg(M,f){
 /* ===== UI ===== */
 const CB={raw:null,M:null,Z:null,G:[],cols:[],busy:false,open:new Set(),init:false,KP:[],view:null};
 const fT=t=>isNaN(t)?'':fd(t),pcn=(c,r)=>r?c/r*100:null,pcs=v=>v==null?'-':v.toFixed(1).replace('.',',')+'%';
-const tel=k=>k?'62'+k:'',qa=s=>e(s).replace(/"/g,'&quot;');
+/* sensor 5 angka terakhir nomor HP (tampilan, pop up, dan export Excel) */
+const mkP=s=>{s=String(s==null?'':s);let n=5;return s.split('').reverse().map(ch=>(n>0&&/\d/.test(ch))?(n--,'X'):ch).reverse().join('')};
+const mkN=s=>String(s==null?'':s).replace(/\+?\d[\d\s\-().]{6,}\d/g,m=>(m.replace(/\D/g,'').length>=10&&!/^\d{1,4}[-.\/]\d{1,2}[-.\/]\d{1,4}/.test(m))?mkP(m):m);
+const tel=k=>k?mkP('62'+k):'',qa=s=>e(s).replace(/"/g,'&quot;');
 function filters(){return{m:$('cbM').value,a:$('cbA').value,u:$('cbU').value}}
 const opt=()=>({ds:$('cbDf').value,gap:$('cbGp').value});
 function fillA(){if(!CB.M)return;const m=CB.M;
@@ -3696,16 +3705,16 @@ function repSpec(list,called){const L=[...list].sort((a,b)=>(a.t||0)-(b.t||0));
  const st=r=>{const c=called.get(r);return c?'Ya ('+c.n+'x)':'Belum'};
  return{v:{h:['No','No Lapor','Tgl Lapor','Area','ULP','Status','No Telp','Dihubungi','Jml Percobaan Telp'],a:L.map((r,i)=>{const c=called.get(r);return[i+1,r.no,fT(r.t),r.area,r.ulp,r.st,tel(r.ph[0]),st(r),c?c.n:0]})},
   d:{h:['No','No Lapor','Tgl Lapor','Area','ULP','Status','No Telp','Nama Pelapor','Alamat','Deskripsi','Penyebab','Durasi (EIS)','Dihubungi','Jml Percobaan Telp','Telp Pertama'],
-   a:L.map((r,i)=>{const c=called.get(r);return[i+1,r.no,fT(r.t),r.area,r.ulp,r.st,tel(r.ph[0]),r.nm,r.al,r.ds,r.pb,r.du,c?'Ya':'Belum',c?c.n:0,c?fT(c.t):'']})}}}
+   a:L.map((r,i)=>{const c=called.get(r);return[i+1,r.no,fT(r.t),r.area,r.ulp,r.st,tel(r.ph[0]),mkN(r.nm),mkN(r.al),mkN(r.ds),mkN(r.pb),r.du,c?'Ya':'Belum',c?c.n:0,c?fT(c.t):'']})}}}
 function callSpec(list,scope,grp){grp=grp!==false;const L=[...list].sort((a,b)=>(a.t||0)-(b.t||0)),sc=scope||L,sl=c=>c.rec?(c.rec.eis?c.rec.st:'Tidak ada di EIS'):'-';
  const kf=c=>c.rec||c.k,tot=new Map();
  sc.forEach(c=>tot.set(kf(c),(tot.get(kf(c))||0)+1));
  const jm=c=>tot.get(kf(c))||'';
  const G1=[],gm=new Map();L.forEach(c=>{const k=kf(c);if(!gm.has(k)){gm.set(k,c);G1.push(c)}});
- const vv=grp?{h:['No','No Lapor','Jumlah Percobaan','Waktu Telp Pertama','No Telp','Nama Kontak','Area','ULP','Status'],a:G1.map((c,i)=>[i+1,c.no||'-',jm(c),fT(c.t),tel(c.k),c.nm,c.area,c.ulp,sl(c)])}
-  :{h:['No','Waktu Telp','No Telp','Nama Kontak','Durasi Telp','No Lapor','Jumlah Percobaan','Area','ULP','Status','Dihitung'],a:L.map((c,i)=>[i+1,fT(c.t),tel(c.k),c.nm,c.du,c.no||'-',jm(c),c.area,c.ulp,sl(c),c.cnt?'Ya':'Ganda'])};
+ const vv=grp?{h:['No','No Lapor','Jumlah Percobaan','Waktu Telp Pertama','No Telp','Nama Kontak','Area','ULP','Status'],a:G1.map((c,i)=>[i+1,c.no||'-',jm(c),fT(c.t),tel(c.k),mkN(c.nm),c.area,c.ulp,sl(c)])}
+  :{h:['No','Waktu Telp','No Telp','Nama Kontak','Durasi Telp','No Lapor','Jumlah Percobaan','Area','ULP','Status','Dihitung'],a:L.map((c,i)=>[i+1,fT(c.t),tel(c.k),mkN(c.nm),c.du,c.no||'-',jm(c),c.area,c.ulp,sl(c),c.cnt?'Ya':'Ganda'])};
  return{v:vv,
-  d:{h:['No','Waktu Telp','No Telp','No Telp (asli log)','Nama Kontak','Tipe Panggilan','Durasi Telp','No Lapor','Jumlah Percobaan','Tgl Lapor','Area','ULP','Status','Dihitung'],a:L.map((c,i)=>[i+1,fT(c.t),tel(c.k),c.raw,c.nm,c.ty,c.du,c.no||'-',jm(c),c.rec?fT(c.rec.t):'',c.area,c.ulp,sl(c),c.cnt?'Ya':'Ganda (jeda singkat)'])}}}
+  d:{h:['No','Waktu Telp','No Telp','No Telp (asli log)','Nama Kontak','Tipe Panggilan','Durasi Telp','No Lapor','Jumlah Percobaan','Tgl Lapor','Area','ULP','Status','Dihitung'],a:L.map((c,i)=>[i+1,fT(c.t),tel(c.k),mkP(c.raw),mkN(c.nm),c.ty,c.du,c.no||'-',jm(c),c.rec?fT(c.rec.t):'',c.area,c.ulp,sl(c),c.cnt?'Ya':'Ganda (jeda singkat)'])}}}
 function popC(t,sp){const n='Callback_'+t.replace(/[^\w]+/g,'-').replace(/^-|-$/g,'').slice(0,70),x=[];
  PP={h:sp.v.h,a:sp.v.a,f:[],n:n,sn:'Tampilan',x:x};PP2={h:sp.d.h,a:sp.d.a,n:n+'_detail',x:x};
  $('mt').textContent=t+' ('+sp.v.a.length+' baris)';
