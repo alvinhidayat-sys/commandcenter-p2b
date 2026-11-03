@@ -8,6 +8,7 @@ if(t!=='light'&&t!=='dark')t=(window.matchMedia&&matchMedia('(prefers-color-sche
 document.documentElement.setAttribute('data-theme',t);
 var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',t==='dark'?'#1a1e2d':'#eaecf8')})();</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -150,19 +151,33 @@ tr.sub td{background:var(--tint-cy);font-weight:700;cursor:pointer}tr.sub:hover 
 summary{cursor:pointer;font-weight:600;color:var(--mut)}
 .inf{font-size:12.5px;color:var(--mut);margin-top:10px;white-space:pre-wrap;line-height:1.5}
 #cbOut td[data-m]{cursor:pointer}#cbOut td[data-m]:hover{background:var(--tint-ye);text-decoration:underline dotted}
+#cbSlOut td[data-m]{cursor:pointer}#cbSlOut td[data-m]:hover{background:var(--tint-ye);text-decoration:underline dotted}
 #cbOut tr.tot td[data-m]:hover{background:var(--cy2);color:var(--on-cy)}
+#cbSlOut tr.tot td[data-m]:hover{background:var(--cy2);color:var(--on-cy)}
 #cbOut.wrap{max-height:none}
+#cbSlOut.wrap{max-height:none}
 #cbOut table{min-width:900px;border-collapse:separate;border-spacing:0;font-size:13.5px}
+#cbSlOut table{min-width:900px;border-collapse:separate;border-spacing:0;font-size:13.5px}
 #cbOut th{position:static;text-align:center;white-space:normal;vertical-align:middle;line-height:1.25;padding:10px;border-bottom:2px solid var(--line);border-right:1px solid var(--line)}
+#cbSlOut th{position:static;text-align:center;white-space:normal;vertical-align:middle;line-height:1.25;padding:10px;border-bottom:2px solid var(--line);border-right:1px solid var(--line)}
 #cbOut th.l{text-align:left}#cbOut th.grp{background:linear-gradient(var(--tint-cy),var(--tint-cy)),var(--sf2);border-bottom:1px solid var(--line)}
+#cbSlOut th.l{text-align:left}#cbSlOut th.grp{background:linear-gradient(var(--tint-cy),var(--tint-cy)),var(--sf2);border-bottom:1px solid var(--line)}
 #cbOut th.st{min-width:96px;font-size:11.5px;background:linear-gradient(var(--tint-ye),var(--tint-ye)),var(--sf2)}
+#cbSlOut th.st{min-width:96px;font-size:11.5px;background:linear-gradient(var(--tint-ye),var(--tint-ye)),var(--sf2)}
 #cbOut th.b,#cbOut td.b{border-left:2px solid var(--line)}
+#cbSlOut th.b,#cbSlOut td.b{border-left:2px solid var(--line)}
 #cbOut td{padding:8px 10px;border-right:1px solid var(--line)}
+#cbSlOut td{padding:8px 10px;border-right:1px solid var(--line)}
 #cbOut td.n{text-align:right;font-variant-numeric:tabular-nums}
+#cbSlOut td.n{text-align:right;font-variant-numeric:tabular-nums}
 #cbOut td.pc{text-align:right;font-weight:700;min-width:84px}
+#cbSlOut td.pc{text-align:right;font-weight:700;min-width:84px}
 #cbOut tr.sub td{font-weight:700}
+#cbSlOut tr.sub td{font-weight:700}
 #cbOut tr.u td:first-child{color:var(--mut);font-size:12.5px}#cbOut tr.u td:nth-child(2){padding-left:22px}
+#cbSlOut tr.u td:first-child{color:var(--mut);font-size:12.5px}#cbSlOut tr.u td:nth-child(2){padding-left:22px}
 #cbOut tr.u:hover td{background:var(--tint-cy)}
+#cbSlOut tr.u:hover td{background:var(--tint-cy)}
 .cbn{margin:8px 0 0}
 /* Tombol ganti tema (melayang, mudah dijangkau ibu jari) */
 #thm{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:8;width:52px;height:52px;min-height:0;padding:0;border-radius:50%;display:grid;place-items:center;background:linear-gradient(145deg,var(--cy2),var(--cy));color:var(--on-cy);box-shadow:var(--raise)}
@@ -187,6 +202,7 @@ label:has(#fU),label:has(#cbU),details label{flex-basis:100%}
 .kpi{grid-template-columns:repeat(2,1fr);gap:10px}.kpi button{padding:12px}.kpi b{font-size:22px}
 .row.tabs,.row:has(#xR){flex:1 1 100%}.tabs button{flex:1}.row:has(#xR) button{flex:1 1 44%}
 #out.wrap,#pOut.wrap,#cbOut.wrap{max-height:none;overflow:visible}
+#out.wrap,#pOut.wrap,#cbSlOut.wrap{max-height:none;overflow:visible}
 .row:has(#pXR){flex:1 1 100%}.row:has(#pXR) button{flex:1 1 44%}#pOut table{min-width:0}
 table{min-width:0}thead{display:none}table,tbody,tr,td{display:block;width:100%}
 tr{background:var(--sf);border-radius:16px;margin-bottom:12px;padding:6px 14px;box-shadow:var(--raise-s)}
@@ -196,6 +212,7 @@ td::before{content:attr(data-l);flex:0 0 45%;text-align:left;color:var(--mut);fo
 tr.sub{background:linear-gradient(var(--tint-cy),var(--tint-cy)),var(--sf)}tr.sub td,tr.tot td{background:transparent}
 tr.tot{background:linear-gradient(145deg,var(--cy2),var(--cy))}tr.tot td{color:var(--on-cy);border-color:rgba(4,48,60,.2)}tr.tot td::before{color:var(--on-cy);opacity:.75}
 #cbOut table{min-width:0}#cbOut td{border-right:0}#cbOut td.b{border-left:0}#cbOut td.pc{min-width:0}#cbOut tr.u td:nth-child(2){padding-left:0}
+#cbSlOut table{min-width:0}#cbSlOut td{border-right:0}#cbSlOut td.b{border-left:0}#cbSlOut td.pc{min-width:0}#cbSlOut tr.u td:nth-child(2){padding-left:0}
 #md{padding:0;align-items:flex-end}#md .box{width:100%;max-height:92vh;max-height:92dvh;border-radius:24px 24px 0 0;padding:14px 14px calc(14px + env(safe-area-inset-bottom,0px))}
 #mi.wrap{padding:4px 10px 10px}
 .cards{grid-template-columns:1fr;gap:16px}.mc .mb{padding:12px 16px 16px}.mc h2{font-size:17px}.mc p{font-size:13px}
@@ -316,6 +333,15 @@ header::after{content:"";position:absolute;left:0;right:0;bottom:0;height:6px;po
 <div class="row btns"><button class="alt" id="cbXR">Unduh Excel tampilan tabel</button><button class="alt" id="cbXD">Unduh Excel detail panggilan</button></div></div>
 <div class="wrap" id="cbOut" style="margin-top:10px"></div>
 <div class="clg cbn"><span><b>Total Lapor</b> = laporan di EIS</span><span><b>Percobaan Telp</b> = panggilan keluar (nomor ganda tetap dihitung)</span><span><b>Plgn Dihubungi</b> = nomor sama dalam jeda singkat dihitung 1 kali</span><span><b>% Dihubungi</b> = Plgn Dihubungi ÷ Total Lapor</span></div></div>
+<div class="card"><div class="row" style="align-items:flex-end"><div style="flex:1;min-width:220px"><b>Monitoring Sumber Lapor</b></div>
+<label>Tampilkan<select id="cbSlM"><option value="rep">Total Lapor</option><option value="con">Pelanggan Dihubungi</option><option value="try">Percobaan Telp</option><option value="pct">% Dihubungi</option></select></label>
+<label>Periode<select id="cbSlG"><option value="auto">Otomatis</option><option value="d">Harian</option><option value="m">Bulanan</option></select></label></div>
+<div class="row" id="cbSlChips" style="margin-top:10px"></div>
+<div style="position:relative;height:340px;margin-top:10px"><canvas id="cbSlCh"></canvas></div><div class="clg cbn" id="cbSlHint"></div></div>
+<div class="card" id="cbSlC"><div class="row btns" style="justify-content:space-between;align-items:center"><div><b>Rekap Callback Sumber Lapor</b></div>
+<div class="row btns"><button class="alt" id="cbXS">Unduh Excel rekap sumber lapor</button></div></div>
+<div class="wrap" id="cbSlOut" style="margin-top:10px"></div>
+<div class="clg cbn"><span><b>Total Lapor</b> = laporan di EIS per sumber lapor</span><span><b>Plgn Dihubungi</b> = nomor sama dalam jeda singkat dihitung 1 kali</span><span><b>% Dihubungi</b> = Plgn Dihubungi ÷ Total Lapor</span><span><b>Belum Dihubungi</b> = laporan tanpa panggilan keluar</span></div></div>
 </main>
 <main id="abs" hidden>
 <div id="absBox"></div>
@@ -3559,10 +3585,11 @@ const CBC={px:'', /* opsional: URL proxy Apps Script (lihat callback-proxy.gs) a
  S:{log:[{n:'log hp operator'},{n:'log hp'},{n:'log panggilan'}],
     apkt:[{n:'data apkt'},{n:'apkt'}],
     eis:[{n:'detail eis'},{n:'data eis'},{n:'eis'},{g:CBG()}],
-    up3:[{n:'data up3'},{n:'up3'}]},
- G:{log:'',apkt:'',eis:'',up3:''}, /* isi gid sheet bila nama sheet berubah / data terbaca tidak lengkap */
+    up3:[{n:'data up3'},{n:'up3'}],
+    sl:[{n:'detail eis'}]},
+ G:{log:'',apkt:'',eis:'',up3:'',sl:'2003840293'}, /* isi gid sheet bila nama sheet berubah / data terbaca tidak lengkap */
  iv:2};
-const UNM='(Tidak terpetakan)',NOA='(Tanpa area)',LAIN='Lainnya';
+const UNM='(Tidak terpetakan)',NOA='(Tanpa area)',LAIN='Lainnya',NOSL='(Tanpa sumber lapor)',NOSU='(Nomor tidak terpetakan)';
 const trm=s=>String(s==null?'':s).replace(/\s+/g,' ').trim();
 /* nomor telepon: 62xxxx / 0xxxx / 8xxxx disamakan menjadi 8xxxx */
 const pk=s=>{let d=ip(s);if(d.startsWith('62'))d=d.slice(2);else if(d.startsWith('0'))d=d.slice(1);return d.length>=7?d:''};
@@ -3606,8 +3633,9 @@ const bApk=h=>{
  return{ph,po,ar,no:cf(h,NOX,['nolapor']),tl:cf(h,TLX,TLX)}};
 const bEis=h=>{
  const no=rq(cf(h,NOX,['nolapor']),'No. Lapor (EIS)',h),po=rq(cf(h,POX,['posko','ulp']),'Posko (EIS)',h),st=rq(cf(h,['status','statuslaporan']),'Status (EIS)',h);
- return{no,po,st,ph:cf(h,PHX,PHI),tl:cf(h,TLX,TLX),ar:cf(h,ARX),nm:cf(h,['nama','namapelapor']),al:cf(h,['alamatpelapor','alamat']),ds:cf(h,['deskripsi']),pb:cf(h,['penyebab']),du:cf(h,['durasi'])}};
+ return{no,po,st,ph:cf(h,PHX,PHI),tl:cf(h,TLX,TLX),ar:cf(h,ARX),nm:cf(h,['nama','namapelapor']),al:cf(h,['alamatpelapor','alamat']),ds:cf(h,['deskripsi']),pb:cf(h,['penyebab']),du:cf(h,['durasi']),sl:cf(h,['sumberlapor','sumber'],['sumberlapor'])}};
 const bUp=h=>({po:rq(cf(h,POX,['posko','ulp']),'Posko/ULP (data UP3)',h),ar:rq(cf(h,['namaup3','up3','namaarea','area'],['up3','area']),'UP3/Area (data UP3)',h)});
+const bSl=h=>({no:rq(cf(h,NOX,['nolapor']),'No. Lapor (sheet sumber lapor)',h),sl:rq(cf(h,['sumberlapor','sumber'],['sumberlapor','sumber']),'Sumber Lapor (sheet detail eis)',h)});
 async function cbLoad(n,g){
  if(CBC.px){const u=CBC.px+(CBC.px.includes('?')?'&':'?')+'n='+encodeURIComponent(n||'')+'&g='+encodeURIComponent(g||'')+'&_='+Date.now(),
   r=await fetch(u,{cache:'no-store'}),t=r.ok?await r.text():'';
@@ -3627,7 +3655,7 @@ function bld(R,o){
  let eBad=0;
  eb.forEach(x=>{const no=trm(x[ec.no]);if(!no||byNo.has(no))return;
   const u=ulpN(x[ec.po]),ar=arN(cell(x,ec.ar)),s=lb(x[ec.st]),r={no,ph:pks(cell(x,ec.ph)),areaRaw:ar,ulp:u,t:ec.tl>=0?pdt(x[ec.tl],eo):NaN,st:s=='-'?'(Tanpa status)':s,eis:true,
-   nm:trm(cell(x,ec.nm)),al:trm(cell(x,ec.al)),ds:trm(cell(x,ec.ds)),pb:trm(cell(x,ec.pb)),du:trm(cell(x,ec.du))};
+   nm:trm(cell(x,ec.nm)),al:trm(cell(x,ec.al)),ds:trm(cell(x,ec.ds)),pb:trm(cell(x,ec.pb)),du:trm(cell(x,ec.du)),slE:trm(cell(x,ec.sl))};
   addC(u,ar);if(ec.tl>=0&&isNaN(r.t))eBad++;recs.push(r);byNo.set(no,r)});
  if(eBad)W.push('EIS: '+eBad+' laporan tanggal lapornya tidak terbaca (tidak ikut bila filter tanggal dipakai).');
  const A=R.apkt,ac=A.c,ab=body(A),ao=ac.tl>=0?pOrd(ab.map(x=>x[ac.tl]),o.ds):'mdy';
@@ -3635,12 +3663,15 @@ function bld(R,o){
   addC(u,ar);let r=no?byNo.get(no):null;
   if(r){ph.forEach(k=>{if(!r.ph.includes(k))r.ph.push(k)});if(!r.areaRaw&&ar)r.areaRaw=ar;if(!r.ulp&&u)r.ulp=u;if(isNaN(r.t)&&!isNaN(t))r.t=t;return}
   if(!ph.length)return;
-  r={no,ph,areaRaw:ar,ulp:u,t,st:'',eis:false,nm:'',al:'',ds:'',pb:'',du:''};recs.push(r);if(no)byNo.set(no,r)});
+  r={no,ph,areaRaw:ar,ulp:u,t,st:'',eis:false,nm:'',al:'',ds:'',pb:'',du:'',slE:''};recs.push(r);if(no)byNo.set(no,r)});
  const am={};for(const u in cnt){let b='',n=0;for(const a in cnt[u])if(cnt[u][a]>n){n=cnt[u][a];b=a}am[u]=b}
  const um={};let upN=0;if(R.up3&&R.up3.c){body(R.up3).forEach(x=>{const u=ulpN(x[R.up3.c.po]),a=arN(x[R.up3.c.ar]);if(u&&a&&!um[u]){um[u]=a;upN++}})}
  let noA=new Set();
  recs.forEach(r=>{r.area=r.areaRaw||um[r.ulp]||am[r.ulp]||NOA;if(r.area==NOA&&r.ulp)noA.add(r.ulp);r.ulp=r.ulp||'-'});
  if(noA.size)W.push('Area tidak ditemukan untuk '+noA.size+' ULP (contoh: '+[...noA].slice(0,3).join(', ')+'). Cek kolom Area di data APKT / sheet data up3.');
+ /* VLOOKUP No Lapor -> Sumber Lapor (sheet detail eis), berlaku untuk laporan ada panggilan maupun tidak */
+ const slm=new Map();if(R.sl&&R.sl.c){body(R.sl).forEach(x=>{const no=trm(x[R.sl.c.no]),v=trm(x[R.sl.c.sl]);if(no&&v&&v!='-'&&!slm.has(no))slm.set(no,lb(v))})}
+ recs.forEach(r=>{r.sl=(r.no&&slm.get(r.no))||(r.slE&&r.slE!='-'?lb(r.slE):'')||NOSL});
  const ix=new Map();recs.forEach(r=>r.ph.forEach(k=>{let a=ix.get(k);if(!a)ix.set(k,a=[]);a.push(r)}));
  /* log HP operator */
  const L=R.log,lc=L.c,lbd=body(L),lo=pOrd(lbd.map(x=>x[lc.dt]),o.ds),rows=[];let noPh=0,noT=0;
@@ -3672,6 +3703,9 @@ function bld(R,o){
  I.push('Data EIS ('+E.src+'): '+eis.length+' laporan (kolom no lapor: '+nmH(E,ec.no)+'; posko: '+nmH(E,ec.po)+'; status: '+nmH(E,ec.st)+'; tgl lapor: '+nmH(E,ec.tl)+'; telepon: '+nmH(E,ec.ph)+'). Rentang: '+rg(eis.map(r=>r.t))+'. Format tanggal: '+eo);
  I.push(R.up3&&R.up3.c?'Data UP3 ('+R.up3.src+'): '+upN+' pemetaan ULP → Area terbaca.':'Data UP3: tidak terbaca (opsional, Area diambil dari data APKT).');
  I.push('Nomor di log yang tidak ditemukan di APKT/EIS: '+unm.size+' nomor ('+calls.filter(c=>!c.rec).length+' panggilan).');
+ const slc=recs.filter(r=>r.no&&r.sl!=NOSL).length,sln=recs.filter(r=>r.no).length;
+ I.push(R.sl&&R.sl.c?'Sumber Lapor ('+R.sl.src+'): '+slm.size+' No Lapor terbaca; '+slc+' dari '+sln+' laporan tercocokkan (VLOOKUP No Lapor).':'Sumber Lapor: sheet gid '+CBC.G.sl+' tidak terbaca'+(R.slErr?' ('+R.slErr.split('\n')[0]+')':'')+'; kolom sumber lapor di sheet EIS dipakai bila ada.');
+ if(!slc)W.push('Sumber Lapor: belum ada No Lapor yang cocok dengan sheet detail eis (gid '+CBC.G.sl+'). Cek kolom "No Lapor" dan "Sumber Lapor".');
  return{recs,eis,calls,sts,W,I}}
 /* ===== agregasi sesuai filter ===== */
 const mkt=t=>new Date(t*1000).toISOString().slice(0,7);
@@ -3703,18 +3737,18 @@ function fillU(){if(!CB.M)return;const a=$('cbA').value,m=CB.M,u=[...new Set(m.e
 /* spesifikasi tabel pop up: v = tampilan, d = detail lengkap */
 function repSpec(list,called){const L=[...list].sort((a,b)=>(a.t||0)-(b.t||0));
  const st=r=>{const c=called.get(r);return c?'Ya ('+c.n+'x)':'Belum'};
- return{v:{h:['No','No Lapor','Tgl Lapor','Area','ULP','Status','No Telp','Dihubungi','Jml Percobaan Telp'],a:L.map((r,i)=>{const c=called.get(r);return[i+1,r.no,fT(r.t),r.area,r.ulp,r.st,tel(r.ph[0]),st(r),c?c.n:0]})},
-  d:{h:['No','No Lapor','Tgl Lapor','Area','ULP','Status','No Telp','Nama Pelapor','Alamat','Deskripsi','Penyebab','Durasi (EIS)','Dihubungi','Jml Percobaan Telp','Telp Pertama'],
-   a:L.map((r,i)=>{const c=called.get(r);return[i+1,r.no,fT(r.t),r.area,r.ulp,r.st,tel(r.ph[0]),mkN(r.nm),mkN(r.al),mkN(r.ds),mkN(r.pb),r.du,c?'Ya':'Belum',c?c.n:0,c?fT(c.t):'']})}}}
+ return{v:{h:['No','No Lapor','Tgl Lapor','Area','ULP','Status','Sumber Lapor','No Telp','Dihubungi','Jml Percobaan Telp'],a:L.map((r,i)=>{const c=called.get(r);return[i+1,r.no,fT(r.t),r.area,r.ulp,r.st,slOf(r),tel(r.ph[0]),st(r),c?c.n:0]})},
+  d:{h:['No','No Lapor','Tgl Lapor','Area','ULP','Status','Sumber Lapor','No Telp','Nama Pelapor','Alamat','Deskripsi','Penyebab','Durasi (EIS)','Dihubungi','Jml Percobaan Telp','Telp Pertama'],
+   a:L.map((r,i)=>{const c=called.get(r);return[i+1,r.no,fT(r.t),r.area,r.ulp,r.st,slOf(r),tel(r.ph[0]),mkN(r.nm),mkN(r.al),mkN(r.ds),mkN(r.pb),r.du,c?'Ya':'Belum',c?c.n:0,c?fT(c.t):'']})}}}
 function callSpec(list,scope,grp){grp=grp!==false;const L=[...list].sort((a,b)=>(a.t||0)-(b.t||0)),sc=scope||L,sl=c=>c.rec?(c.rec.eis?c.rec.st:'Tidak ada di EIS'):'-';
  const kf=c=>c.rec||c.k,tot=new Map();
  sc.forEach(c=>tot.set(kf(c),(tot.get(kf(c))||0)+1));
  const jm=c=>tot.get(kf(c))||'';
  const G1=[],gm=new Map();L.forEach(c=>{const k=kf(c);if(!gm.has(k)){gm.set(k,c);G1.push(c)}});
- const vv=grp?{h:['No','No Lapor','Jumlah Percobaan','Waktu Telp Pertama','No Telp','Nama Kontak','Area','ULP','Status'],a:G1.map((c,i)=>[i+1,c.no||'-',jm(c),fT(c.t),tel(c.k),mkN(c.nm),c.area,c.ulp,sl(c)])}
-  :{h:['No','Waktu Telp','No Telp','Nama Kontak','Durasi Telp','No Lapor','Jumlah Percobaan','Area','ULP','Status','Dihitung'],a:L.map((c,i)=>[i+1,fT(c.t),tel(c.k),mkN(c.nm),c.du,c.no||'-',jm(c),c.area,c.ulp,sl(c),c.cnt?'Ya':'Ganda'])};
+ const vv=grp?{h:['No','No Lapor','Jumlah Percobaan','Waktu Telp Pertama','No Telp','Nama Kontak','Area','ULP','Status','Sumber Lapor'],a:G1.map((c,i)=>[i+1,c.no||'-',jm(c),fT(c.t),tel(c.k),mkN(c.nm),c.area,c.ulp,sl(c),slC(c)])}
+  :{h:['No','Waktu Telp','No Telp','Nama Kontak','Durasi Telp','No Lapor','Jumlah Percobaan','Area','ULP','Status','Sumber Lapor','Dihitung'],a:L.map((c,i)=>[i+1,fT(c.t),tel(c.k),mkN(c.nm),c.du,c.no||'-',jm(c),c.area,c.ulp,sl(c),slC(c),c.cnt?'Ya':'Ganda'])};
  return{v:vv,
-  d:{h:['No','Waktu Telp','No Telp','No Telp (asli log)','Nama Kontak','Tipe Panggilan','Durasi Telp','No Lapor','Jumlah Percobaan','Tgl Lapor','Area','ULP','Status','Dihitung'],a:L.map((c,i)=>[i+1,fT(c.t),tel(c.k),mkP(c.raw),mkN(c.nm),c.ty,c.du,c.no||'-',jm(c),c.rec?fT(c.rec.t):'',c.area,c.ulp,sl(c),c.cnt?'Ya':'Ganda (jeda singkat)'])}}}
+  d:{h:['No','Waktu Telp','No Telp','No Telp (asli log)','Nama Kontak','Tipe Panggilan','Durasi Telp','No Lapor','Jumlah Percobaan','Tgl Lapor','Area','ULP','Status','Sumber Lapor','Dihitung'],a:L.map((c,i)=>[i+1,fT(c.t),tel(c.k),mkP(c.raw),mkN(c.nm),c.ty,c.du,c.no||'-',jm(c),c.rec?fT(c.rec.t):'',c.area,c.ulp,sl(c),slC(c),c.cnt?'Ya':'Ganda (jeda singkat)'])}}}
 function popC(t,sp){const n='Callback_'+t.replace(/[^\w]+/g,'-').replace(/^-|-$/g,'').slice(0,70),x=[];
  PP={h:sp.v.h,a:sp.v.a,f:[],n:n,sn:'Tampilan',x:x};PP2={h:sp.d.h,a:sp.d.a,n:n+'_detail',x:x};
  $('mt').textContent=t+' ('+sp.v.a.length+' baris)';
@@ -3753,7 +3787,7 @@ function recHtml(){const Z=CB.Z,cols=CB.cols,fa=$('cbA').value;CB.G=[];
  return ctl+'<table><thead><tr>'+BASE.map((h,i)=>`<th rowspan="${g?2:1}" class="${i<2?'l':''}" title="${qa(TT[i])}">${h}</th>`).join('')+(g?`<th colspan="${g}" class="grp">Jumlah Callback per Status</th>`:'')+'</tr>'+
   (g?'<tr>'+cols.map((c,i)=>`<th class="st${i?'':' b'}" title="${qa('Jumlah callback berstatus '+c+' (dari pelanggan yang dihubungi)')}">${e(c)}</th>`).join('')+'</tr>':'')+'</thead><tbody>'+tr+'</tbody></table>'}
 function render(){
- if(!CB.M){$('cbKpi').innerHTML='';$('cbOut').innerHTML='<div class="emp">Belum ada data. Klik "Sinkron sekarang".</div>';return}
+ if(!CB.M){$('cbKpi').innerHTML='';$('cbSlOut').innerHTML='';$('cbOut').innerHTML='<div class="emp">Belum ada data. Klik "Sinkron sekarang".</div>';return}
  const Z=agg(CB.M,filters());CB.Z=Z;
  CB.cols=CB.M.sts.slice();if((Z.T.st[LAIN]||[]).length)CB.cols.push(LAIN);
  if(!CB.init){Z.A.forEach(a=>CB.open.add(a.name));CB.init=true}
@@ -3768,11 +3802,60 @@ function render(){
   {l:'Panggilan Nomor Tidak Terpetakan',v:noF?unm.length:'-',d:()=>({t:'Nomor Tidak Terpetakan',s:callSpec(unm,unm)})}];
  $('cbKpi').innerHTML=CB.KP.map((k,i)=>`<button data-k="${i}"><b>${k.v}</b>${k.l}</button>`).join('');
  $('cbOut').innerHTML=Z.A.length?recHtml():'<div class="emp">Tidak ada data untuk filter ini.</div>';
- if(!Z.A.length)CB.view=null}
+ if(!Z.A.length)CB.view=null;slRender(Z)}
+/* ===== Sumber Lapor: rekap + grafik garis dinamis + export ===== */
+const slOf=r=>r.sl||NOSL,slC=c=>c.rec?slOf(c.rec):NOSU,SLP=['#2563eb','#e11d48','#16a34a','#f59e0b','#7c3aed','#0891b2','#db2777','#65a30d','#ea580c','#0d9488','#b45309','#4f46e5'];
+CB.off=new Set();
+function slGrp(Z,kf){const M=new Map(),g=k=>{let x=M.get(k);if(!x)M.set(k,x={k,rep:[],try:[],con:[],st:{}});return x};
+ Z.rep.forEach(r=>g(kf(r,slOf(r))).rep.push(r));
+ Z.cl.forEach(c=>{const x=g(kf(c.rec||c,slC(c)));x.try.push(c);if(c.cnt){x.con.push(c);(x.st[c.sk]=x.st[c.sk]||[]).push(c)}});return M}
+const slSort=(a,b)=>(a.k==NOSU)-(b.k==NOSU)||(a.k==NOSL)-(b.k==NOSL)||b.rep.length-a.rep.length||a.k.localeCompare(b.k);
+function slRender(Z){const L=[...slGrp(Z,(o,s)=>s).values()].sort(slSort),cols=CB.cols,T={k:'TOTAL',rep:Z.T.rep,try:Z.T.try,con:Z.T.con,st:Z.T.st},
+ H=['SUMBER LAPOR','Total Lapor','Percobaan Telp','Plgn Dihubungi','% Dihubungi','Belum Dihubungi'].concat(cols),
+ nb=x=>x.rep.filter(r=>!Z.called.has(r)).length,
+ row=x=>{const p=pcn(x.con.length,x.rep.length);return[x.k,x.rep.length,x.try.length,x.con.length,p==null?'':+p.toFixed(1),nb(x)].concat(cols.map(c=>(x.st[c]||[]).length))},
+ all=L.length>1?L.concat([T]):L,
+ td=(m,l,v,gi,c)=>`<td class="n${c||''}" data-l="${qa(l)}" data-m="${m}" data-g="${gi}">${v}</td>`;
+ CB.sv={h:H,a:all.map(row)};
+ const tr=all.map(x=>{const gi=CB.G.push({G:x,l:'Sumber Lapor: '+x.k})-1,p=pcn(x.con.length,x.rep.length);
+  return `<tr class="${x===T?'tot':''}"><td data-l="SUMBER LAPOR">${e(x.k)}</td>`+td('rep',H[1],x.rep.length,gi)+td('try',H[2],x.try.length,gi)+td('con',H[3],x.con.length,gi)+td('pct',H[4],pcs(p),gi,' pc')+td('pct',H[5],nb(x),gi)+cols.map((c,i)=>td('s'+i,c,(x.st[c]||[]).length,gi,i?'':' b')).join('')+'</tr>'}).join('');
+ $('cbSlOut').innerHTML=L.length?'<table><thead><tr>'+H.slice(0,6).map((h,i)=>`<th rowspan="${cols.length?2:1}" class="${i?'':'l'}">${h}</th>`).join('')+(cols.length?`<th colspan="${cols.length}" class="grp">Jumlah Callback per Status</th>`:'')+'</tr>'+(cols.length?'<tr>'+cols.map((c,i)=>`<th class="st${i?'':' b'}">${e(c)}</th>`).join('')+'</tr>':'')+'</thead><tbody>'+tr+'</tbody></table>':'<div class="emp">Tidak ada data untuk filter ini.</div>';
+ slChart(Z)}
+function slTrend(Z){const g=$('cbSlG').value=='auto'?($('cbM').value?'d':'m'):$('cbSlG').value,met=$('cbSlM').value,B={},ks=new Set(),
+ bk=t=>new Date(t*1000).toISOString().slice(0,g=='d'?10:7),
+ put=(s,t,f)=>{if(isNaN(t))return;const k=bk(t);ks.add(k);[s,'TOTAL'].forEach(n=>{const m=B[n]=B[n]||{},o=m[k]=m[k]||{rep:0,try:0,con:0};o[f]++})};
+ Z.rep.forEach(r=>put(slOf(r),r.t,'rep'));Z.cl.forEach(c=>{const s=slC(c);put(s,c.mt,'try');if(c.cnt)put(s,c.mt,'con')});
+ const so=[...ks].sort(),keys=[];
+ if(so.length){const[y,m,d]=so[0].split('-').map(Number),last=so[so.length-1];
+  for(let n=0;n<4000;n++){const k=g=='d'?new Date(Date.UTC(y,m-1,d+n)).toISOString().slice(0,10):new Date(Date.UTC(y,m-1+n,1)).toISOString().slice(0,7);keys.push(k);if(k>=last)break}}
+ const sum=n=>Object.values(B[n]).reduce((a,o)=>a+o.rep,0),
+ names=['TOTAL'].concat(Object.keys(B).filter(n=>n!='TOTAL').sort((a,b)=>(a==NOSU)-(b==NOSU)||(a==NOSL)-(b==NOSL)||sum(b)-sum(a)||a.localeCompare(b))),
+ val=(n,k)=>{const o=(B[n]||{})[k]||{rep:0,try:0,con:0};return met=='pct'?(o.rep?+(o.con/o.rep*100).toFixed(1):null):o[met]};
+ return{g,met,keys,names,labels:keys.map(k=>g=='d'?k.slice(8)+'/'+k.slice(5,7):MN[+k.slice(5)-1].slice(0,3)+' '+k.slice(2,4)),series:names.map(n=>keys.map(k=>val(n,k)))}}
+function slChart(Z){const hint=$('cbSlHint');
+ if(typeof Chart==='undefined'){hint.textContent='Library grafik gagal dimuat (cek koneksi internet). Tabel tetap bisa dipakai.';return}hint.textContent='';
+ const Tn=slTrend(Z),pc=Tn.met=='pct',cs=getComputedStyle(document.body),clr=i=>i?SLP[(i-1)%SLP.length]:cs.color;CB.tr=Tn;
+ $('cbSlChips').innerHTML=Tn.names.map((n,i)=>`<button type="button" class="alt" data-s="${qa(n)}" style="border-left:6px solid ${clr(i)};opacity:${CB.off.has(n)?.4:1}">${e(n)}</button>`).join('');
+ Chart.defaults.color=cs.color;Chart.defaults.borderColor='rgba(128,128,128,.25)';
+ if(CB.ch)CB.ch.destroy();
+ CB.ch=new Chart($('cbSlCh'),{type:'line',data:{labels:Tn.labels,datasets:Tn.names.map((n,i)=>({label:n,data:Tn.series[i],hidden:CB.off.has(n),borderColor:clr(i),backgroundColor:clr(i),borderWidth:i?2:3,borderDash:i?[]:[6,4],tension:.25,pointRadius:Tn.keys.length>45?0:3,pointHoverRadius:5,spanGaps:true}))},
+  options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' '+c.dataset.label+': '+(c.parsed.y==null?'-':String(c.parsed.y).replace('.',',')+(pc?'%':''))}}},
+   scales:{y:{beginAtZero:true,title:{display:true,text:$('cbSlM').options[$('cbSlM').selectedIndex].text},ticks:{callback:v=>pc?v+'%':v}},x:{ticks:{maxRotation:55,autoSkip:true}}}}})}
+$('cbSlM').onchange=$('cbSlG').onchange=()=>{if(CB.Z)slChart(CB.Z)};
+$('cbSlChips').onclick=ev=>{const b=ev.target.closest('button[data-s]');if(!b)return;const n=b.dataset.s;CB.off.has(n)?CB.off.delete(n):CB.off.add(n);if(CB.Z)slChart(CB.Z)};
+$('cbSlOut').onclick=ev=>{const c=ev.target.closest('td[data-m]');if(!c)return;const g=CB.G[+c.dataset.g],k=metricSpec(g,c.dataset.m);popC(k.t,k.s)};
+$('cbXS').onclick=()=>{const Z=CB.Z;if(!Z||!CB.sv||!CB.sv.a.length)return alert('Tidak ada data untuk diunduh.');
+ const Tn=slTrend(Z),mt=$('cbSlM').options[$('cbSlM').selectedIndex].text,cols=CB.cols,
+ M=[...slGrp(Z,(o,s)=>o.area+'\u0001'+o.ulp+'\u0001'+s).values()].sort((a,b)=>a.k.localeCompare(b.k)),
+ pr=x=>{const p=pcn(x.con.length,x.rep.length);return p==null?'':+p.toFixed(1)},
+ u={n:'Sumber Lapor per ULP',h:['AREA','ULP','SUMBER LAPOR','Total Lapor','Percobaan Telp','Plgn Dihubungi','% Dihubungi'].concat(cols),a:M.map(x=>x.k.split('\u0001').concat([x.rep.length,x.try.length,x.con.length,pr(x)],cols.map(c=>(x.st[c]||[]).length)))},
+ t={n:'Tren '+(Tn.g=='d'?'Harian':'Bulanan'),h:['Periode ('+mt+')'].concat(Tn.names),a:Tn.keys.map((k,i)=>[k].concat(Tn.series.map(v=>v[i]==null?'':v[i])))},
+ d=repSpec(Z.rep,Z.called).d;
+ dl(CB.sv.h,CB.sv.a,'Callback_SumberLapor'+sfx2(),'Rekap Sumber Lapor',[u,t,{n:'Detail Laporan',h:d.h,a:d.a}])};
 const warn=()=>{$('cbErr').textContent=CB.M.W.length?'Perhatian:\n'+CB.M.W.join('\n'):''};
 async function sync(){if(CB.busy)return;CB.busy=true;$('cbErr').textContent='';$('cbSt').textContent='Menyinkronkan...';
- try{const ks=[['log',bLog],['apkt',bApk],['eis',bEis],['up3',bUp]],rs=await Promise.allSettled(ks.map(([k,b])=>ldS(k,b))),R={},er=[];
-  rs.forEach((r,i)=>{const k=ks[i][0];if(r.status=='fulfilled')R[k]=r.value;else if(k!='up3')er.push(r.reason.message);else R.up3=null});
+ try{const ks=[['log',bLog],['apkt',bApk],['eis',bEis],['up3',bUp],['sl',bSl]],rs=await Promise.allSettled(ks.map(([k,b])=>ldS(k,b))),R={},er=[];
+  rs.forEach((r,i)=>{const k=ks[i][0];if(r.status=='fulfilled')R[k]=r.value;else if(k!='up3'&&k!='sl')er.push(r.reason.message);else{R[k]=null;if(k=='sl')R.slErr=r.reason.message}});
   if(er.length)throw Error(er.join('\n\n'));
   CB.raw=R;CB.M=bld(R,opt());fillA();render();
   $('cbSt').textContent='Tersinkron '+new Date().toLocaleTimeString('id-ID')+' ('+CB.M.eis.length+' laporan EIS, '+CB.M.calls.length+' panggilan keluar)';warn()
@@ -3791,8 +3874,8 @@ $('cbOut').onclick=ev=>{const b=ev.target.closest('button');
  const c=ev.target.closest('td[data-m]');if(c){const g=CB.G[+c.dataset.g],k=metricSpec(g,c.dataset.m);return popC(k.t,k.s)}
  const t=ev.target.closest('tr[data-a]');if(t){const n=t.dataset.a;CB.open.has(n)?CB.open.delete(n):CB.open.add(n);render()}};
 const sfx2=()=>{const f=[$('cbM').value,$('cbA').value,$('cbU').value].filter(Boolean).join('_').replace(/[^\w-]+/g,'-');return f?'_'+f:''};
-$('cbXR').onclick=()=>{if(!CB.view||!CB.view.a.length)return alert('Tidak ada data untuk diunduh.');dl(CB.view.h,CB.view.a,'Callback_Rekap'+sfx2(),'Rekap Callback')};
-$('cbXD').onclick=()=>{if(!CB.Z||!CB.Z.cl.length)return alert('Tidak ada panggilan untuk diunduh.');const s=callSpec(CB.Z.cl,CB.Z.cl);dl(s.d.h,s.d.a,'Callback_DetailPanggilan'+sfx2(),'Detail Panggilan')};
+$('cbXR').onclick=()=>{if(!CB.view||!CB.view.a.length)return alert('Tidak ada data untuk diunduh.');dl(CB.view.h,CB.view.a,'Callback_Rekap'+sfx2(),'Rekap Callback',CB.sv?[{n:'SUMBER LAPOR',h:CB.sv.h,a:CB.sv.a}]:[])};
+$('cbXD').onclick=()=>{if(!CB.Z||!CB.Z.cl.length)return alert('Tidak ada panggilan untuk diunduh.');const s=callSpec(CB.Z.cl,CB.Z.cl);dl(s.d.h,s.d.a,'Callback_DetailPanggilan'+sfx2(),'Detail Panggilan',CB.sv?[{n:'SUMBER LAPOR',h:CB.sv.h,a:CB.sv.a}]:[])};
 $('mx2').onclick=()=>{if(PP2)dl(PP2.h,PP2.a,PP2.n,'Detail',PP2.x)};
 setInterval(()=>{if(!$('cb').hidden&&!document.hidden)sync()},CBC.iv*60000);
 window.__cb={bld,agg,pdt,pk,pks,ulpN,ordOf};
