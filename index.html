@@ -3417,7 +3417,8 @@ select{-webkit-appearance:none;appearance:none;padding-right:36px;background-rep
 @keyframes sp{to{transform:rotate(360deg)}}
 .dg{background:var(--sf);border-radius:var(--r);box-shadow:var(--raise);padding:12px 16px;margin-bottom:18px}
 .dg summary{cursor:pointer;color:var(--mut);font-weight:600;font-size:13.5px}
-#dga{box-shadow:var(--inset);margin-bottom:0}
+#dga{background:var(--sf);border-radius:20px;box-shadow:var(--inset);padding:14px}
+#dga .ah{color:var(--cyt);font-size:14.5px}
 /* KPI */
 .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;margin-bottom:18px}
 .kc{position:relative;overflow:hidden;background:var(--sf);border-radius:20px;box-shadow:var(--raise);padding:14px 16px 14px 21px;transition:transform .15s}
@@ -3462,9 +3463,10 @@ th.rd,td.rd{color:var(--rd)!important;font-weight:800}
 .em{text-align:center;color:var(--mut);padding:24px;font-family:inherit}
 /* tabel Kategori Batal Command Center: header ringkas (teks turun ke baris berikutnya), header &amp; isi rata tengah */
 #t2 table{min-width:0}
-#t2 thead th{white-space:normal;vertical-align:middle;text-align:center;line-height:1.3;padding:10px 8px;min-width:88px}
-#t2 thead th:first-child{min-width:110px}
-#t2 td,#t2 td.k,#t2 tfoot td{text-align:center}
+#t2 thead th{white-space:normal;vertical-align:middle;text-align:center;line-height:1.3;padding:10px 8px;min-width:70px}
+/* kedua tabel: angka rata tengah, nama Area / Posko rata kiri */
+#t1 td,#t2 td,#t1 tfoot td,#t2 tfoot td{text-align:center}
+#t1 td.k,#t2 td.k,#t1 tfoot td.k,#t2 tfoot td.k{text-align:left}
 /* pop up rincian */
 .ov{position:fixed;inset:0;background:var(--scrim);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;padding:calc(var(--abs-top,0px) + 12px) 14px 14px;z-index:50}
 .ov.on{display:flex}
@@ -3549,7 +3551,7 @@ th.rd,td.rd{color:var(--rd)!important;font-weight:800}
 
   <section class=&quot;card&quot;>
     <div class=&quot;ch&quot;>
-      <div><h2 id=&quot;j2&quot;>🗂️ Kategori Batal Command Center</h2><small style=&quot;color:var(--faint);font-size:12px&quot;>Hanya tipe batal by Comcen. Alasan batal dikelompokkan otomatis; keterangan yang tidak sesuai format dianalisa maksudnya (teks asli tetap ditampilkan di rincian &amp;amp; Excel).</small></div>
+      <div><h2 id=&quot;j2&quot;>🗂️ Kategori Batal Command Center</h2></div>
       <div class=&quot;tools&quot;>
         <input class=&quot;s&quot; id=&quot;q2&quot; placeholder=&quot;🔍 Cari…&quot;>
         <button class=&quot;b&quot; data-x=&quot;t2&quot; data-m=&quot;rekap&quot;>⬇ Rekap</button>
@@ -3557,7 +3559,7 @@ th.rd,td.rd{color:var(--rd)!important;font-weight:800}
       </div>
     </div>
     <div class=&quot;tw&quot; id=&quot;t2&quot;></div>
-    <details class=&quot;dg&quot; id=&quot;dga&quot; style=&quot;margin-top:14px&quot;><summary id=&quot;dgas&quot;>🔎 Hasil analisa keterangan di luar format paten</summary><div id=&quot;dgab&quot; style=&quot;margin-top:10px&quot;></div></details>
+    <div id=&quot;dga&quot; style=&quot;margin-top:16px&quot;><div class=&quot;ah&quot; id=&quot;dgas&quot; style=&quot;font-weight:700;margin-bottom:10px&quot;>🔎 Hasil analisa keterangan di luar format paten</div><div id=&quot;dgab&quot;></div></div>
   </section>
 </div>
 
@@ -3565,6 +3567,16 @@ th.rd,td.rd{color:var(--rd)!important;font-weight:800}
   <div class=&quot;md&quot;>
     <div class=&quot;mh&quot;><b id=&quot;mt&quot;></b><div class=&quot;tools&quot;><button class=&quot;b&quot; id=&quot;mx&quot;>⬇ Excel</button><button class=&quot;b&quot; id=&quot;mc&quot;>✕ Tutup</button></div></div>
     <div class=&quot;mb&quot; id=&quot;mb&quot;></div>
+  </div>
+</div>
+<div class=&quot;ov&quot; id=&quot;ova&quot;>
+  <div class=&quot;md&quot; style=&quot;width:min(520px,100%)&quot;>
+    <div class=&quot;mh&quot;><b>Sesuaikan Kategori Batal</b><div class=&quot;tools&quot;><button class=&quot;b alt&quot; id=&quot;ax&quot;>✕ Tutup</button></div></div>
+    <div class=&quot;mb&quot;>
+      <div style=&quot;display:flex;flex-direction:column;gap:6px;margin-bottom:14px&quot;><label style=&quot;font-size:11.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;opacity:.8&quot;>Keterangan asli</label><div id=&quot;atx&quot; style=&quot;padding:10px 12px;border:1px solid var(--bd);border-radius:12px;font-weight:700;word-break:break-word&quot;></div><small id=&quot;acur&quot;></small></div>
+      <div style=&quot;display:flex;flex-direction:column;gap:6px;margin-bottom:14px&quot;><label for=&quot;asel&quot; style=&quot;font-size:11.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;opacity:.8&quot;>Kelompokkan ke kategori</label><select id=&quot;asel&quot;></select></div>
+      <div class=&quot;tools&quot;><button class=&quot;b&quot; id=&quot;asv&quot;>Simpan</button><button class=&quot;b alt&quot; id=&quot;adl&quot; hidden>Kembalikan ke hasil otomatis</button></div>
+    </div>
   </div>
 </div>
 <div class=&quot;toast&quot; id=&quot;tst&quot; hidden></div>
@@ -3775,9 +3787,9 @@ const BSEM=[
  [12,[/(sudah|sdh|telah|udah|udh)\s*(di\s*)?(diperbaiki|perbaiki|dinormalkan|normalkan|teratasi|beres|tertangani|ditangani|diselesaikan|dikerjakan|dikerjain|dibenahi|diatasi)/,
       /(petugas|tim|team|regu)\s*(lain|unit\s*lain|ulp\s*lain|up3\s*lain)/]],
  /* 7 Laporan Ganda: laporan sama / wilayah sama / padam sudah menyala sendiri (penyebab tidak bisa dipastikan petugas) */
- [7,[/sudah\s*ada\s*(laporan|lapor|tiket|ticket|ctt|wo|order)/,
+ [7,[/(sudah|sdh|udah|udh|telah)\s*(ada|ad)\s*(laporan|lapor|tiket|ticket|ctt|wo|order)/,
      /(sama|serupa|sejenis)\s*(dengan\s*)?(laporan|lapor|tiket|ticket|ctt|wo|no)/,
-     /laporan\s*(lain|sebelumnya|sebelum|yang\s*sama|serupa|sama)/,
+     /laporan\s*(lain|sebelumnya|sebelum|yang\s*sama|serupa|sama|terkait)/,
      /(sdh|sudah|telah|udh)\s*(di\s*)?lapor/,
      /(wilayah|lokasi|area|daerah|titik)\s*(yang\s*)?sama/,
      /(nyala|menyala|hidup|pulih|normal)\s*(dengan\s*)?(sendiri|sendirinya)/,
@@ -3813,8 +3825,10 @@ const BSEM=[
       /(pelanggan|pemilik)\s*(minta|meminta|request)\s*(di\s*)?(tunda|jadwal|besok|nanti|ditunda|dijadwalkan)/,
       /(tidak|tdk)\s*(bisa|dapat)\s*(masuk|diakses)\s*(rumah|lokasi|area)?/]]
 ];
-const BDASAR={paten:'Format Paten',analisa:'Hasil Analisa',kosong:'Tanpa Keterangan',belum:'Belum Bisa Dianalisa'};
-function bcls(raw){const n=nz(raw);if(emptyN(n))return[BTR,'kosong'];if(bkC.has(n))return bkC.get(n);
+const BDASAR={paten:'Format Paten',analisa:'Hasil Analisa',kosong:'Tanpa Keterangan',belum:'Belum Bisa Dianalisa',manual:'Penyesuaian Manual'};
+function bcls(raw){const n=nz(raw);if(emptyN(n))return[BTR,'kosong'];
+  if(MAN[n]){const mi=BCAT.findIndex(c=>c[0]==MAN[n]);if(mi>=0)return[mi,'manual']}   /* penyesuaian manual user didahulukan */
+  if(bkC.has(n))return bkC.get(n);
   let r=BCN.indexOf(n),d='paten';
   if(r<0){const nc=n.replace(/ /g,'');r=BCN.findIndex(x=>x.replace(/ /g,'')==nc)}
   if(r<0)r=BCAT.findIndex(c=>c[1].some(x=>x.test(n)));
@@ -3823,18 +3837,53 @@ function bcls(raw){const n=nz(raw);if(emptyN(n))return[BTR,'kosong'];if(bkC.has(
   if(r<0){r=BTR;d='belum'}
   const o=[r,d];bkC.set(n,o);return o}
 const bkat=raw=>bcls(raw)[0];
-/* panel: daftar keterangan di luar format paten beserta hasil analisanya (untuk dicek/dikoreksi) */
+/* ===== penyesuaian manual kategori oleh user (disimpan di browser ini) ===== */
+const MKEY='wo-batal-manual-kategori';
+let MAN={},ANA=[],ADJ='';
+try{MAN=JSON.parse(localStorage.getItem(MKEY)||'{}')||{}}catch(e){MAN={}}
+const saveMan=()=>{try{localStorage.setItem(MKEY,JSON.stringify(MAN));return true}catch(e){return false}};
+/* panel: daftar keterangan di luar format paten + hasil analisanya; tombol Sesuaikan untuk memilih kategori manual */
 function paintAnalisa(list){
   const m=new Map();
-  list.forEach(r=>{const a=gA(r),n=nz(a);if(emptyN(n))return;const c=bcls(a);if(c[1]!='analisa'&amp;&amp;c[1]!='belum')return;
+  list.forEach(r=>{const a=gA(r),n=nz(a);if(emptyN(n))return;const c=bcls(a);if(c[1]=='paten')return;
     let e=m.get(n);if(!e){e={t:String(a).trim(),n:0,c};m.set(n,e)}e.n++});
-  const arr=[...m.values()].sort((x,y)=>(x.c[1]=='analisa'?0:1)-(y.c[1]=='analisa'?0:1)||y.n-x.n);
-  const na=arr.filter(x=>x.c[1]=='analisa').length,nb=arr.length-na;
+  const ord={belum:0,analisa:1,manual:2};
+  ANA=[...m.values()].sort((x,y)=>ord[x.c[1]]-ord[y.c[1]]||y.n-x.n);
+  const cn=k=>ANA.filter(x=>x.c[1]==k).length;
   const sm=$('#dgas'),bd=$('#dgab');if(!sm||!bd)return;
-  sm.textContent='🔎 Hasil analisa keterangan di luar format paten — '+na+' teks dikelompokkan, '+nb+' belum terbaca';
-  const body=arr.length?arr.slice(0,300).map(x=>`<tr><td class=&quot;k&quot; style=&quot;white-space:normal;min-width:240px&quot;>${esc(x.t)}</td><td style=&quot;text-align:left&quot;>${esc(BCAT[x.c[0]][0])}</td><td style=&quot;text-align:center&quot;>${BDASAR[x.c[1]]}</td><td>${i0(x.n)}</td></tr>`).join('')
-    :'<tr><td class=&quot;em&quot; colspan=&quot;4&quot;>Tidak ada keterangan di luar format paten.</td></tr>';
-  bd.innerHTML='<div class=&quot;tw&quot;><table style=&quot;min-width:680px&quot;><thead><tr><th>Keterangan Asli</th><th>Dikelompokkan ke</th><th>Dasar</th><th>Jumlah</th></tr></thead><tbody>'+body+'</tbody></table></div>'+(arr.length>300?'<p class=&quot;stat&quot;>Menampilkan 300 teks pertama.</p>':'')}
+  sm.textContent='🔎 Hasil analisa keterangan di luar format paten — '+cn('analisa')+' dikelompokkan otomatis, '+cn('belum')+' belum terbaca'+(cn('manual')?', '+cn('manual')+' disesuaikan manual':'');
+  const body=ANA.length?ANA.slice(0,300).map((x,i)=>`<tr><td class=&quot;k&quot; style=&quot;white-space:normal;min-width:240px&quot;>${esc(x.t)}</td><td style=&quot;text-align:left&quot;>${esc(BCAT[x.c[0]][0])}</td><td style=&quot;text-align:center&quot;>${BDASAR[x.c[1]]}</td><td style=&quot;text-align:center&quot;>${i0(x.n)}</td><td style=&quot;text-align:center&quot;><button class=&quot;rb&quot; data-a=&quot;${i}&quot;>Sesuaikan</button></td></tr>`).join('')
+    :'<tr><td class=&quot;em&quot; colspan=&quot;5&quot;>Tidak ada keterangan di luar format paten.</td></tr>';
+  bd.innerHTML='<div class=&quot;tw&quot;><table style=&quot;min-width:760px&quot;><thead><tr><th>Keterangan Asli</th><th>Dikelompokkan ke</th><th>Dasar</th><th>Jumlah</th><th>Aksi</th></tr></thead><tbody>'+body+'</tbody></table></div>'+(ANA.length>300?'<p class=&quot;stat&quot;>Menampilkan 300 teks pertama.</p>':'');
+  bd.onclick=e=>{const b=e.target.closest('[data-a]');if(b)openAdj(+b.dataset.a)}}
+function openAdj(i){const x=ANA[i];if(!x)return;ADJ=nz(x.t);
+  $('#atx').textContent=x.t;
+  $('#acur').textContent='Saat ini: '+BCAT[x.c[0]][0]+' ('+BDASAR[x.c[1]]+')';
+  const sel=$('#asel');sel.innerHTML='<option value=&quot;&quot;>— pilih kategori —</option>'+BCAT.map(c=>`<option>${esc(c[0])}</option>`).join('');
+  sel.value=(x.c[1]=='manual'||x.c[1]=='analisa')?BCAT[x.c[0]][0]:'';
+  $('#adl').hidden=!MAN[ADJ];$('#ova').classList.add('on')}
+$('#asv').onclick=()=>{const v=$('#asel').value;if(!v){toast('Pilih kategori dari daftar terlebih dahulu.',1);return}
+  MAN[ADJ]=v;const ok=saveMan();$('#ova').classList.remove('on');render();
+  toast(ok?'Penyesuaian disimpan di browser ini.':'Penyesuaian berlaku sementara (browser menolak penyimpanan).',!ok)};
+$('#adl').onclick=()=>{delete MAN[ADJ];saveMan();$('#ova').classList.remove('on');render();toast('Dikembalikan ke hasil otomatis.')};
+$('#ax').onclick=()=>$('#ova').classList.remove('on');
+$('#ova').addEventListener('click',e=>{if(e.target.id=='ova')$('#ova').classList.remove('on')});
+document.addEventListener('keydown',e=>{if(e.key=='Escape')$('#ova').classList.remove('on')});
+/* header tabel Kategori Batal: lebar kolom disesuaikan agar teks kategori maksimal 4 baris */
+const _fc=document.createElement('canvas').getContext('2d');
+function fitHead(sel){
+  const el=$(sel);if(!el)return;
+  _fc.font='700 11px Montserrat,&quot;Segoe UI&quot;,system-ui,sans-serif';
+  const mw=s=>_fc.measureText(s).width+s.length*.44;
+  el.querySelectorAll('thead th').forEach(th=>{
+    const words=th.textContent.replace(/[↑↓⇅]/g,'').replace(/\s+/g,' ').trim().toUpperCase().split(' ').filter(Boolean);
+    if(!words.length)return;
+    const ww=words.map(mw),sp=mw(' ');ww[ww.length-1]+=18;   /* ruang panah urut di baris terakhir */
+    const lines=W=>{let n=1,cur=0;ww.forEach(w=>{if(cur&amp;&amp;cur+sp+w>W){n++;cur=w}else cur+=(cur?sp:0)+w});return n};
+    const total=ww.reduce((a,b)=>a+b,0)+sp*(ww.length-1);let W=Math.max(...ww);
+    while(W<total&amp;&amp;lines(W)>4)W+=2;
+    th.style.minWidth=Math.ceil(W+16+6)+'px'})}
+if(document.fonts&amp;&amp;document.fonts.ready)document.fonts.ready.then(()=>{try{fitHead('#t2')}catch(e){}});
 const btipe=raw=>{const n=nz(raw);if(/com\s*cen|command/.test(n))return'cm';if(/call|\bcc\b|contact/.test(n))return'cc';if(/mobile|\bpm\b/.test(n))return'pm';return'ot'};
 const hasKet=v=>!emptyN(nz(v));
 
@@ -4031,7 +4080,7 @@ function drawT(t){
   const body=rs.length?rs.map(it=>{const idx=t.items.indexOf(it);return `<tr>${it.cells.map((v,c)=>c<t.nk?`<td class=&quot;k&quot;>${esc(v)}</td>`:`<td class=&quot;${t.cls[c-t.nk]||''} clk&quot; data-i=&quot;${idx}&quot; data-c=&quot;${c-t.nk}&quot;>${t.fmt[c-t.nk](v)}</td>`).join('')}${t.G?`<td><button class=&quot;rb&quot; data-i=&quot;${idx}&quot;>👁 Rincian</button></td>`:''}</tr>`}).join('')
     :`<tr><td class=&quot;em&quot; colspan=&quot;${cols}&quot;>Tidak ada data.</td></tr>`;
   const foot=t.tot?`<tfoot><tr><td class=&quot;k&quot;>${esc(t.tot.l)}</td>${t.tot.cells.map((v,c)=>`<td class=&quot;${t.cls[c]||''} clk&quot; data-i=&quot;-1&quot; data-c=&quot;${c}&quot;>${t.fmt[c](v)}</td>`).join('')}${t.G?'<td></td>':''}</tr></tfoot>`:'';
-  $(t.el).innerHTML=`<table><thead><tr>${r1}</tr>${r2?`<tr>${r2}</tr>`:''}</thead><tbody>${body}</tbody>${foot}</table>`;
+  $(t.el).innerHTML=`<table><thead><tr>${r1}</tr>${r2?`<tr>${r2}</tr>`:''}</thead><tbody>${body}</tbody>${foot}</table>`;if(t.el===&quot;#t2&quot;)fitHead(t.el);
 }
 
 /* ===== RINCIAN (popup) ===== */
