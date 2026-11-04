@@ -283,6 +283,23 @@ header::after{content:"";position:absolute;left:0;right:0;bottom:0;height:6px;po
 .kita-legacy i{display:block;width:92px;height:46px;background:var(--kl) center/contain no-repeat}
 @media(max-width:640px){.kita-legacy{right:calc(74px + env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));gap:6px}.kita-legacy b{font-size:9.5px}.kita-legacy i{width:72px;height:36px}}
 @media print{.kita-legacy{display:none!important}}
+</style><style>
+/* ===== Menu card "WO Batal": kartu memanjang di bawah deretan kartu ===== */
+.mc-wide{grid-column:1/-1}
+.mc-wide svg{aspect-ratio:960/180}
+.mc svg [fill="#c93e55"]{fill:var(--bad)}
+.mc svg [stroke="#c93e55"]{stroke:var(--bad)}
+.mc-wide svg text{fill:var(--on-cy)}
+@media(max-width:640px){.mc-wide svg{aspect-ratio:2/1}}
+/* halaman WO Batal ditanam layar penuh (iframe srcdoc), header transparan seperti menu Cuti/Absensi */
+main#wob{max-width:none;margin:0;padding:0}
+:root{--wz:.9}@media(max-width:640px){:root{--wz:1}}
+/* halaman WO Batal tampil setara zoom browser 90% (di HP tetap 100%) */
+#wob iframe{position:fixed;left:0;top:0;width:calc(100% / var(--wz));height:calc(100vh / var(--wz));height:calc(100dvh / var(--wz));transform:scale(var(--wz));transform-origin:0 0;border:0;z-index:1;background:transparent}
+.wobld{position:fixed;left:0;right:0;top:50%;text-align:center;font-weight:700;color:var(--mut);z-index:0}
+html.wobmode{overflow:hidden;overscroll-behavior:none}html.wobmode body{min-height:calc(100vh + 600px)}
+html.wobmode header{background:rgba(234,236,248,.5);background:color-mix(in srgb,var(--bg) 50%,transparent);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}
+html.wobmode[data-theme="dark"] header{background:rgba(26,30,45,.5);background:color-mix(in srgb,var(--bg) 50%,transparent)}
 </style></head><body>
 <header><a class="btnlink hback" id="hbk" href="#" aria-label="Kembali ke Beranda"><span class="bk">←</span><span class="bt"> Kembali ke Beranda</span></a><div class="hero" id="hr"><video id="hv" src="journey.webm" poster="journey-poster.png" autoplay muted loop playsinline preload="auto" disablepictureinpicture disableremoteplayback aria-hidden="true" tabindex="-1"></video></div><div class="brand"><b id="bt">Command Center</b><span id="bs">UIW Papua dan Papua Barat</span></div><h1 id="ht">Dashboard Kinerja dan Administrasi Command Center</h1><p id="hp"></p></header>
 <div id="fl" aria-hidden="true"></div>
@@ -295,6 +312,7 @@ header::after{content:"";position:absolute;left:0;right:0;bottom:0;height:6px;po
 <a class="mc" href="#callback"><svg viewBox="0 0 320 180" role="img" aria-label="Callback pelanggan: telepon, percakapan dan penilaian"><rect width="320" height="180" fill="#efdcae"/><path d="M0 45H320M0 90H320M0 135H320M80 0V180M160 0V180M240 0V180" stroke="#c8ae7e" stroke-width="1" opacity=".5"/><g stroke="#3a2a1c" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"><rect x="40" y="26" width="72" height="128" rx="12" fill="#fbf2dc"/><rect x="50" y="42" width="52" height="86" rx="3" fill="#efdcae"/><circle cx="76" cy="142" r="5" fill="#fbf2dc"/><path d="M142 40H282A8 8 0 0 1 290 48V92A8 8 0 0 1 282 100H178L156 120V100H142A8 8 0 0 1 134 92V48A8 8 0 0 1 142 40Z" fill="#fbf2dc"/><circle cx="76" cy="84" r="13" fill="#5f6535"/><path d="M71 84l4 4 8-9" fill="none" stroke="#fbf2dc" stroke-width="3"/></g><text x="212" y="78" text-anchor="middle" font-family="serif" font-size="26" fill="#d49a2a" letter-spacing="2">★★★★★</text><path d="M170 150Q214 172 262 140" fill="none" stroke="#9c3f22" stroke-width="4" stroke-dasharray="7 6" stroke-linecap="round"/><path d="M256 130L272 144L250 150Z" fill="#9c3f22"/><circle cx="288" cy="136" r="15" fill="#fbf2dc" stroke="#7a6247" stroke-width="9" stroke-dasharray="5 4.5"/><circle cx="288" cy="136" r="7" fill="#fbf2dc" stroke="#3a2a1c" stroke-width="3"/></svg><div class="mb"><h2>Callback Pelanggan</h2><p>Rekap callback / Konfirmasi ke pelanggan.</p><span class="go">Buka rekap →</span></div></a>
 <a class="mc" href="#cuti"><svg viewBox="0 0 320 180" role="img" aria-label="Pengajuan cuti: kalender dengan hari cuti ditandai, koper dan matahari"><rect width="320" height="180" fill="#efdcae"/><path d="M0 45H320M0 90H320M0 135H320M80 0V180M160 0V180M240 0V180" stroke="#c8ae7e" stroke-width="1" opacity=".5"/><g stroke="#3a2a1c" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"><rect x="30" y="26" width="146" height="128" rx="6" fill="#fbf2dc"/><rect x="30" y="26" width="146" height="24" rx="6" fill="#3a2a1c"/><path d="M62 18V34M144 18V34" fill="none" stroke-width="5"/><rect x="42" y="66" width="20" height="14" rx="2" fill="#efdcae" stroke="#c8ae7e" stroke-width="2"/><rect x="68" y="66" width="20" height="14" rx="2" fill="#efdcae" stroke="#c8ae7e" stroke-width="2"/><rect x="94" y="66" width="20" height="14" rx="2" fill="#efdcae" stroke="#c8ae7e" stroke-width="2"/><rect x="120" y="66" width="20" height="14" rx="2" fill="#efdcae" stroke="#c8ae7e" stroke-width="2"/><rect x="146" y="66" width="20" height="14" rx="2" fill="#efdcae" stroke="#c8ae7e" stroke-width="2"/><rect x="42" y="86" width="20" height="14" rx="2" fill="#efdcae" stroke="#c8ae7e" stroke-width="2"/><rect x="68" y="86" width="20" height="14" rx="2" fill="#5f6535"/><rect x="94" y="86" width="20" height="14" rx="2" fill="#5f6535"/><rect x="120" y="86" width="20" height="14" rx="2" fill="#5f6535"/><rect x="146" y="86" width="20" height="14" rx="2" fill="#efdcae" stroke="#c8ae7e" stroke-width="2"/><rect x="42" y="106" width="20" height="14" rx="2" fill="#5f6535"/><rect x="68" y="106" width="20" height="14" rx="2" fill="#5f6535"/><rect x="94" y="106" width="20" height="14" rx="2" fill="#efdcae" stroke="#c8ae7e" stroke-width="2"/><rect x="120" y="106" width="20" height="14" rx="2" fill="#efdcae" stroke="#c8ae7e" stroke-width="2"/><rect x="146" y="106" width="20" height="14" rx="2" fill="#efdcae" stroke="#c8ae7e" stroke-width="2"/><rect x="42" y="126" width="20" height="14" rx="2" fill="#efdcae" stroke="#c8ae7e" stroke-width="2"/><rect x="68" y="126" width="20" height="14" rx="2" fill="#efdcae" stroke="#c8ae7e" stroke-width="2"/><rect x="94" y="126" width="20" height="14" rx="2" fill="#efdcae" stroke="#c8ae7e" stroke-width="2"/><rect x="120" y="126" width="20" height="14" rx="2" fill="#efdcae" stroke="#c8ae7e" stroke-width="2"/><rect x="146" y="126" width="20" height="14" rx="2" fill="#efdcae" stroke="#c8ae7e" stroke-width="2"/><path d="M118 112l5 5 10-11" fill="none" stroke="#fbf2dc" stroke-width="3"/></g><circle cx="270" cy="40" r="15" fill="#d49a2a" stroke="#3a2a1c" stroke-width="3"/><path d="M270 14V8M270 66V72M244 40H238M296 40H302M252 22l-4-4M288 22l4-4M252 58l-4 4M288 58l4 4" stroke="#d49a2a" stroke-width="3" stroke-linecap="round"/><g stroke="#3a2a1c" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"><path d="M230 96V88A6 6 0 0 1 236 82H262A6 6 0 0 1 268 88V96" fill="none"/><rect x="198" y="96" width="100" height="62" rx="8" fill="#9c3f22"/><path d="M226 96V158M270 96V158" fill="none" stroke="#fbf2dc" stroke-width="4"/><rect x="241" y="120" width="16" height="12" rx="2" fill="#d49a2a"/></g></svg><div class="mb"><h2>Pengajuan Cuti</h2><p>Ajukan dan pantau cuti pegawai Command Center.</p><span class="go">Buka pengajuan →</span></div></a>
 <a class="mc" href="#absensi"><svg viewBox="0 0 320 180" role="img" aria-label="Rekap absensi dan lembur: daftar hadir, jam dinding dan bulan penanda lembur malam"><rect width="320" height="180" fill="#efdcae"/><path d="M0 45H320M0 90H320M0 135H320M80 0V180M160 0V180M240 0V180" stroke="#c8ae7e" stroke-width="1" opacity=".5"/><g stroke="#3a2a1c" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"><rect x="26" y="22" width="108" height="140" rx="6" fill="#fbf2dc"/><rect x="58" y="14" width="44" height="16" rx="5" fill="#d49a2a"/><circle cx="52" cy="52" r="8" fill="#5f6535"/><path d="M48 52l3 3 6-7" fill="none" stroke="#fbf2dc" stroke-width="2.5"/><path d="M72 52H118" fill="none"/><circle cx="52" cy="76" r="8" fill="#5f6535"/><path d="M48 76l3 3 6-7" fill="none" stroke="#fbf2dc" stroke-width="2.5"/><path d="M72 76H118" fill="none"/><circle cx="52" cy="100" r="8" fill="#fbf2dc"/><path d="M72 100H118" fill="none"/><circle cx="52" cy="124" r="8" fill="#5f6535"/><path d="M48 124l3 3 6-7" fill="none" stroke="#fbf2dc" stroke-width="2.5"/><path d="M72 124H118" fill="none"/></g><g stroke="#3a2a1c" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"><circle cx="220" cy="92" r="52" fill="#fbf2dc"/><circle cx="220" cy="92" r="42" fill="#efdcae" stroke-width="2"/><path d="M220 92V62M220 92L242 104" fill="none" stroke-width="4"/><circle cx="220" cy="92" r="4" fill="#3a2a1c"/><path d="M220 54v5M220 125v5M182 92h5M253 92h5" fill="none" stroke-width="2.5"/></g><path d="M276 28a20 20 0 1 0 22 26a16 16 0 0 1-22-26Z" fill="#d49a2a" stroke="#3a2a1c" stroke-width="3" stroke-linejoin="round"/><circle cx="170" cy="140" r="14" fill="#9c3f22" stroke="#3a2a1c" stroke-width="3"/><path d="M170 133V147M163 140H177" stroke="#fbf2dc" stroke-width="3.5" stroke-linecap="round"/></svg><div class="mb"><h2>Rekap Absensi dan Lembur</h2><p>Rekap absensi dan lembur pegawai.</p><span class="go">Buka rekap →</span></div></a>
+<a class="mc mc-wide" href="#wobatal"><svg viewBox="0 0 960 180" preserveAspectRatio="xMidYMid slice" role="img" aria-label="WO Batal: tumpukan work order, satu work order dibatalkan, lalu direkap dalam grafik batang"><rect width="960" height="180" fill="#efdcae"/><path d="M0 45H960M0 90H960M0 135H960M80 0V180M160 0V180M240 0V180M320 0V180M400 0V180M480 0V180M560 0V180M640 0V180M720 0V180M800 0V180M880 0V180" stroke="#c8ae7e" stroke-width="1" opacity=".5"/><g stroke="#3a2a1c" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"><rect x="50" y="44" width="100" height="112" rx="5" fill="#fbf2dc"/><rect x="70" y="32" width="100" height="112" rx="5" fill="#fbf2dc"/><rect x="90" y="20" width="100" height="112" rx="5" fill="#fbf2dc"/><rect x="90" y="20" width="100" height="22" rx="5" fill="#3a2a1c"/><circle cx="108" cy="62" r="7" fill="#5f6535"/><circle cx="108" cy="84" r="7" fill="#5f6535"/><circle cx="108" cy="106" r="7" fill="#5f6535"/><path d="M124 62H176M124 84H170M124 106H160" fill="none"/><path d="M104 62l3 3 5-6M104 84l3 3 5-6M104 106l3 3 5-6" fill="none" stroke="#fbf2dc" stroke-width="2.2"/><rect x="400" y="14" width="150" height="152" rx="6" fill="#fbf2dc"/><rect x="400" y="14" width="150" height="26" rx="6" fill="#3a2a1c"/><rect x="454" y="6" width="42" height="14" rx="5" fill="#d49a2a"/><path d="M416 58H534M416 74H520M416 90H498" fill="none"/><circle cx="500" cy="124" r="34" fill="#c93e55"/><path d="M486 110L514 138M514 110L486 138" fill="none" stroke="#fbf2dc" stroke-width="7"/><rect x="636" y="22" width="270" height="136" rx="8" fill="#fbf2dc"/><rect x="654" y="90" width="26" height="50" fill="#5f6535" stroke-width="2.5"/><rect x="692" y="58" width="26" height="82" fill="#d49a2a" stroke-width="2.5"/><rect x="730" y="74" width="26" height="66" fill="#5f6535" stroke-width="2.5"/><rect x="768" y="38" width="26" height="102" fill="#c93e55" stroke-width="2.5"/><rect x="806" y="82" width="26" height="58" fill="#5f6535" stroke-width="2.5"/><rect x="844" y="62" width="26" height="78" fill="#d49a2a" stroke-width="2.5"/><path d="M644 140H898" fill="none"/></g><text x="140" y="36" text-anchor="middle" font-family="serif" font-size="13" fill="#fbf2dc">WO</text><text x="475" y="32" text-anchor="middle" font-family="serif" font-size="14" fill="#fbf2dc">WO BATAL</text><path d="M200 70Q250 38 306 64" fill="none" stroke="#9c3f22" stroke-width="4" stroke-dasharray="7 6" stroke-linecap="round"/><path d="M300 52L320 66L296 74Z" fill="#9c3f22"/><path d="M558 92H610" fill="none" stroke="#9c3f22" stroke-width="4" stroke-dasharray="7 6" stroke-linecap="round"/><path d="M604 80L626 92L604 104Z" fill="#9c3f22"/><path d="M667 84L705 52L743 68L781 32L819 76L857 56" fill="none" stroke="#9c3f22" stroke-width="3" stroke-dasharray="6 5" stroke-linecap="round" stroke-linejoin="round"/></svg><div class="mb"><h2>WO Batal</h2><p>Rekap work order yang dibatalkan per Distribusi, Area dan Posko, lengkap dengan tipe batal (Command Center, Call Center, PLN Mobile) dan kategori alasan batal.</p><span class="go">Buka rekap →</span></div></a>
 </div>
 <p class="hnote"><span>sumber data : APKT-EIS-VCC</span></p>
 </main>
@@ -3334,6 +3352,783 @@ fillKet();renderCal();refreshAuto();load();
 </html>
 "></div>
 </main>
+<main id="wob" hidden>
+<div id="wobBox"></div>
+<div id="wobSrc" hidden data-html="<!DOCTYPE html>
+<html lang=&quot;id&quot; data-theme=&quot;dark&quot;>
+<head>
+<script>(function(){try{if(parent!==window){var d=document.documentElement;d.classList.add(&quot;emb&quot;);var t=parent.document.documentElement.getAttribute(&quot;data-theme&quot;);if(t===&quot;dark&quot;||t===&quot;light&quot;)d.setAttribute(&quot;data-theme&quot;,t)}}catch(e){}})();</script>
+<meta charset=&quot;UTF-8&quot;>
+<meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0, viewport-fit=cover&quot;>
+<title>WO Batal</title>
+<link rel=&quot;preconnect&quot; href=&quot;https://fonts.googleapis.com&quot;>
+<link href=&quot;https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&amp;display=swap&quot; rel=&quot;stylesheet&quot;>
+<script src=&quot;https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js&quot;></script>
+<script src=&quot;https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js&quot;></script>
+<style>
+/* ===== Tema Dashboard (neumorphic terang/gelap) ===== */
+:root{
+ --bg:#eaecf8;--bg2:#f6f7fd;--sf:#eceefa;--sf2:#f4f5fc;--edge:#fbfbff;
+ --sh-d:rgba(148,157,193,.55);--sh-l:rgba(255,255,255,.95);
+ --ink:#2c3650;--mut:#5b6882;--line:#d3d8ec;
+ --cy:#52c3dc;--cy2:#8feaf6;--cyt:#0a6e88;--ye:#f8c420;--ye2:#fde084;--yet:#7a5a00;
+ --on-cy:#04303c;--on-ye:#3b2c00;--bad:#c93e55;--badbg:rgba(201,62,85,.13);
+ --tint-cy:rgba(82,195,220,.17);--tint-ye:rgba(248,196,32,.22);--scrim:rgba(40,48,80,.45);
+ --raise:6px 6px 14px var(--sh-d),-6px -6px 14px var(--sh-l);
+ --raise-s:3px 3px 8px var(--sh-d),-3px -3px 8px var(--sh-l);
+ --inset:inset 3px 3px 7px var(--sh-d),inset -3px -3px 7px var(--sh-l);
+ --r:22px;--zb:#e8ebf8;--hv:color-mix(in srgb,var(--cy) 20%,var(--sf));
+ /* nama variabel lama yang dipakai script/tabel */
+ --card:var(--sf);--card2:var(--sf2);--bd:var(--line);--tx:var(--ink);--dim:var(--mut);--faint:var(--mut);
+ --c1:#a07400;--c2:#0a6e88;--c3:#6b55a8;--ng:#c93e55;--ok:#1e8e55;--rd:#c93e55;
+ color-scheme:light}
+:root[data-theme=dark]{
+ --bg:#1a1e2d;--bg2:#222739;--sf:#222639;--sf2:#2a2f46;--edge:#2d3352;
+ --sh-d:rgba(7,9,18,.72);--sh-l:rgba(68,77,114,.4);
+ --ink:#e8ebf7;--mut:#a3adc7;--line:#353b5c;--cyt:#7fdcee;--yet:#fdd24f;
+ --bad:#ff8c9a;--badbg:rgba(255,140,154,.14);--tint-cy:rgba(82,195,220,.2);--tint-ye:rgba(248,196,32,.2);
+ --scrim:rgba(6,8,16,.62);--zb:#272c42;
+ --c1:#fdd24f;--c2:#7fdcee;--c3:#b7a6e6;--ng:#ff8c9a;--ok:#7fd9a8;--rd:#ff8c9a;
+ color-scheme:dark}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+html,body{margin:0}
+body{min-height:100vh;min-height:100dvh;font:14.5px/1.5 Montserrat,&quot;Segoe UI&quot;,system-ui,-apple-system,Roboto,Arial,sans-serif;color:var(--ink);background:var(--bg);background-image:linear-gradient(160deg,var(--bg2),var(--bg));background-attachment:fixed;-webkit-tap-highlight-color:transparent}
+html.emb,html.emb body{background:transparent}
+/* --abs-top diisi Dashboard (tinggi header) agar isi mulai tepat di bawah header */
+.wrap{max-width:1240px;margin:0 auto;padding:calc(var(--abs-top,0px) + 14px) 16px 100px}
+.card{background:var(--sf);border-radius:var(--r);padding:16px;margin-bottom:18px;box-shadow:var(--raise);min-width:0}
+.row{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end}
+.row.bar{margin-top:14px;align-items:center}
+.fg{display:flex;flex-direction:column;gap:6px;min-width:180px;flex:1}
+.fg label{font-size:11.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--mut)}
+select,input.s{font:inherit;font-size:14px;font-weight:500;padding:9px 14px;min-height:42px;border:2px solid var(--edge);border-radius:14px;color:var(--ink);background-color:var(--sf);box-shadow:var(--inset)}
+select{-webkit-appearance:none;appearance:none;padding-right:36px;background-repeat:no-repeat;background-position:right 13px center;background-image:url(&quot;data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='10' viewBox='0 0 14 10'><path d='M1.5 1.5h11L7 9z' fill='%2352c3dc' stroke='%2352c3dc' stroke-width='1.5' stroke-linejoin='round'/></svg>&quot;)}
+.b{cursor:pointer;font:inherit;font-size:14px;font-weight:700;padding:9px 16px;min-height:42px;border:0;border-radius:14px;white-space:nowrap;background:linear-gradient(145deg,var(--ye2),var(--ye));color:var(--on-ye);box-shadow:var(--raise-s);transition:transform .12s,box-shadow .15s,filter .15s;touch-action:manipulation}
+.b:hover{filter:brightness(1.04)}
+.b:active{transform:scale(.98);box-shadow:var(--inset)}
+.b:disabled{opacity:.6;cursor:progress}
+.b.alt{background:var(--sf);color:var(--ink)}
+:is(.b,select,input,summary,.kc,.rb):focus-visible{outline:3px solid var(--cy);outline-offset:2px}
+.tools{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.stat{font-size:13px;color:var(--mut)}
+.stat.err{color:var(--bad)}
+.spin{display:inline-block;animation:sp 1s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.dg{background:var(--sf);border-radius:var(--r);box-shadow:var(--raise);padding:12px 16px;margin-bottom:18px}
+.dg summary{cursor:pointer;color:var(--mut);font-weight:600;font-size:13.5px}
+#dga{box-shadow:var(--inset);margin-bottom:0}
+/* KPI */
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;margin-bottom:18px}
+.kc{position:relative;overflow:hidden;background:var(--sf);border-radius:20px;box-shadow:var(--raise);padding:14px 16px 14px 21px;transition:transform .15s}
+.kc::before{content:&quot;&quot;;position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--a)}
+.kc.clk:hover{transform:translateY(-2px);text-decoration:none}
+.kc .l{font-size:11.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--mut)}
+.kc .v{font:800 26px/1.15 Montserrat,&quot;Segoe UI&quot;,system-ui,sans-serif;margin-top:6px;font-variant-numeric:tabular-nums}
+.kc .s{font-size:12px;color:var(--mut);margin-top:2px}
+/* kartu &amp; grafik */
+.ch{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.ch h2{margin:0;font:700 18px/1.3 Montserrat,&quot;Segoe UI&quot;,system-ui,sans-serif;color:var(--cyt)}
+.ch .tools input{min-width:240px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px}
+.grid2 .card{margin-bottom:0}
+.grid2 .full{grid-column:1/-1}
+.grid2 h3{margin:0 0 8px;font:700 15px/1.3 Montserrat,&quot;Segoe UI&quot;,system-ui,sans-serif;color:var(--cyt)}
+.cbox{position:relative;height:320px}
+/* tabel */
+.tw{overflow:auto;max-height:520px;border:1px solid var(--line);border-radius:16px;-webkit-overflow-scrolling:touch}
+table{border-collapse:collapse;width:100%;min-width:900px;font-size:13px;line-height:1.5}
+th,td{padding:8px 10px;border-bottom:1px solid var(--line);border-right:1px solid var(--line);white-space:nowrap}
+thead th{position:sticky;top:0;background:var(--sf2);z-index:1;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--mut);font-weight:700;cursor:pointer;text-align:center;border-left:1px solid var(--line)}
+thead tr:nth-child(2) th{top:34px}
+thead th:first-child{border-left:0}
+th i{font-style:normal;opacity:.6}
+td{color:var(--mut);text-align:right;font-variant-numeric:tabular-nums}
+td.k{text-align:left;color:var(--ink);font-weight:700}
+tbody tr:nth-child(even) td{background:var(--zb)}
+tbody tr:hover td{background:var(--hv)}
+td.k,thead th:first-child,tfoot td:first-child{position:sticky;left:0;z-index:2;background:var(--sf)}
+thead th:first-child{z-index:3;background:var(--sf2)}
+tbody tr:nth-child(even) td.k{background:var(--zb)}
+tbody tr:hover td.k{background:var(--hv)}
+tfoot td{font-weight:800;background:var(--cy);color:var(--on-cy)!important;border-bottom:0;border-right-color:rgba(4,48,60,.18)}
+tfoot td:first-child{background:var(--cy)}
+tfoot td.rd{color:#7a0f24!important}
+.c1{color:var(--c1)!important}.c2{color:var(--c2)!important}.c3{color:var(--c3)!important}.ng{color:var(--ng)!important}
+th.rd,td.rd{color:var(--rd)!important;font-weight:800}
+.clk{cursor:pointer}.clk:hover{text-decoration:underline dotted}
+.rb{border:0;background:var(--tint-cy);color:var(--cyt);border-radius:10px;padding:5px 11px;cursor:pointer;font:700 12px Montserrat,&quot;Segoe UI&quot;,system-ui,sans-serif;white-space:nowrap}
+.rb:hover{background:var(--tint-ye)}
+.em{text-align:center;color:var(--mut);padding:24px;font-family:inherit}
+/* tabel Kategori Batal Command Center: header ringkas (teks turun ke baris berikutnya), header &amp; isi rata tengah */
+#t2 table{min-width:0}
+#t2 thead th{white-space:normal;vertical-align:middle;text-align:center;line-height:1.3;padding:10px 8px;min-width:88px}
+#t2 thead th:first-child{min-width:110px}
+#t2 td,#t2 td.k,#t2 tfoot td{text-align:center}
+/* pop up rincian */
+.ov{position:fixed;inset:0;background:var(--scrim);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;padding:calc(var(--abs-top,0px) + 12px) 14px 14px;z-index:50}
+.ov.on{display:flex}
+.md{background:var(--sf);border-radius:24px;box-shadow:0 20px 50px -12px rgba(0,0,0,.45);width:min(1100px,100%);max-height:88vh;max-height:calc(100dvh - var(--abs-top,0px) - 26px);display:flex;flex-direction:column;padding:16px;gap:12px}
+.mh{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}
+.mh b{font:700 18px/1.3 Montserrat,&quot;Segoe UI&quot;,system-ui,sans-serif;color:var(--cyt)}
+.mb{overflow:auto;min-height:0}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--sf);color:var(--ink);box-shadow:var(--raise);padding:10px 16px;border-radius:14px;font-size:13px;z-index:60;max-width:92vw}
+@media(max-width:900px){.grid2{grid-template-columns:1fr}}
+@media(max-width:640px){
+ body{font-size:14px}
+ .wrap{padding:calc(var(--abs-top,0px) + 10px) 12px 96px}
+ .card{padding:14px;margin-bottom:14px}
+ .fg{min-width:calc(50% - 6px)}
+ select,input.s,.b{font-size:16px;min-height:46px}
+ .row.bar .b{flex:1 1 38%}.row.bar .stat{flex:1 1 100%}
+ .kpis{grid-template-columns:repeat(2,1fr);gap:10px}.kc .v{font-size:22px}
+ .grid2{gap:14px;margin-bottom:14px}.cbox{height:280px}
+ .ch .tools{width:100%}.ch .tools input{min-width:100%;flex:1 1 100%}.ch .tools .b{flex:1 1 40%}
+ .ov{padding:0;align-items:flex-end}
+ .md{width:100%;max-height:calc(100dvh - var(--abs-top,0px) - 8px);border-radius:24px 24px 0 0;padding:14px 14px calc(14px + env(safe-area-inset-bottom,0px))}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}.spin{animation:none}}
+/* filter menempel di bawah header saat halaman di-skrol, lalu sedikit mengecil */
+.fbar{position:sticky;top:calc(var(--abs-top,0px) + 8px);z-index:5;transition:padding .28s ease,margin-bottom .28s ease,box-shadow .28s ease}
+.fbar .row,.fbar .fg{transition:gap .28s ease,margin-top .28s ease}
+.fbar .fg label{max-height:20px;transition:font-size .28s ease,max-height .28s ease,opacity .28s ease}
+.fbar select,.fbar .b{transition:min-height .28s ease,padding .28s ease,font-size .28s ease,transform .12s,box-shadow .15s,filter .15s}
+.fbar.shrunk{padding:8px 12px;margin-bottom:calc(18px + var(--comp,0px));box-shadow:0 12px 26px -12px var(--sh-d),var(--raise-s)}
+.fbar.shrunk .row{gap:8px}
+.fbar.shrunk .row.bar{margin-top:8px}
+.fbar.shrunk .fg{gap:2px}
+.fbar.shrunk .fg label{font-size:9.5px}
+.fbar.shrunk select{min-height:32px;padding:4px 30px 4px 10px;font-size:13px}
+.fbar.shrunk .b{min-height:32px;padding:4px 12px;font-size:13px}
+.fbar.shrunk .stat{font-size:12px}
+.fbar.nt,.fbar.nt *{transition:none!important}
+@media(max-width:640px){
+ .fbar.shrunk .fg label{max-height:0;opacity:0;overflow:hidden}
+ .fbar.shrunk .row.bar .stat{display:none}
+ .fbar.shrunk select,.fbar.shrunk .b{font-size:16px;min-height:38px}
+}
+</style>
+</head>
+<body>
+<div class=&quot;wrap&quot;>
+  <section class=&quot;card fbar&quot; id=&quot;fbar&quot;>
+    <div class=&quot;row&quot;>
+      <div class=&quot;fg&quot;><label for=&quot;fb&quot;>Bulan</label><select id=&quot;fb&quot;></select></div>
+      <div class=&quot;fg&quot;><label for=&quot;fd&quot;>Distribusi</label><select id=&quot;fd&quot;></select></div>
+      <div class=&quot;fg&quot;><label for=&quot;fa&quot;>Area</label><select id=&quot;fa&quot;></select></div>
+      <div class=&quot;fg&quot;><label for=&quot;fp&quot;>Posko</label><select id=&quot;fp&quot;></select></div>
+    </div>
+    <div class=&quot;row bar&quot;>
+      <button class=&quot;b alt&quot; id=&quot;rs&quot;>Reset</button>
+      <button class=&quot;b&quot; id=&quot;sy&quot; title=&quot;Cek folder dan ambil data terbaru&quot;><span id=&quot;syi&quot;>⟳</span> Sinkron</button>
+      <button class=&quot;b alt&quot; id=&quot;th&quot; title=&quot;Ganti tema terang/gelap&quot;>🌙 / ☀️</button>
+      <span class=&quot;stat&quot; id=&quot;st&quot;>Memuat…</span>
+    </div>
+  </section>
+
+  <details class=&quot;dg&quot;><summary>Status data &amp;amp; file</summary><div id=&quot;dgb&quot; style=&quot;margin-top:10px&quot;></div></details>
+  <div class=&quot;kpis&quot; id=&quot;kp&quot;></div>
+
+  <div class=&quot;grid2&quot;>
+    <div class=&quot;card full&quot;><h3>Batal per <span id=&quot;u1&quot;>Area</span> menurut tipe batal</h3><div class=&quot;cbox&quot;><canvas id=&quot;c1&quot;></canvas></div></div>
+    <div class=&quot;card&quot;><h3>Kategori Batal Command Center</h3><div class=&quot;cbox&quot;><canvas id=&quot;c2&quot;></canvas></div></div>
+    <div class=&quot;card&quot;><h3>WO Batal Per Unit</h3><div class=&quot;cbox&quot;><canvas id=&quot;c3&quot;></canvas></div></div>
+  </div>
+
+  <section class=&quot;card&quot;>
+    <div class=&quot;ch&quot;>
+      <div><h2 id=&quot;j1&quot;>🚫 Rekapitulasi Laporan Batal</h2></div>
+      <div class=&quot;tools&quot;>
+        <input class=&quot;s&quot; id=&quot;q1&quot; placeholder=&quot;🔍 Cari…&quot;>
+        <button class=&quot;b&quot; data-x=&quot;t1&quot; data-m=&quot;rekap&quot;>⬇ Rekap</button>
+        <button class=&quot;b&quot; data-x=&quot;t1&quot; data-m=&quot;detail&quot;>⬇ Detail</button>
+      </div>
+    </div>
+    <div class=&quot;tw&quot; id=&quot;t1&quot;></div>
+  </section>
+
+  <section class=&quot;card&quot;>
+    <div class=&quot;ch&quot;>
+      <div><h2 id=&quot;j2&quot;>🗂️ Kategori Batal Command Center</h2><small style=&quot;color:var(--faint);font-size:12px&quot;>Hanya tipe batal by Comcen. Alasan batal dikelompokkan otomatis; keterangan yang tidak sesuai format dianalisa maksudnya (teks asli tetap ditampilkan di rincian &amp;amp; Excel).</small></div>
+      <div class=&quot;tools&quot;>
+        <input class=&quot;s&quot; id=&quot;q2&quot; placeholder=&quot;🔍 Cari…&quot;>
+        <button class=&quot;b&quot; data-x=&quot;t2&quot; data-m=&quot;rekap&quot;>⬇ Rekap</button>
+        <button class=&quot;b&quot; data-x=&quot;t2&quot; data-m=&quot;detail&quot;>⬇ Detail</button>
+      </div>
+    </div>
+    <div class=&quot;tw&quot; id=&quot;t2&quot;></div>
+    <details class=&quot;dg&quot; id=&quot;dga&quot; style=&quot;margin-top:14px&quot;><summary id=&quot;dgas&quot;>🔎 Hasil analisa keterangan di luar format paten</summary><div id=&quot;dgab&quot; style=&quot;margin-top:10px&quot;></div></details>
+  </section>
+</div>
+
+<div class=&quot;ov&quot; id=&quot;ov&quot;>
+  <div class=&quot;md&quot;>
+    <div class=&quot;mh&quot;><b id=&quot;mt&quot;></b><div class=&quot;tools&quot;><button class=&quot;b&quot; id=&quot;mx&quot;>⬇ Excel</button><button class=&quot;b&quot; id=&quot;mc&quot;>✕ Tutup</button></div></div>
+    <div class=&quot;mb&quot; id=&quot;mb&quot;></div>
+  </div>
+</div>
+<div class=&quot;toast&quot; id=&quot;tst&quot; hidden></div>
+
+<script>
+/* ===== KONFIGURASI ===== */
+const APPS_URL='https://script.google.com/macros/s/AKfycbwj07hp-nTx4ghx0E8g6eHcHEqN8hiamt8izoQeo5FMhquHOKM6L0KMoGG5sMXhwkSN/exec';
+const AUTO_MS=180000;
+const BLN=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+
+/* ===== UTIL &amp; STATE ===== */
+const $=s=>document.querySelector(s),D={p2b:[],cc:[]},KM={},TB={},CACHE={},CH={};
+let AF={d:'',a:'',p:''},MX=null,KPI=[],busy=false,diag='';
+const esc=s=>String(s==null?'':s).replace(/[&amp;<>&quot;]/g,c=>({'&amp;':'&amp;amp;','<':'&amp;lt;','>':'&amp;gt;','&quot;':'&amp;quot;'}[c]));
+const f=(v,d=0)=>v==null||isNaN(v)?'-':Number(v).toLocaleString('id-ID',{minimumFractionDigits:d,maximumFractionDigits:d});
+const i0=v=>f(v,0),pc=v=>v==null?'-':f(v,2)+'%';
+const slug=s=>String(s==null?'':s).normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^A-Za-z0-9]+/g,'_').replace(/^_+|_+$/g,'').slice(0,50)||'Data';
+const toast=(m,err)=>{const t=$('#tst');t.textContent=m;t.hidden=false;t.style.borderLeft='3px solid '+(err?'var(--ng)':'var(--ok)');clearTimeout(t._h);t._h=setTimeout(()=>t.hidden=true,4500)};
+
+/* ===== BACA DATA (daftar file dari Apps Script, isi dari gviz) ===== */
+async function fetchList(){
+  const r=await fetch(APPS_URL+'?t='+Date.now(),{cache:'no-store'});
+  if(!r.ok)throw new Error('Apps Script HTTP '+r.status);
+  const j=await r.json();if(j.error)throw new Error(j.error);return j;
+}
+function csv(t){const r=[];let w=[],c='',q=0;for(let i=0;i<t.length;i++){const x=t[i];
+  if(q){if(x=='&quot;'){if(t[i+1]=='&quot;'){c+='&quot;';i++}else q=0}else c+=x}
+  else if(x=='&quot;')q=1;else if(x==','){w.push(c);c=''}else if(x=='\n'){w.push(c);r.push(w);w=[];c=''}else if(x!='\r')c+=x}
+  if(c||w.length){w.push(c);r.push(w)}return r}
+const NEED=new Set(['NOLAPORAN','NAMADISTRIBUSI','NAMAAREA','NAMAPOSKO','TGLLAPOR','BLTH','APKTSTATUS','STATUSAPKT','TIPEBATAL','JENISBATAL','TIPEPEMBATALAN','ALASANBATAL','ALASANPEMBATALAN','KETERANGANBATAL','KETBATAL','BATALBY']);
+const normH=x=>String(x).trim().toUpperCase().replace(/[^A-Z0-9]+/g,'_').replace(/^_+|_+$/g,'');
+const isNeed=h=>{const n=h.replace(/[^A-Z0-9]/g,'');return NEED.has(n)||n.includes('BATAL')||n.includes('ALASAN')||n.includes('PEMBATALAN')||n.includes('KETERANGAN')||/^KET\d*$/.test(n)||n.includes('STATUS')};
+const colL=i=>{let s='';for(i++;i>0;i=Math.floor((i-1)/26))s=String.fromCharCode(65+(i-1)%26)+s;return s};
+async function gv(id,q){
+  const res=await fetch(`https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:csv${q?'&amp;tq='+encodeURIComponent(q):''}&amp;_=${Date.now()}`,{cache:'no-store'});
+  if(!res.ok)throw new Error('HTTP '+res.status);
+  const txt=await res.text();
+  if(/^\s*<(!doctype|html)/i.test(txt))throw new Error('belum dibagikan sebagai Pelihat');
+  return csv(txt);
+}
+function toRows(r,name,g){
+  const h=r[0].map(normH);
+  return r.slice(1).filter(x=>x.some(v=>v!=='')).map(x=>{const o={_SHEET:g,_FILE:name};h.forEach((k,i)=>{const v=(x[i]||'').trim();if(o[k]===undefined||o[k]==='')o[k]=v});return o});
+}
+// ambil hanya kolom yang dipakai dashboard (jauh lebih kecil &amp; cepat); bila gagal, ambil semua kolom
+async function loadSheet(id,name,g){
+  try{
+    const hd=(await gv(id,'select * limit 1'))[0]||[];
+    const idx=[];hd.forEach((x,i)=>{if(isNeed(normH(x)))idx.push(i)});
+    if(idx.some(i=>normH(hd[i])=='NO_LAPORAN')){
+      const r=await gv(id,'select '+idx.map(colL).join(','));
+      if(r.length&amp;&amp;r[0].length==idx.length)return toRows(r,name,g);
+    }
+  }catch(e){if(/belum dibagikan/.test(e.message))throw e}
+  return toRows(await gv(id,''),name,g);
+}
+const GS='application/vnd.google-apps.spreadsheet';
+let DIAG=[];
+/* ===== ATURAN BACA DATA (PATEN) =====
+   1. Semua file di kedua folder (Kode G + COMCEN) dibaca otomatis, nama file bebas.
+   2. Semua baris digabung per NO_LAPORAN (dinormalkan), lintas file &amp; lintas bulan; COMCEN diprioritaskan,
+      kolom kosong diisi dari file lain yang punya nilainya.
+   3. Bulan = 2 angka di depan nama file (01-12) untuk semua baris file itu; bila nama tidak berawalan MM:
+      per baris BLTH -> bulan file -> TGL_LAPOR. Penggabungan per (bulan + NO_LAPORAN).
+   4. Kolom status/tipe/alasan batal dicari per baris (bukan per file) setelah penggabungan,
+      jadi tidak tergantung baris pertama di file. */
+const noKey=r=>{const v=String(r.NO_LAPORAN==null?'':r.NO_LAPORAN).trim().replace(/^'+/,'').replace(/\.0+$/,'').replace(/\s+/g,'').toUpperCase();return v};
+/* nama kolom persis dicari dulu; bila tidak ada baru dicocokkan dengan pola (fz) agar nama kolom yang beda tetap terbaca */
+function pickKey(r,al,fz){
+  for(const k in r){if(k[0]=='_')continue;const n=k.replace(/[^A-Z0-9]/g,'');
+    if(al.includes(n)){const v=r[k];if(v!==''&amp;&amp;v!=null)return k}}
+  if(fz)for(const k in r){if(k[0]=='_')continue;const n=k.replace(/[^A-Z0-9]/g,'');
+    if(fz(n)){const v=r[k];if(v!==''&amp;&amp;v!=null)return k}}
+  return '';
+}
+function pickCol(r,al,fz){const k=pickKey(r,al,fz);return k?r[k]:''}
+const A_S=['APKTSTATUS','STATUSAPKT','STATUSLAPORAN','STATUSWO','STATUS'],A_T=['TIPEBATAL','JENISBATAL','TIPEPEMBATALAN'],A_A=['ALASANBATAL','ALASANPEMBATALAN','KETERANGANBATAL','KETBATAL','ALASAN','KETERANGANPEMBATALAN','KETPEMBATALAN','ALASANDIBATALKAN','KETERANGANDIBATALKAN'];
+const fzS=n=>n.includes('STATUS')&amp;&amp;(n.includes('APKT')||n.includes('LAPOR')||n.includes('WO'));
+const fzA=n=>(n.includes('ALASAN')||(n.includes('KET')&amp;&amp;(n.includes('BATAL')||n.includes('PEMBATALAN'))))&amp;&amp;!n.includes('TIPE')&amp;&amp;!n.includes('JENIS')&amp;&amp;!n.includes('TGL')&amp;&amp;!n.includes('TANGGAL')&amp;&amp;!n.includes('JAM');
+const fzT=n=>n.includes('BATAL')&amp;&amp;(n.includes('TIPE')||n.includes('JENIS'))&amp;&amp;!n.includes('ALASAN')&amp;&amp;!n.includes('KET');
+function canon(r){r._S=pickCol(r,A_S,fzS);r._T=pickCol(r,A_T,fzT);r._A=pickCol(r,A_A,fzA)||(/batal/i.test(r._S)?pickCol(r,['KETERANGAN','KET']):'');
+  // skema tanpa kolom TIPE_BATAL (mis. Kode G Oktober): batal dengan alasan / BATAL_BY terisi = dibatalkan Command Center
+  if(!r._T&amp;&amp;/batal/i.test(r._S)&amp;&amp;(r._A||pickCol(r,['BATALBY']))){r._T='Batal by Comcen';r._TD=1}}
+function dateNum(v){const s=String(v||'');let m=s.match(/(\d{4})[\/\-.](\d{1,2})[\/\-.](\d{1,2})/);
+  if(m&amp;&amp;+m[2]>=1&amp;&amp;+m[2]<=12)return +m[1]*100+ +m[2];
+  m=s.match(/(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{4})/);
+  if(m){let a=+m[1],b=+m[2];const mo=a>12?b:(b>12?a:b);if(mo>=1&amp;&amp;mo<=12)return +m[3]*100+mo}
+  return 0}
+function assemble(files){
+  files.forEach(f=>{f.byName=!!nameMM(f.name);f.per=periodOf(f.rows,f.name)});
+  const order=files.slice().sort((a,b)=>(a.g=='cc'?0:1)-(b.g=='cc'?0:1));
+  const M=new Map(),cnt={};let anon=0;
+  const bump=(p,g)=>{(cnt[p]||(cnt[p]={cc:0,p2b:0}))[g]++};
+  order.forEach(f=>{f.months=new Set();
+    f.rows.forEach(r=>{
+      const p=f.byName?f.per:(blthNum(blth(r))||f.per||0);f.months.add(p);bump(p,f.g);
+      const nk=noKey(r),k=nk?(p+'|'+nk):('#'+(anon++));
+      let m=M.get(k);
+      if(!m){m={...r};if(nk)m.NO_LAPORAN=nk;m._PER=p;m._G={cc:0,p2b:0};m._G[f.g]=1;M.set(k,m);return}
+      m._G[f.g]=1;if(!m._PER&amp;&amp;p)m._PER=p;
+      for(const c in r)if(c[0]!='_'&amp;&amp;(m[c]===undefined||m[c]==='')&amp;&amp;r[c]!=='')m[c]=r[c];
+    })});
+  const all=[...M.values()];
+  all.forEach(m=>{canon(m);if(!m._PER)m._PER=dateNum(m.TGL_LAPOR)||0});
+  for(const k in KM)delete KM[k];
+  const by=new Map();all.forEach(m=>{if(!by.has(m._PER))by.set(m._PER,[]);by.get(m._PER).push(m)});
+  const sum=[...by.keys()].sort((a,b)=>(a||1e9)-(b||1e9)).map(p=>{const rows=by.get(p),bl=rows.filter(isBt),c=cnt[p]||{cc:0,p2b:0};
+    const cmr=bl.filter(r=>btipe(gT(r))=='cm'),akr=cmr.filter(r=>hasKet(gA(r))),cn=new Set(),hs=new Set();
+    akr.slice(0,300).forEach(r=>{const k=pickKey(r,A_A,fzA)||(pickKey(r,['KETERANGAN','KET'])||'');if(k)cn.add(k)});
+    bl.slice(0,60).forEach(r=>Object.keys(r).forEach(k=>{if(k[0]!='_'&amp;&amp;/BATAL|ALASAN|KET|STATUS/i.test(k))hs.add(k)}));
+    return{p,cm:cmr.length,ak:akr.length,ac:[...cn].join(', '),hint:[...hs].slice(0,12).join(', '),cc:c.cc,kg:c.p2b,uniq:rows.length,rows,bl:bl.length,kos:bl.filter(r=>!gT(r)).length,turun:bl.filter(r=>r._TD).length,area:rows.filter(r=>r.NAMA_AREA).length,onlyKG:rows.filter(r=>r._G.p2b&amp;&amp;!r._G.cc).length}});
+  return{all,files,sum};
+}
+function renderDiag(){
+  const rows=DIAG.map(d=>{const folder=d.g=='cc'?'COMCEN':d.g=='p2b'?'Kode G':'Ringkasan';
+    return`<tr><td class=&quot;k&quot;>${esc(d.f)}</td><td style=&quot;text-align:left&quot;>${folder}</td><td style=&quot;text-align:left&quot;>${d.per?plbl(d.per):'-'}</td><td>${d.n!=null?i0(d.n):'-'}</td><td style=&quot;text-align:left;white-space:normal&quot;>${esc(d.note)}</td></tr>`}).join('');
+  $('#dgb').innerHTML=`<div class=&quot;tw&quot;><table style=&quot;min-width:760px&quot;><thead><tr><th>File / Ringkasan</th><th>Folder</th><th>Bulan</th><th>Baris</th><th>Catatan</th></tr></thead><tbody>${rows||'<tr><td class=&quot;em&quot; colspan=&quot;5&quot;>Belum ada data.</td></tr>'}</tbody></table></div>`;
+}
+const idb=(()=>{let p;const open=()=>p||(p=new Promise((ok,no)=>{try{const q=indexedDB.open('wo-batal',1);q.onupgradeneeded=()=>q.result.createObjectStore('f');q.onsuccess=()=>ok(q.result);q.onerror=()=>no(q.error)}catch(e){no(e)}}));
+  return{get:k=>open().then(d=>new Promise(r=>{const q=d.transaction('f').objectStore('f').get(k);q.onsuccess=()=>r(q.result);q.onerror=()=>r()})).catch(()=>{}),
+    set:(k,v)=>open().then(d=>{d.transaction('f','readwrite').objectStore('f').put(v,k)}).catch(()=>{})}})();
+function finish(files,diag){
+  const{all,files:fs,sum}=assemble(files);
+  D.p2b=all;D.cc=[];
+  fs.forEach(f=>{const ms=[...(f.months||[])].filter(Boolean).sort().map(plbl).join(', ');diag.push({f:f.name,g:f.g,per:f.per,n:f.rows.length,note:!f.rows.length?'kosong':(ms?'dibaca · bulan: '+ms:'dibaca · bulan tidak terdeteksi (cek nama file berawalan MM, kolom BLTH atau TGL_LAPOR)')})});
+  sum.forEach(x=>diag.push({f:'Bulan '+plbl(x.p),g:'sum',per:x.p,n:x.uniq,note:`baris COMCEN ${x.cc} · Kode G ${x.kg} · laporan unik ${x.uniq} · batal ${x.bl} · tipe kosong ${x.kos} · hanya di Kode G ${x.onlyKG}`+(x.turun?` · tipe diturunkan dari alasan/BATAL_BY ${x.turun}`:'')+(x.area?'':' · area &amp; posko tidak tersedia')+` · Batal ComCen ${x.cm}, alasan terbaca ${x.ak}`+(x.ac?` (kolom: ${x.ac})`:'')+(x.cm&amp;&amp;!x.ak?` · KOLOM ALASAN TIDAK DITEMUKAN, kolom terkait: ${x.hint||'-'}`:'')}));
+  DIAG=diag;fillAll();renderDiag();
+}
+/* tanda perubahan data: render ulang &amp; simpan snapshot hanya bila ada file berubah (hindari freeze tiap sinkron) */
+let SIG='';
+const sigOf=(files,diag)=>files.map(f=>f.id+'|'+f.mt).sort().join(';')+'#'+diag.map(d=>d.f+d.note).join(';');
+async function boot(){   // tampilkan data tersimpan lebih dulu, lalu sinkron di latar
+  const pre=fetchList();pre.catch(()=>{});   // daftar file diminta lebih awal, paralel dengan baca data tersimpan
+  try{const sn=await idb.get('snap2');
+    if(sn&amp;&amp;sn.length){sn.forEach(x=>{CACHE[x.id]={mt:x.mt,rows:x.rows}});finish(sn.map(x=>({g:x.g,name:x.name,rows:x.rows})),[]);SIG=sigOf(sn,[]);
+      $('#st').className='stat';$('#st').textContent='Data tersimpan · memperbarui…'}}catch(e){}
+  sync(pre);
+}
+async function sync(pre){
+  if(busy)return;busy=true;const b=$('#sy');b.disabled=true;$('#syi').classList.add('spin');
+  try{
+    const L=(pre&amp;&amp;typeof pre.then=='function')?await pre:await fetchList(),diag=[],jobs=[];
+    for(const g of ['p2b','cc'])for(const fl of (L[g]||[])){
+      if(fl.mime&amp;&amp;fl.mime!==GS){diag.push({f:fl.name,g,per:0,n:0,note:'bukan Google Sheets: tunggu konversi otomatis atau jalankan ulang Apps Script'});continue}
+      jobs.push((async()=>{
+        try{
+          const c=CACHE[fl.id];let rows;
+          if(c&amp;&amp;c.mt==fl.modifiedTime)rows=c.rows;
+          else{rows=await loadSheet(fl.id,fl.name,g);CACHE[fl.id]={mt:fl.modifiedTime,rows}}
+          return{g,name:fl.name,id:fl.id,mt:fl.modifiedTime,rows};
+        }catch(e){diag.push({f:fl.name,g,per:0,n:0,note:'gagal dibaca: '+e.message});return null}
+      })());
+    }
+    const files=(await Promise.all(jobs)).filter(Boolean);   // semua file diunduh bersamaan
+    const sg=sigOf(files,diag);
+    if(sg!==SIG){SIG=sg;finish(files,diag);setTimeout(()=>idb.set('snap2',files),800)}   // data tidak berubah: tidak dirender ulang
+    $('#st').className='stat';$('#st').textContent='Diperbarui '+new Date().toLocaleTimeString('id-ID');
+    const perlu=diag.filter(d=>d.g!='sum'&amp;&amp;!/^dibaca/.test(d.note)).length;
+    if(perlu)toast(perlu+' file perlu perhatian, lihat Status data',true);
+  }catch(e){$('#st').className='stat err';$('#st').textContent=e.message;toast(e.message,true)}
+  busy=false;b.disabled=false;$('#syi').classList.remove('spin');
+}
+
+/* ===== KLASIFIKASI ALASAN BATAL (tidak berubah) ===== */
+const BCAT=[
+ ['Batal Tidak Sesuai Prosedur',[/(tidak|tdk|tak|bkn|ga|gak)\s*(sesuai|sesui|sesua|sesuay)/,/pros[ei]?du?r/,/\bsop\b/]],
+ ['Belum Ada Petugas Yantek / Unit Blankspot',[/belum\s*ada\s*(petugas|yantek|regu)/,/blank\s*spot|blankspot|blank\s*sport/,/petugas\s*yantek|unit\s*blank/]],
+ ['Bukan Gangguan PLN',[/bukan\s*(gangguan|ggn|gng)/,/non\s*gangguan/]],
+ ['Ditindaklanjuti Team Pemeliharaan',[/tindak\s*lanjut/,/(tim|team)\s*(pemeliharaan|har)\b/,/pemeliharaan/]],
+ ['Gangguan Intranet / Sistem APKT',[/intranet/,/(sistem|system)\s*apkt/,/apkt\s*(error|eror|down|trouble|gangguan|bermasalah|lemot)/,/gangguan\s*(sistem|system|apkt|jaringan)/]],
+ ['Instalasi Pelanggan Bermasalah',[/instalasi/,/\bip\s*(pelanggan|bermasalah)/]],
+ ['Kondisi Keamanan / Bencana Alam',[/keamanan/,/bencana/,/banjir|longsor|gempa|kerusuhan/]],
+ ['Laporan Ganda',[/\bganda\b/,/double|doubel|dobel|duplikat|duplicate/]],
+ ['Padam Meluas Tidak Masuk Marking (Diluar Range Kode Referensi Marking)',[/padam\s*meluas/,/(di\s*)?luar\s*range/,/kode\s*referensi/,/(tidak|tdk)\s*masuk\s*marking/]],
+ ['Pelanggan P2TL / Non Distribusi',[/p\s*2\s*t\s*l/,/non\s*distribusi/]],
+ ['Pelanggan Tidak Dapat Dihubungi &amp; Alamat Tidak Ditemukan',[/dihubungi|menghubungi|hubungi/,/alamat\s*(tidak|tdk|tak)/,/(tidak|tdk)\s*ditemukan/]],
+ ['Pelanggan Tidak Dilokasi / Menunda Perbaikan',[/(tidak|tdk)\s*(di\s*)?lokasi/,/menunda|ditunda|tunda/,/(tidak|tdk)\s*ada\s*(di\s*)?(lokasi|rumah)/,/(tidak|tdk)\s*(di\s*)?rumah/]],
+ ['Sudah Dikerjakan Pihak Lain',[/sudah\s*(di\s*)?(kerja|selesai|tangani)/,/sdh\s*(di\s*)?kerja/,/dikerjakan/,/pihak\s*lain/]],
+ ['Tanpa Kategori / Keterangan',[/tanpa\s*(kategori|keterangan|ket)\b/]],
+ ['Kategori tidak Terbaca',[]]
+];
+const BTK=13,BTR=14,NC=BCAT.length;   // 13 = kosong, 14 = teks di luar daftar
+const BTL={cm:'Batal by Comcen',cc:'Batal by Call Center',pm:'Batal by PLN Mobile',ot:'Tipe Lain / Kosong'};
+const nz=s=>String(s==null?'':s).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/&amp;/g,' dan ').replace(/[^a-z0-9]+/g,' ').trim();
+const emptyN=n=>!n||/^(null|nan|na|n a|undefined|none|nil|nihil|kosong)$/.test(n);
+function lev(a,b){if(a==b)return 0;const m=a.length,n=b.length;if(!m)return n;if(!n)return m;let p=Array.from({length:n+1},(_,j)=>j);
+  for(let i=1;i<=m;i++){const c=[i];for(let j=1;j<=n;j++)c[j]=Math.min(p[j]+1,c[j-1]+1,p[j-1]+(a[i-1]==b[j-1]?0:1));p=c}return p[n]}
+const BCN=BCAT.map(c=>nz(c[0])),bkC=new Map();
+/* ===== ANALISA MAKSUD KETERANGAN (hanya untuk teks yang TIDAK sesuai format paten) =====
+   Urutan: 1) format paten (nama kategori / kata kunci / salah ketik)  2) analisa maksud (kamus di bawah)  3) kosong / belum terbaca.
+   Entri: [indeks kategori di BCAT, [pola...]]. Urutan entri = prioritas. Teks asli tidak pernah diubah. */
+const BSEM=[
+ /* 8 Padam Meluas Tidak Masuk Marking: padam luas, padam terencana, gangguan TM (jam laporan &amp; jam kode tidak sinkron sehingga tidak bisa di-marking) */
+ [8,[/(?=.*(pemadaman|padam|pdm|mati lampu|mati listrik|blackout|black out))(?=.*(luas|massal|bersama|total|serentak|banyak|penyulang|feeder|seluruh|sebagian wilayah|satu wilayah|satu desa|satu kelurahan))/,
+     /(pemadaman|padam|pdm)\s*(yang\s*)?(terencana|terjadwal|rencana|terprogram)/,
+     /(gangguan|ggn|gng|padam|pemadaman)\s*(tm|sutm|jtm|20\s*kv)\b/,/\btm\b.*(gangguan|padam|ggn)/,
+     /dampak\s*(pemadaman|padam|gangguan|ggn)/,
+     /\bmarking\b/]],
+ /* 9 Pelanggan P2TL / Non Distribusi: urusan meter/administrasi pelanggan, bukan gangguan jaringan */
+ [9,[/(ganti|pergantian|penggantian|mengganti|diganti|tukar|penukaran|pasang|pemasangan|perubahan|upgrade)\s*(kwh\s*)?(meter|kwh|stand|apm|app|alat\s*pembatas|pembatas)/,
+     /(kwh\s*)?meter\s*(rusak|diganti|baru|error|eror|blank|mati|layar|display|lcd|hilang|dicuri)/,
+     /tunggakan|menunggak|disegel|segel|tagihan/]],
+ /* 2 Bukan Gangguan PLN */
+ [2,[/(token|pulsa)\s*(listrik\s*)?(habis|abis|kosong|belum\s*(di\s*)?isi|belum\s*beli)/,
+     /(belum|lupa|tidak|tdk|blm)\s*(isi|mengisi|beli|membeli)\s*(token|pulsa)/,
+     /prabayar\s*(habis|abis|kosong)/,/bukan\s*(wilayah|area|aset|asset)\s*pln/]],
+ /* 12 Sudah Dikerjakan Pihak Lain */
+ [12,[/(sudah|sdh|telah|udah|udh)\s*(di\s*)?(diperbaiki|perbaiki|dinormalkan|normalkan|teratasi|beres|tertangani|ditangani|diselesaikan|dikerjakan|dikerjain|dibenahi|diatasi)/,
+      /(petugas|tim|team|regu)\s*(lain|unit\s*lain|ulp\s*lain|up3\s*lain)/]],
+ /* 7 Laporan Ganda: laporan sama / wilayah sama / padam sudah menyala sendiri (penyebab tidak bisa dipastikan petugas) */
+ [7,[/sudah\s*ada\s*(laporan|lapor|tiket|ticket|ctt|wo|order)/,
+     /(sama|serupa|sejenis)\s*(dengan\s*)?(laporan|lapor|tiket|ticket|ctt|wo|no)/,
+     /laporan\s*(lain|sebelumnya|sebelum|yang\s*sama|serupa|sama)/,
+     /(sdh|sudah|telah|udh)\s*(di\s*)?lapor/,
+     /(wilayah|lokasi|area|daerah|titik)\s*(yang\s*)?sama/,
+     /(nyala|menyala|hidup|pulih|normal)\s*(dengan\s*)?(sendiri|sendirinya)/,
+     /(sudah|sdh|telah|udah)\s*(kembali\s*)?(menyala|nyala|hidup|normal|pulih)/]],
+ /* 5 Instalasi Pelanggan Bermasalah */
+ [5,[/(?=.*\b(mcb|sekring|sikring|elcb|rccb)\b)(?=.*(pelanggan|rumah|persil|bangunan|milik|internal|sendiri))/,
+     /korsleting|korslet|konslet|konsleting/,/(sisi|internal)\s*pelanggan/,
+     /(mcb|sekring|sikring)\s*(turun|trip|jatuh|putus|rusak|anjlok)/]],
+ /* 1 Belum Ada Petugas Yantek / Unit Blankspot */
+ [1,[/(belum|blm|tidak|tdk|tak|kurang|terbatas|habis|kosong)\s*(ada|tersedia|siap|cukup|standby|stand by)?\s*(petugas|regu|personil|personel|tim|team|yantek|crew)/,
+     /(petugas|regu|personil|personel|tim|team|yantek|crew)\s*(belum|blm|tidak|tdk|tak|kurang|terbatas|habis|kosong)\s*(ada|tersedia|siap|cukup|standby|stand by)?/,
+     /(petugas|regu|yantek|crew)\s*(sedang|masih)\s*(menangani|bertugas|di\s*lokasi\s*lain|antri|antre|penuh)/,
+     /antri|antre/]],
+ /* 4 Gangguan Intranet / Sistem APKT */
+ [4,[/(aplikasi|apk|apkt|server|koneksi|internet|vpn|website|web|sistem|system|intranet|apps)\s*(sedang\s*)?(error|eror|down|trouble|gangguan|bermasalah|lemot|lambat|offline|mati|gagal|crash|hang|macet)/,
+     /(error|eror|gagal|trouble)\s*(aplikasi|apk|apkt|server|sistem|system)/,
+     /(tidak|tdk|gak|ga)\s*(bisa|dapat)\s*(login|masuk\s*aplikasi|membuka\s*aplikasi|buka\s*aplikasi)/]],
+ /* 3 Ditindaklanjuti Team Pemeliharaan: petugas sudah memastikan ke lokasi, butuh tim &amp; peralatan yang sesuai */
+ [3,[/(butuh|perlu|membutuhkan|memerlukan|dibutuhkan|diperlukan|minta|meminta|menunggu)\s*(bantuan\s*)?(tim|team|regu|peralatan|alat|material|kendaraan|crane|tangga|har|pemeliharaan|petugas\s*har)/,
+     /(perbaikan|penormalan|pengerjaan|pekerjaan|perbaiki|normalkan)\s*(jaringan|jtr|jtm|sutr|sutm|trafo|gardu|kabel|tiang|penyulang|sr)\b/,
+     /eskalasi|dieskalasi|diteruskan\s*(ke)?\s*(tim|team|har|pemeliharaan|ulp|up3)/,
+     /peralatan\s*(khusus|tidak\s*(memadai|lengkap|ada))/]],
+ /* 6 Kondisi Keamanan / Bencana Alam */
+ [6,[/(pohon|tiang|ranting|dahan)\s*(tumbang|roboh|patah|rubuh|menimpa|jatuh)/,
+     /hujan|angin\s*(kencang|ribut)|badai|petir|cuaca|ombak|gelombang|kebakaran|terbakar|unjuk\s*rasa|\bdemo\b|huru\s*hara|konflik|tawuran|gempa|tsunami|erupsi|abu\s*vulkanik|puting\s*beliung|rawan|(tidak|tdk)\s*(aman|kondusif)/]],
+ /* 10 Pelanggan Tidak Dapat Dihubungi &amp; Alamat Tidak Ditemukan */
+ [10,[/(no|nomor|telp|telepon|tlp|hp|wa|kontak)\s*(pelanggan\s*)?(tidak|tdk|salah|mati|nonaktif|non\s*aktif|belum|di\s*luar|diluar|sibuk)/,
+      /tidak\s*(diangkat|dijawab|merespon|respon|menjawab)/,/(tidak|tdk)\s*(ada)?\s*(jawaban|respon|balasan)/,
+      /(alamat|lokasi)\s*(tidak|tdk|salah|kurang|belum)\s*(jelas|lengkap|sesuai|diketahui)/]],
+ /* 11 Pelanggan Tidak Dilokasi / Menunda Perbaikan */
+ [11,[/rumah\s*(kosong|terkunci|dikunci|ditinggal)/,
+      /(pelanggan|pemilik|penghuni)\s*(sedang\s*)?(keluar|pergi|ke\s*luar|tidak\s*ada|tdk\s*ada|dinas|bepergian|luar\s*kota)/,
+      /(pelanggan|pemilik)\s*(minta|meminta|request)\s*(di\s*)?(tunda|jadwal|besok|nanti|ditunda|dijadwalkan)/,
+      /(tidak|tdk)\s*(bisa|dapat)\s*(masuk|diakses)\s*(rumah|lokasi|area)?/]]
+];
+const BDASAR={paten:'Format Paten',analisa:'Hasil Analisa',kosong:'Tanpa Keterangan',belum:'Belum Bisa Dianalisa'};
+function bcls(raw){const n=nz(raw);if(emptyN(n))return[BTR,'kosong'];if(bkC.has(n))return bkC.get(n);
+  let r=BCN.indexOf(n),d='paten';
+  if(r<0){const nc=n.replace(/ /g,'');r=BCN.findIndex(x=>x.replace(/ /g,'')==nc)}
+  if(r<0)r=BCAT.findIndex(c=>c[1].some(x=>x.test(n)));
+  if(r<0){let best=0;BCN.forEach((x,i)=>{if(i==BTK||i==BTR)return;const sc=1-lev(n,x)/Math.max(n.length,x.length);if(sc>best){best=sc;r=i}});if(best<.75)r=-1}
+  if(r<0){const s=BSEM.find(x=>x[1].some(re=>re.test(n)));if(s){r=s[0];d='analisa'}}
+  if(r<0){r=BTR;d='belum'}
+  const o=[r,d];bkC.set(n,o);return o}
+const bkat=raw=>bcls(raw)[0];
+/* panel: daftar keterangan di luar format paten beserta hasil analisanya (untuk dicek/dikoreksi) */
+function paintAnalisa(list){
+  const m=new Map();
+  list.forEach(r=>{const a=gA(r),n=nz(a);if(emptyN(n))return;const c=bcls(a);if(c[1]!='analisa'&amp;&amp;c[1]!='belum')return;
+    let e=m.get(n);if(!e){e={t:String(a).trim(),n:0,c};m.set(n,e)}e.n++});
+  const arr=[...m.values()].sort((x,y)=>(x.c[1]=='analisa'?0:1)-(y.c[1]=='analisa'?0:1)||y.n-x.n);
+  const na=arr.filter(x=>x.c[1]=='analisa').length,nb=arr.length-na;
+  const sm=$('#dgas'),bd=$('#dgab');if(!sm||!bd)return;
+  sm.textContent='🔎 Hasil analisa keterangan di luar format paten — '+na+' teks dikelompokkan, '+nb+' belum terbaca';
+  const body=arr.length?arr.slice(0,300).map(x=>`<tr><td class=&quot;k&quot; style=&quot;white-space:normal;min-width:240px&quot;>${esc(x.t)}</td><td style=&quot;text-align:left&quot;>${esc(BCAT[x.c[0]][0])}</td><td style=&quot;text-align:center&quot;>${BDASAR[x.c[1]]}</td><td>${i0(x.n)}</td></tr>`).join('')
+    :'<tr><td class=&quot;em&quot; colspan=&quot;4&quot;>Tidak ada keterangan di luar format paten.</td></tr>';
+  bd.innerHTML='<div class=&quot;tw&quot;><table style=&quot;min-width:680px&quot;><thead><tr><th>Keterangan Asli</th><th>Dikelompokkan ke</th><th>Dasar</th><th>Jumlah</th></tr></thead><tbody>'+body+'</tbody></table></div>'+(arr.length>300?'<p class=&quot;stat&quot;>Menampilkan 300 teks pertama.</p>':'')}
+const btipe=raw=>{const n=nz(raw);if(/com\s*cen|command/.test(n))return'cm';if(/call|\bcc\b|contact/.test(n))return'cc';if(/mobile|\bpm\b/.test(n))return'pm';return'ot'};
+const hasKet=v=>!emptyN(nz(v));
+
+/* kolom dicari fleksibel: abaikan spasi/underscore/huruf besar-kecil (cache per file) */
+function fkey(r,tag,al){const ks=Object.keys(r).map(x=>[x,x.replace(/[^A-Z0-9]/g,'')]);
+  for(const a of al){const h=ks.find(([,n])=>n==a);if(h)return h[0]}
+  if(tag=='t')return(ks.find(([,n])=>n.includes('BATAL')&amp;&amp;(n.includes('TIPE')||n.includes('JENIS'))&amp;&amp;!n.includes('ALASAN')&amp;&amp;!n.includes('KET'))||[null])[0];
+  return null}
+function ck(r,tag,al){const m=KM[r._FILE]||(KM[r._FILE]={});if(!(tag in m))m[tag]=fkey(r,tag,al);return m[tag]?r[m[tag]]:''}
+const gS=r=>r._S||'',gT=r=>r._T||'',gA=r=>r._A||'';
+const isBt=r=>/batal/i.test(gS(r));
+const uq=rows=>new Set(rows.map((r,i)=>r.NO_LAPORAN||'x'+i)).size;
+
+function bcalc(rows){
+  const m=new Map();rows.forEach((r,i)=>{if(isBt(r))m.set(r.NO_LAPORAN||'x'+i+r._FILE,r)});
+  const c={tot:uq(rows),b:m.size,cm:0,cmk:0,cc:0,cck:0,pm:0,pmk:0,ot:0,list:[...m.values()]};
+  m.forEach(r=>{const t=btipe(gT(r));c[t]++;if(t!='ot'&amp;&amp;hasKet(gA(r)))c[t+'k']++});
+  return c;
+}
+const bdet=rows=>rows.map(r=>{const t=btipe(gT(r)),c=t=='cm'?bcls(gA(r)):null;return{...r,TIPE_BATAL:BTL[t],ALASAN_BATAL:gA(r),KATEGORI_BATAL:c?BCAT[c[0]][0]:'-',DASAR_PENGELOMPOKAN:c?BDASAR[c[1]]:'-'}});
+const ticketInfo=r=>{const b=isBt(r),t=btipe(gT(r)),c=b&amp;&amp;t=='cm'?bcls(gA(r)):null;return{st:gS(r),tipe:b?BTL[t]:'-',alasan:b?gA(r):'-',kat:c?BCAT[c[0]][0]:'-',dasar:c?BDASAR[c[1]]:'-'}};
+const ticketRows=list=>list.map(r=>{const x=ticketInfo(r);return{Distribusi:r.NAMA_DISTRIBUSI,Area:r.NAMA_AREA,Posko:r.NAMA_POSKO,'No. Laporan':r.NO_LAPORAN,'Tgl Lapor':r.TGL_LAPOR,'Status APKT':x.st,'Tipe Batal':x.tipe,'Alasan Batal (asli)':x.alasan,'Kategori Batal':x.kat,'Dasar Pengelompokan':x.dasar,'File Sumber':r._FILE}});
+function grp(rows,nk){const m=new Map();rows.forEach(r=>{const k=KEYS.slice(0,nk).map(x=>r[x]),s=k.join('|');if(!m.has(s))m.set(s,{k,rows:[]});m.get(s).rows.push(r)});
+  return[...m.values()].sort((a,b)=>a.k.join().localeCompare(b.k.join()))}
+
+
+/* ===== PERIODE (bulan dari file) ===== */
+const blth=r=>{const k=Object.keys(r).find(x=>x.replace(/[^A-Z0-9]/g,'')=='BLTH');return k?r[k]:''};
+function blthNum(v){let s=String(v==null?'':v).trim();if(!s)return null;
+  let m=s.match(/^(\d{1,2})[\/\-.](\d{4})$/);if(m&amp;&amp;+m[1]>=1&amp;&amp;+m[1]<=12)return +m[2]*100+ +m[1];
+  s=s.replace(/^(\d{6})[.,]0+$/,'$1');const d=s.replace(/\D/g,'');if(d.length!=6)return null;
+  const y=+d.slice(0,4),mo=+d.slice(4);return y>=2000&amp;&amp;mo>=1&amp;&amp;mo<=12?y*100+mo:null}
+// kode periode = YYYYMM; 0 bila tidak diketahui
+const BLNK=[['jan','januari','january'],['feb','februari','february'],['mar','maret','march'],['apr','april'],['mei','may'],['jun','juni','june'],['jul','juli','july'],['agu','agt','agus','agustus','aug','august'],['sep','sept','september'],['okt','oct','oktober','october'],['nov','november'],['des','dec','desember','december']];
+function nameMonth(name){
+  const n=nz(name).replace(/(\d+)/g,' $1 '),t=n.split(/\s+/).filter(Boolean);
+  let y=0,mo=-1;
+  t.forEach(x=>{if(/^20\d\d$/.test(x))y=+x;const q=x.match(/^(20\d\d)(0[1-9]|1[0-2])$/);if(q){y=+q[1];mo=+q[2]-1}});
+  if(mo<0)mo=BLNK.findIndex(a=>t.some(x=>a.includes(x)));
+  if(mo<0){const d=t.find(x=>/^(0?[1-9]|1[0-2])$/.test(x));if(d)mo=+d-1}
+  return y&amp;&amp;mo>=0?y*100+mo+1:0}
+// acuan utama: 2 angka di depan nama file = bulan (01..12); tahun dari BLTH / TGL_LAPOR / nama file / tahun berjalan
+const nameMM=name=>{const m=String(name||'').trim().match(/^(0[1-9]|1[0-2])(?!\d)/);return m?+m[1]:0};
+function yearOf(rows,name){
+  const c={};rows.forEach(r=>{const v=blthNum(blth(r));const y=v?Math.floor(v/100):Math.floor(dateNum(r.TGL_LAPOR)/100);if(y)c[y]=(c[y]||0)+1});
+  const t=Object.entries(c).sort((a,b)=>b[1]-a[1])[0];if(t)return +t[0];
+  const ny=(String(name||'').match(/20\d\d/)||[])[0];return ny?+ny:new Date().getFullYear()}
+function periodOf(rows,name){
+  const mm=nameMM(name);if(mm)return yearOf(rows,name)*100+mm;
+  const cnt={};rows.forEach(r=>{const v=blthNum(blth(r));if(v)cnt[v]=(cnt[v]||0)+1});
+  const top=Object.entries(cnt).sort((a,b)=>b[1]-a[1])[0];
+  if(top)return +top[0];
+  const nm=nameMonth(name);if(nm)return nm;
+  const dc={};rows.forEach(r=>{const v=dateNum(r.TGL_LAPOR);if(v)dc[v]=(dc[v]||0)+1});
+  const dt=Object.entries(dc).sort((a,b)=>b[1]-a[1])[0];
+  return dt?+dt[0]:0;
+}
+const plbl=p=>p?BLN[p%100-1]+' '+Math.floor(p/100):'Tidak diketahui';
+
+/* ===== FILTER BERTINGKAT: Bulan → Distribusi → Area → Posko ===== */
+const mrows=()=>{const b=$('#fb').value;return D.p2b.filter(r=>!b||String(r._PER)==b)};
+function opts(id,vals,ph){const e=$(id),v=e.value;e.innerHTML=`<option value=&quot;&quot;>${ph}</option>`+[...new Set(vals.filter(Boolean))].sort().map(x=>`<option>${esc(x)}</option>`).join('');if(vals.includes(v))e.value=v}
+function fillMonth(){const ps=[...new Set(D.p2b.map(r=>r._PER))].sort((a,b)=>(a||1e9)-(b||1e9)),v=$('#fb').value;
+  $('#fb').innerHTML='<option value=&quot;&quot;>Semua Bulan</option>'+ps.map(p=>`<option value=&quot;${p}&quot;>${plbl(p)}</option>`).join('');if(ps.map(String).includes(v))$('#fb').value=v}
+function fillDist(){opts('#fd',mrows().map(r=>r.NAMA_DISTRIBUSI),'Semua Distribusi')}
+function fillArea(){const d=$('#fd').value;opts('#fa',mrows().filter(r=>!d||r.NAMA_DISTRIBUSI==d).map(r=>r.NAMA_AREA),'Semua Area')}
+function fillPos(){const d=$('#fd').value,a=$('#fa').value;opts('#fp',mrows().filter(r=>(!d||r.NAMA_DISTRIBUSI==d)&amp;&amp;(!a||r.NAMA_AREA==a)).map(r=>r.NAMA_POSKO),'Semua Posko')}
+function readF(){AF={d:$('#fd').value,a:$('#fa').value,p:$('#fp').value}}
+function fillAll(){fillMonth();fillDist();fillArea();fillPos();readF();render()}
+const sel=()=>mrows().filter(r=>(!AF.d||r.NAMA_DISTRIBUSI==AF.d)&amp;&amp;(!AF.a||r.NAMA_AREA==AF.a)&amp;&amp;(!AF.p||r.NAMA_POSKO==AF.p));
+
+/* ===== DAFTAR DATA DI BALIK SETIAP ANGKA ===== */
+const uniqueRows=rows=>{const m=new Map();rows.forEach((r,i)=>{const k=r.NO_LAPORAN||'x'+i;if(!m.has(k))m.set(k,r)});return[...m.values()]};
+const PK={
+  wo:rows=>uniqueRows(rows),
+  b:rows=>bcalc(rows).list,
+  cm:rows=>bcalc(rows).list.filter(r=>btipe(gT(r))=='cm'),
+  cmk:rows=>bcalc(rows).list.filter(r=>btipe(gT(r))=='cm'&amp;&amp;hasKet(gA(r))),
+  cc:rows=>bcalc(rows).list.filter(r=>btipe(gT(r))=='cc'),
+  cck:rows=>bcalc(rows).list.filter(r=>btipe(gT(r))=='cc'&amp;&amp;hasKet(gA(r))),
+  pm:rows=>bcalc(rows).list.filter(r=>btipe(gT(r))=='pm'),
+  pmk:rows=>bcalc(rows).list.filter(r=>btipe(gT(r))=='pm'&amp;&amp;hasKet(gA(r))),
+  ot:rows=>bcalc(rows).list.filter(r=>btipe(gT(r))=='ot')
+};
+const catList=j=>rows=>PK.cm(rows).filter(r=>bkat(gA(r))==j);
+const grpBy=(rows,fn)=>{const m=new Map();rows.forEach(r=>{const k=String(fn(r)??'');if(!m.has(k))m.set(k,{k:[k],rows:[]});m.get(k).rows.push(r)});return[...m.values()].sort((a,b)=>a.k[0].localeCompare(b.k[0]))};
+
+/* ===== RENDER ===== */
+function render(){
+  const rows=sel(),unit=AF.a?'Posko':'Area',fn=AF.a?(r=>r.NAMA_POSKO):(r=>r.NAMA_AREA);
+  const A=bcalc(rows),G=grpBy(rows,fn);
+  KPI=[
+    {t:'Total WO',v:i0(A.tot),s:'laporan terdata',c:'var(--c1)',fn:PK.wo},
+    {t:'Total WO Batal',v:i0(A.b),s:'laporan berstatus batal',c:'var(--ng)',fn:PK.b},
+    {t:'% Batal',v:pc(A.tot?A.b/A.tot*100:null),s:'terhadap total WO',c:'var(--c3)',fn:PK.b},
+    {t:'Batal by Command Center',v:i0(A.cm),s:i0(A.cmk)+' ada keterangan',c:'var(--c2)',fn:PK.cm,sfn:PK.cmk,ss:'ada keterangan'},
+    {t:'Batal by Call Center',v:i0(A.cc),s:i0(A.cck)+' ada keterangan',c:'var(--c1)',fn:PK.cc,sfn:PK.cck,ss:'ada keterangan'},
+    {t:'Batal by PLN Mobile',v:i0(A.pm),s:i0(A.pmk)+' ada keterangan',c:'var(--c3)',fn:PK.pm,sfn:PK.pmk,ss:'ada keterangan'}
+  ].map(k=>({...k,rows}));
+  $('#kp').innerHTML=KPI.map((k,i)=>`<div class=&quot;kc clk&quot; data-k=&quot;${i}&quot; style=&quot;--a:${k.c}&quot;><div class=&quot;l&quot;>${k.t}</div><div class=&quot;v&quot; style=&quot;color:${k.c}&quot;>${k.v}</div><div class=&quot;s&quot;>${k.sfn?`<span class=&quot;clk&quot; data-k=&quot;${i}&quot; data-s=&quot;1&quot;>${k.s}</span>`:k.s}</div></div>`).join('');
+  $('#j1').textContent='🚫 Rekapitulasi Laporan Batal';
+  $('#j2').textContent='🗂️ Kategori Batal';
+  $('#u1').textContent=unit;
+
+  const vals=c=>[c.tot,c.b,c.tot?c.b/c.tot*100:null,c.cm,c.cmk,c.cc,c.cck,c.pm,c.pmk,c.ot];
+  TB.t1={q:'#q1',el:'#t1',nk:1,
+    head:[unit,'Total WO','Total WO Batal','% Batal','WO Batal','Ada Ket.','WO Batal','Ada Ket.','WO Batal','Ada Ket.','Tipe Lain / Kosong'],
+    groups:[{l:'Command Center',c:[4,5]},{l:'Call Center',c:[6,7]},{l:'PLN Mobile',c:[8,9]}],
+    kinds:[PK.wo,PK.b,PK.b,PK.cm,PK.cmk,PK.cc,PK.cck,PK.pm,PK.pmk,PK.ot],
+    fmt:[i0,i0,pc,i0,i0,i0,i0,i0,i0,i0],cls:['','ng','ng','c1','c1','c2','c2','c3','c3',''],
+    items:G.map(g=>{const c=bcalc(g.rows);return{cells:[...g.k,...vals(c)],rows:g.rows,list:c.list}}),
+    tot:{l:`TOTAL (${G.length} ${unit})`,cells:vals(A)},allRows:rows,G:true,sc:null,sd:1};
+
+  const cnt=rs=>{const a=Array(NC).fill(0);rs.forEach(r=>a[bkat(gA(r))]++);return a};
+  const cmR=PK.cm(rows);
+  TB.t2={q:'#q2',el:'#t2',nk:1,
+    head:[unit,'Total Batal ComCen',...BCAT.map(c=>c[0])],
+    kinds:[PK.cm,...BCAT.map((_,j)=>catList(j))],
+    hr:[2],fmt:Array(NC+1).fill(i0),cls:['c1','rd',...Array(NC-1).fill('')],
+    items:G.map(g=>{const cg=PK.cm(g.rows);return{cells:[...g.k,cg.length,...cnt(cg)],rows:g.rows,list:cg}}),
+    tot:{l:`TOTAL (${G.length} ${unit})`,cells:[cmR.length,...cnt(cmR)]},allRows:rows,G:true,sc:null,sd:1};
+
+  drawT(TB.t1);drawT(TB.t2);
+  paintAnalisa(cmR);
+  charts(rows,G);
+}
+
+/* ===== GRAFIK ===== */
+const cv=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+function mk(id,cfg){if(CH[id])CH[id].destroy();if(typeof Chart=='undefined')return;CH[id]=new Chart($('#'+id),cfg)}
+const PAL3=['#F8C420','#52C3DC','#9B87C4','#E2566E','#6FBF96','#5AA9E6','#D98BB0','#B8C46B','#F28C38','#7FB3D5','#C0392B','#16A085','#8E44AD','#2E86C1','#AAB7B8'];
+function shade(hex,a){const n=parseInt(hex.slice(1),16),r=n>>16,g=n>>8&amp;255,b=n&amp;255,f=v=>Math.max(0,Math.min(255,Math.round(a<0?v*(1+a):v+(255-v)*a)));return`rgb(${f(r)},${f(g)},${f(b)})`}
+// kolom 3D buatan sendiri: bayangan lantai, sisi atas dan kanan, badan bergradasi
+const bar3d={id:'bar3d',afterDatasetsDraw(ch){
+  const cols=(ch.options.plugins.bar3d||{}).colors||[],m=ch.getDatasetMeta(0),ctx=ch.ctx;
+  m.data.forEach((el,i)=>{
+    const v=ch.data.datasets[0].data[i];if(!v)return;
+    const p=el.getProps(['x','y','base','width'],true),c=cols[i%cols.length]||'#F8C420';
+    const w=p.width,d=Math.max(5,Math.min(16,w*.35)),l=p.x-w/2,r=p.x+w/2,t=p.y,b=p.base;
+    ctx.save();
+    ctx.fillStyle='rgba(0,0,0,.22)';ctx.beginPath();ctx.ellipse(p.x+d/2,b+3,w/2+d,4,0,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle=shade(c,-.38);ctx.beginPath();ctx.moveTo(r,t);ctx.lineTo(r+d,t-d);ctx.lineTo(r+d,b-d);ctx.lineTo(r,b);ctx.closePath();ctx.fill();
+    ctx.fillStyle=shade(c,.4);ctx.beginPath();ctx.moveTo(l,t);ctx.lineTo(l+d,t-d);ctx.lineTo(r+d,t-d);ctx.lineTo(r,t);ctx.closePath();ctx.fill();
+    const g=ctx.createLinearGradient(l,0,r,0);g.addColorStop(0,shade(c,.18));g.addColorStop(.5,c);g.addColorStop(1,shade(c,-.2));
+    ctx.fillStyle=g;ctx.fillRect(l,t,w,b-t);
+    ctx.fillStyle=cv('--tx');ctx.font=&quot;700 11px Montserrat,sans-serif&quot;;ctx.textAlign='center';ctx.textBaseline='bottom';
+    ctx.fillText(i0(v),p.x+d/2,t-d-4);
+    ctx.restore();
+  });
+}};
+// bayangan lembut untuk garis
+const shadowLine={id:'shadowLine',beforeDatasetDraw(ch){const x=ch.ctx;x.save();x.shadowColor='rgba(0,0,0,.45)';x.shadowBlur=14;x.shadowOffsetY=8},afterDatasetDraw(ch){ch.ctx.restore()}};
+function charts(rows,G){
+  const tc=cv('--dim'),gc=cv('--bd'),shortN=s=>s.length>24?s.slice(0,22)+'…':s;
+  const vs=G.map(g=>bcalc(g.rows));
+  mk('c1',{type:'bar',data:{labels:G.map(g=>g.k[0]),datasets:[
+    {label:'Command Center',data:vs.map(c=>c.cm),backgroundColor:'#F8C420'},
+    {label:'Call Center',data:vs.map(c=>c.cc),backgroundColor:'#52C3DC'},
+    {label:'PLN Mobile',data:vs.map(c=>c.pm),backgroundColor:'#9B87C4'},
+    {label:'Tipe Lain / Kosong',data:vs.map(c=>c.ot),backgroundColor:'#5F7286'}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:tc}}},
+      scales:{x:{stacked:true,ticks:{color:tc,autoSkip:false,maxRotation:60,font:{size:11}},grid:{display:false}},y:{stacked:true,ticks:{color:tc},grid:{color:gc}}}}});
+
+  const cm=PK.cm(rows),cnt=Array(NC).fill(0);cm.forEach(r=>cnt[bkat(gA(r))]++);
+  mk('c2',{type:'bar',data:{labels:BCAT.map(c=>shortN(c[0])),datasets:[{label:'Batal Command Center',data:cnt,backgroundColor:'transparent',borderWidth:0,barPercentage:.6,categoryPercentage:.85}]},
+    options:{responsive:true,maintainAspectRatio:false,layout:{padding:{top:22,right:14}},
+      plugins:{legend:{display:false},bar3d:{colors:PAL3},tooltip:{callbacks:{title:it=>BCAT[it[0].dataIndex][0]}}},
+      scales:{x:{ticks:{color:tc,autoSkip:false,maxRotation:65,minRotation:45,font:{size:10}},grid:{display:false}},y:{beginAtZero:true,ticks:{color:tc},grid:{color:gc}}}},
+    plugins:[bar3d]});
+
+  const grad=c=>{const{chart:ch}=c;if(!ch.chartArea)return 'rgba(226,102,90,.25)';const g=ch.ctx.createLinearGradient(0,ch.chartArea.top,0,ch.chartArea.bottom);g.addColorStop(0,'rgba(226,102,90,.45)');g.addColorStop(1,'rgba(226,102,90,0)');return g};
+  mk('c3',{type:'line',data:{labels:G.map(g=>g.k[0]),datasets:[{label:'WO Batal',data:vs.map(c=>c.b),borderColor:'#E2566E',borderWidth:3,pointRadius:5,pointHoverRadius:7,pointBackgroundColor:'#E2566E',pointBorderColor:'#fff',pointBorderWidth:2,tension:.35,fill:true,backgroundColor:grad}]},
+    options:{responsive:true,maintainAspectRatio:false,layout:{padding:{top:10,right:10}},plugins:{legend:{display:false}},
+      scales:{x:{ticks:{color:tc,autoSkip:false,maxRotation:60,minRotation:35,font:{size:10}},grid:{display:false}},y:{beginAtZero:true,ticks:{color:tc},grid:{color:gc}}}},
+    plugins:[shadowLine]});
+}
+
+/* ===== TABEL ===== */
+function drawT(t){
+  const q=($(t.q).value||'').toLowerCase();
+  let rs=t.items.filter(it=>!q||it.cells.slice(0,t.nk).join(' ').toLowerCase().includes(q));
+  if(t.sc!=null)rs=[...rs].sort((a,b)=>{const x=a.cells[t.sc],y=b.cells[t.sc];return(typeof x=='string'?x.localeCompare(y):(x??-1)-(y??-1))*t.sd});
+  const th=(c,label,a='')=>`<th data-c=&quot;${c}&quot;${t.hr&amp;&amp;t.hr.includes(c)?' class=&quot;rd&quot;':''} ${a}>${esc(label)} <i>${t.sc===c?(t.sd>0?'↑':'↓'):'⇅'}</i></th>`;
+  let r1='',r2='';
+  if(t.groups){
+    for(let c=0;c<t.head.length;c++){
+      const g=t.groups.find(g=>g.c[0]==c);
+      if(g){r1+=`<th colspan=&quot;${g.c.length}&quot;>${esc(g.l)}</th>`;g.c.forEach(x=>r2+=th(x,t.head[x]))}
+      else if(!t.groups.some(g=>g.c.includes(c)))r1+=th(c,t.head[c],'rowspan=&quot;2&quot;');
+    }
+  }else r1=t.head.map((h,c)=>th(c,h)).join('');
+  if(t.G)r1+=`<th${t.groups?' rowspan=&quot;2&quot;':''}>Aksi</th>`;
+  const cols=t.head.length+(t.G?1:0);
+  const body=rs.length?rs.map(it=>{const idx=t.items.indexOf(it);return `<tr>${it.cells.map((v,c)=>c<t.nk?`<td class=&quot;k&quot;>${esc(v)}</td>`:`<td class=&quot;${t.cls[c-t.nk]||''} clk&quot; data-i=&quot;${idx}&quot; data-c=&quot;${c-t.nk}&quot;>${t.fmt[c-t.nk](v)}</td>`).join('')}${t.G?`<td><button class=&quot;rb&quot; data-i=&quot;${idx}&quot;>👁 Rincian</button></td>`:''}</tr>`}).join('')
+    :`<tr><td class=&quot;em&quot; colspan=&quot;${cols}&quot;>Tidak ada data.</td></tr>`;
+  const foot=t.tot?`<tfoot><tr><td class=&quot;k&quot;>${esc(t.tot.l)}</td>${t.tot.cells.map((v,c)=>`<td class=&quot;${t.cls[c]||''} clk&quot; data-i=&quot;-1&quot; data-c=&quot;${c}&quot;>${t.fmt[c](v)}</td>`).join('')}${t.G?'<td></td>':''}</tr></tfoot>`:'';
+  $(t.el).innerHTML=`<table><thead><tr>${r1}</tr>${r2?`<tr>${r2}</tr>`:''}</thead><tbody>${body}</tbody>${foot}</table>`;
+}
+
+/* ===== RINCIAN (popup) ===== */
+function openDetail(title,list){
+  const rows=ticketRows(list),n=rows.length;
+  $('#mt').textContent=`${title} — ${n} data`;
+  const keys=rows[0]?Object.keys(rows[0]):['Keterangan'];
+  $('#mb').innerHTML=`<div class=&quot;tw&quot;><table style=&quot;min-width:1000px&quot;><thead><tr>${keys.map(x=>`<th>${esc(x)}</th>`).join('')}</tr></thead><tbody>`+
+    (n?rows.slice(0,300).map(o=>`<tr>${keys.map(x=>`<td class=&quot;${x=='Kategori Batal'&amp;&amp;o[x]==BCAT[0][0]?'rd':''}&quot; style=&quot;text-align:left&quot;>${esc(o[x])}</td>`).join('')}</tr>`).join('')
+      :`<tr><td class=&quot;em&quot; colspan=&quot;${keys.length}&quot;>Tidak ada data.</td></tr>`)+'</tbody></table></div>'+(n>300?'<p class=&quot;stat&quot;>Menampilkan 300 pertama; Excel berisi seluruh data.</p>':'');
+  MX={file:'Rincian_'+slug(title),rows};
+  $('#ov').classList.add('on');
+}
+
+/* ===== EXPORT EXCEL ===== */
+function saveXlsx(sheets,name){
+  const wb=XLSX.utils.book_new();
+  sheets.forEach(s=>XLSX.utils.book_append_sheet(wb,s.ws,s.name));
+  XLSX.writeFile(wb,name+'_'+new Date().toISOString().slice(0,10)+'.xlsx');
+}
+function exportT(id,mode){
+  const t=TB[id];if(!t||!t.items.length){toast('Tidak ada data untuk diexport',true);return}
+  if(mode=='rekap'){
+    const top=t.groups?t.head.map((h,c)=>{const g=t.groups.find(g=>g.c.includes(c));return g?g.l:''}):null;
+    const aoa=[...(top?[top]:[]),t.head,...t.items.map(it=>it.cells),[t.tot.l,...t.tot.cells]];
+    saveXlsx([{name:'Rekap',ws:XLSX.utils.aoa_to_sheet(aoa)}],id=='t1'?'Rekap_Laporan_Batal':'Kategori_Batal_Comcen');
+  }else{
+    const rows=ticketRows(t.allRows.length?(id=='t1'?PK.b(t.allRows):PK.cm(t.allRows)):[]);
+    if(!rows.length){toast('Tidak ada tiket batal',true);return}
+    saveXlsx([{name:'Detail Tiket',ws:XLSX.utils.json_to_sheet(rows)}],id=='t1'?'Detail_Laporan_Batal':'Detail_Kategori_Batal_Comcen');
+  }
+}
+
+/* ===== EVENT ===== */
+$('#fb').onchange=fillAll;
+$('#fd').onchange=()=>{fillArea();fillPos();readF();render()};
+$('#fa').onchange=()=>{const a=$('#fa').value,d=$('#fd').value;
+  if(a){const r=mrows().find(x=>x.NAMA_AREA==a&amp;&amp;(!d||x.NAMA_DISTRIBUSI==d));if(r)$('#fd').value=r.NAMA_DISTRIBUSI}
+  fillAll()};
+$('#fp').onchange=()=>{const p=$('#fp').value,a=$('#fa').value,d=$('#fd').value;
+  if(p){const r=mrows().find(x=>x.NAMA_POSKO==p&amp;&amp;(!a||x.NAMA_AREA==a)&amp;&amp;(!d||x.NAMA_DISTRIBUSI==d));if(r){$('#fd').value=r.NAMA_DISTRIBUSI;$('#fa').value=r.NAMA_AREA}}
+  fillAll()};
+$('#rs').onclick=()=>{$('#fd').value='';$('#fa').value='';$('#fp').value='';fillAll()};
+$('#sy').onclick=sync;
+$('#q1').oninput=()=>drawT(TB.t1);$('#q2').oninput=()=>drawT(TB.t2);
+document.querySelectorAll('button[data-x]').forEach(b=>b.onclick=()=>exportT(b.dataset.x,b.dataset.m));
+['t1','t2'].forEach(id=>$('#'+id).addEventListener('click',e=>{
+  const t=TB[id];if(!t)return;
+  const th=e.target.closest('th[data-c]');
+  if(th){const c=+th.dataset.c;t.sd=t.sc==c?-t.sd:1;t.sc=c;drawT(t);return}
+  const td=e.target.closest('td.clk');
+  if(td){
+    const i=+td.dataset.i,c=+td.dataset.c,it=i<0?null:t.items[i];
+    const title=(it?it.cells[0]:t.tot.l)+' — '+t.head[t.nk+c];
+    openDetail(title,t.kinds[c](it?it.rows:t.allRows));
+    return;
+  }
+  const b=e.target.closest('.rb');
+  if(b){const it=t.items[+b.dataset.i];openDetail(it.cells[0],it.list)}
+}));
+$('#kp').addEventListener('click',e=>{
+  const el=e.target.closest('[data-k]');if(!el)return;
+  const k=KPI[+el.dataset.k],sub=el.hasAttribute('data-s');
+  openDetail(k.t+(sub?' — '+k.ss:''),(sub?k.sfn:k.fn)(k.rows));
+});
+$('#mc').onclick=()=>$('#ov').classList.remove('on');
+$('#ov').addEventListener('click',e=>{if(e.target.id=='ov')$('#ov').classList.remove('on')});
+document.addEventListener('keydown',e=>{if(e.key=='Escape')$('#ov').classList.remove('on')});
+$('#mx').onclick=()=>{if(MX&amp;&amp;MX.rows.length)saveXlsx([{name:'Rincian Tiket Batal',ws:XLSX.utils.json_to_sheet(MX.rows)}],MX.file);else toast('Tidak ada data untuk diexport',true)};
+
+function theme(t,sv){document.documentElement.dataset.theme=t;if(sv!==false)try{localStorage.setItem('wo-batal-tema',t)}catch(e){}if(D.p2b.length)render()}
+const EMB=document.documentElement.classList.contains('emb');
+/* ditanam di Dashboard: tema mengikuti tombol tema Dashboard */
+window.__setTheme=t=>{if((t==='dark'||t==='light')&amp;&amp;document.documentElement.dataset.theme!==t)theme(t,false)};
+$('#th').onclick=()=>{if(EMB){try{parent.document.getElementById('thm').click();return}catch(e){}}theme(document.documentElement.dataset.theme=='light'?'dark':'light')};
+if(EMB)$('#th').hidden=true;
+else try{document.documentElement.dataset.theme=localStorage.getItem('wo-batal-tema')||'dark'}catch(e){}
+
+/* filter menempel di atas saat di-skrol dan sedikit mengecil (tinggi layout dijaga agar isi tidak melompat) */
+(function(){const el=document.getElementById('fbar');if(!el)return;let on=false;
+ function shrink(v){
+  if(v){el.classList.add('nt');el.classList.remove('shrunk');const h0=el.offsetHeight;el.classList.add('shrunk');const h1=el.offsetHeight;
+   el.classList.remove('shrunk');void el.offsetHeight;el.classList.remove('nt');
+   el.style.setProperty('--comp',Math.max(0,h0-h1)+'px');el.classList.add('shrunk');on=true}
+  else{el.classList.remove('shrunk');on=false}}
+ const y=()=>window.pageYOffset||document.documentElement.scrollTop||0;
+ addEventListener('scroll',()=>{const v=y();if(!on&amp;&amp;v>60)shrink(true);else if(on&amp;&amp;v<20)shrink(false)},{passive:true});
+ addEventListener('resize',()=>{if(on)shrink(true)});
+})();
+fillAll();
+boot();
+setInterval(()=>{if(!document.hidden)sync()},AUTO_MS);
+</script>
+</body>
+</html>
+"></div>
+</main>
 <div id="md" hidden><div class="box"><div class="row" style="justify-content:space-between;align-items:center"><h2 id="mt"></h2><div class="row"><button class="alt" id="mx">Unduh Excel</button><button class="alt" id="mx2" hidden>Unduh Excel (detail)</button><button id="mc">Tutup</button></div></div><div class="wrap" id="mi"></div><div id="mf"></div></div></div>
 <script>
 const $=id=>document.getElementById(id),e=s=>String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
@@ -3574,7 +4369,7 @@ function enter(k){if(cur==k&&!$('app').hidden)return;const g=MENUS[k];cur=k;CG=g
  tab='R';lim=200;open.clear();CH.sel=null;$('tR').classList.add('on');$('tD').classList.remove('on');
  $('fM').value='';$('fA').value='';$('fU').value='';R=DATA[k]||[];fill();render();
  $('err').textContent='';$('st').textContent=DATA[k]?'Menyegarkan...':'Belum sinkron';window.scrollTo(0,0);sync()}
-function route(){const h=location.hash.slice(1);if(h=='absensi'){if(window.absEnter)absEnter();return}if(h=='cuti'){if(window.cutEnter)cutEnter();return}if(h=='callback'){if(window.cbEnter)cbEnter();return}MENUS[h]?enter(h):home()}
+function route(){const h=location.hash.slice(1);if(h=='absensi'){if(window.absEnter)absEnter();return}if(h=='cuti'){if(window.cutEnter)cutEnter();return}if(h=='wobatal'){if(window.wobEnter)wobEnter();return}if(h=='callback'){if(window.cbEnter)cbEnter();return}MENUS[h]?enter(h):home()}
 addEventListener('hashchange',route);route();setInterval(sync,D.iv*60000);
 </script>
 <script>
@@ -3915,7 +4710,7 @@ let w=innerWidth;addEventListener('resize',()=>{const m1=w<=640,m2=innerWidth<=6
 <script>
 /* Penanda halaman menu: header menu seragam di semua card menu (tidak berlaku di beranda) */
 (function(){const r=document.documentElement;
-function f(){const h=location.hash.slice(1);r.classList.toggle('hmenu',!!(h&&(h=='absensi'||h=='cuti'||h=='callback'||(typeof MENUS!=='undefined'&&MENUS[h]))))}
+function f(){const h=location.hash.slice(1);r.classList.toggle('hmenu',!!(h&&(h=='absensi'||h=='cuti'||h=='wobatal'||h=='callback'||(typeof MENUS!=='undefined'&&MENUS[h]))))}
 addEventListener('hashchange',f);f()})();
 </script>
 <script>
@@ -4033,6 +4828,37 @@ addEventListener('hashchange',sync);addEventListener('resize',()=>{if(!cut.hidde
 addEventListener('scroll',()=>{if(!cut.hidden)place()},{passive:true});addEventListener('load',()=>{sync();if(!cut.hidden)settle()});
 sync();
 if(location.hash.slice(1)=='cuti')window.cutEnter();
+})();
+</script>
+<script>
+/* Menu card "WO Batal": halaman WO Batal ditanam di iframe (srcdoc) layar penuh.
+   Tabel, filter, fitur, fungsi dan sumber data WO Batal tidak diubah; tampilan memakai tema Dashboard
+   dan tema terang/gelap mengikuti tombol tema Dashboard. */
+(function(){
+const $=id=>document.getElementById(id),wob=$('wob'),root=document.documentElement;let fr=null,tm=[],bld=false;
+const FIT='html,body{overscroll-behavior:none}';
+function theme(){if(!fr)return;try{const t=root.getAttribute('data-theme')==='dark'?'dark':'light',w=fr.contentWindow;
+ if(w&&typeof w.__setTheme==='function')w.__setTheme(t);else if(fr.contentDocument&&fr.contentDocument.documentElement)fr.contentDocument.documentElement.setAttribute('data-theme',t)}catch(e){}}
+function place(){if(!fr||wob.hidden)return;let d;try{d=fr.contentDocument}catch(x){return}if(!d||!d.documentElement)return;
+ if(!d.getElementById('wobFit')&&d.head){const st=d.createElement('style');st.id='wobFit';st.textContent=FIT;d.head.appendChild(st)}
+ const hb=document.querySelector('header').getBoundingClientRect().bottom,z=matchMedia('(min-width:641px)').matches?.9:1,hz=Math.max(0,Math.round(hb/z))+'px';
+ d.documentElement.style.setProperty('--hb',hz);d.documentElement.style.setProperty('--abs-top',hz);theme()}
+function settle(){tm.forEach(clearTimeout);tm=[0,60,200,500,1000].map(t=>setTimeout(()=>{if(!wob.hidden){window.scrollTo(0,1e5);place()}},t))}
+function sync(){const on=location.hash.slice(1)=='wobatal';
+ if(!on&&(!wob.hidden||root.classList.contains('wobmode'))){wob.hidden=true;root.classList.remove('wobmode');window.scrollTo(0,0)}}
+window.wobEnter=function(){
+ cur=null;$('home').hidden=true;$('app').hidden=true;$('cb').hidden=true;$('md').hidden=true;$('abs').hidden=true;$('cut').hidden=true;wob.hidden=false;root.classList.add('wobmode');
+ $('ht').textContent='WO Batal';$('hp').textContent='';document.title='WO Batal';
+ /* halaman dimuat setelah animasi transisi selesai agar animasi tidak tersendat / freeze */
+ if(!fr&&!bld){bld=true;const box=$('wobBox'),ld=document.createElement('div');ld.className='wobld';ld.textContent='Memuat WO Batal…';box.appendChild(ld);let n=0;
+  const mk=()=>{const f=document.createElement('iframe');f.title='WO Batal';f.setAttribute('allow','clipboard-write; fullscreen');
+   f.addEventListener('load',()=>{ld.remove();place()});f.srcdoc=$('wobSrc').dataset.html.replace('<head>','<head>'+(window.CCGUARD||''));fr=f;box.appendChild(f);bld=false};
+  const w=()=>{if(document.querySelector('.mph')&&n++<40)setTimeout(w,60);else setTimeout(mk,60)};w()}
+ sync();settle()};
+new MutationObserver(theme).observe(root,{attributes:true,attributeFilter:['data-theme']});
+addEventListener('hashchange',sync);addEventListener('resize',()=>{if(!wob.hidden)settle()});
+addEventListener('scroll',()=>{if(!wob.hidden)place()},{passive:true});addEventListener('load',()=>{sync();if(!wob.hidden)settle()});
+if(location.hash.slice(1)=='wobatal')window.wobEnter();
 })();
 </script>
 <button id="thm" type="button" aria-label="Ganti tema" aria-pressed="false" title="Ganti tema terang/gelap"><svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M20.4 14.6A8.5 8.5 0 0 1 9.4 3.6a.7.7 0 0 0-.9-.9A10 10 0 1 0 21.3 15.5a.7.7 0 0 0-.9-.9z"/></svg><svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.4" fill="currentColor"/><g stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 2.5v2.4M12 19.1v2.4M2.5 12h2.4M19.1 12h2.4M5.3 5.3l1.7 1.7M17 17l1.7 1.7M5.3 18.7L7 17M17 7l1.7-1.7"/></g></svg></button>
