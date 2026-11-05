@@ -226,6 +226,9 @@ tr.tot{background:linear-gradient(145deg,var(--cy2),var(--cy))}tr.tot td{color:v
 main#abs,main#cut{max-width:none;margin:0;padding:0}
 #abs .abar,#cut .abar{position:fixed;left:0;right:0;top:0;z-index:7;padding:12px 16px;pointer-events:none}#abs .abar a,#cut .abar a{pointer-events:auto}
 #abs iframe,#cut iframe{position:fixed;left:0;top:0;width:100%;height:100vh;height:100dvh;border:0;z-index:1}
+#cut:has(iframe.pvopen){position:static!important;z-index:auto!important}
+#cut iframe.pvopen{z-index:2147483000!important}
+@media(min-width:901px){#cut iframe.pvopen{height:calc(100dvh / .9)!important}}
 html.absmode{overflow:hidden;overscroll-behavior:none}html.absmode body{min-height:calc(100vh + 600px)}
 html.absmode header{background:rgba(234,236,248,.5);background:color-mix(in srgb,var(--bg) 50%,transparent);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}
 html.absmode[data-theme="dark"] header{background:rgba(26,30,45,.5);background:color-mix(in srgb,var(--bg) 50%,transparent)}
@@ -3001,6 +3004,7 @@ async function load(){
     }
     const p=mapRows(a,SPEC_P).filter(x=>x.nama);if(p.length){S.people=p.map(x=>({...x,gender:gen(x.gender),pola:polaOf(x.shift)}));ok.push('tenaga_kerja')}}catch(e){}
   S.ttdOk=false;try{const t=parseTtd(await sheet('',TTD_GID));if(t.length){S.ttd=t;S.ttdOk=true;ok.push('ttd_cuti')}}catch(e){}
+  S.ttdX=null;try{S.ttdX=await ttdExtra()}catch(e){}
   try{const c=await sheet('ket_cuti');const k=uniq(c.rows.map(r=>String(r[0]||'').trim()));if(k.length&amp;&amp;!/divisi/i.test(c.h.join(' '))){S.ket=k;ok.push('ket_cuti')}}catch(e){}
   try{S.remote=parseRekap(await sheet('',REKAP_GID));if(S.remote.length)ok.push('rekap');reconcile()}catch(e){S.remote=[]}
   if(!S.ttd.length)S.ttd=TTD_DEMO.map(r=>({divisi:r[0],t1:r[1],u1:r[2],t2:r[3],u2:r[4],t3:r[5],u3:r[6],t4:r[7],u4:r[8]}));
@@ -3222,7 +3226,18 @@ const ukey=s=>{const n=N(s);if(!n)return'';const k=KOTA.find(x=>n.includes(x));r
 function ttdFor(p){
   const f=v=>{const k=ukey(v);return k?S.ttd.find(x=>ukey(x.divisi)==k):null};
   const t=f(p.divisi)||f(p.unit)||{};
-  return{t1:t.t1||'',u1:t.u1||'',t2:t.t2||'',u2:t.u2||'',t3:t.t3||'',u3:t.u3||'',t4:t.t4||'',u4:t.u4||''};
+  const o={t1:t.t1||'',u1:t.u1||'',t2:t.t2||'',u2:t.u2||'',t3:t.t3||'',u3:t.u3||'',t4:t.t4||'',u4:t.u4||''};
+  // tambahan Menyetujui khusus DCC UP3 Jayapura: nama & jabatan dari ttd_cuti!B10:C10 (database)
+  if(ukey(p.divisi)==='jayapura'||ukey(p.unit)==='jayapura'){if(S.ttdX&&S.ttdX.n){o.x1=S.ttdX.n;o.x2=S.ttdX.u}}
+  return o;
+}
+function csvRow(line){const out=[];let c='',q=false;for(let i=0;i<line.length;i++){const x=line[i];if(q){if(x=='&quot;'){if(line[i+1]=='&quot;'){c+='&quot;';i++}else q=false}else c+=x}else if(x=='&quot;')q=true;else if(x==','){out.push(c);c=''}else c+=x}out.push(c);return out}
+async function ttdExtra(){
+  const r=await fetch(`https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${TTD_GID}&range=B10:C10&_=${Date.now()}`,{cache:'no-store'});
+  if(!r.ok)throw new Error('ttd_cuti B10:C10');
+  const row=csvRow(((await r.text()).split(/\r?\n/))[0]||'');
+  const n=(row[0]||'').trim(),u=(row[1]||'').trim();
+  return n?{n,u}:null;
 }
 function makePDF(r,ev){
   const{jsPDF}=window.jspdf,d=new jsPDF({unit:'pt',format:'a4'});
@@ -3240,10 +3255,15 @@ function makePDF(r,ev){
   y+=14;d.text('Dengan ini mengajukan permohonan tidak masuk kerja :',73,y);y+=26;
   y=row(y,'Keterangan',r.ket);y=row(y,'Lamanya Cuti',lam(r));y=row(y,'Jumlah Cuti',r.jumlah+' Hari');y=row(y,sisaLbl(r),r.sisa+' Hari');
   d.setFont('helvetica','normal');d.text(hari(r.tglAjuan),556,337,{align:'right'});
-  d.text('Menyetujui',190,377,{align:'center'});d.text('Pemohon',432,377,{align:'center'});
   const sg=(n,u,x,yy,w)=>{if(n)ctr(n,x,yy,true);else{d.setFont('helvetica','normal');d.text('..............................',x,yy,{align:'center'})}ctrL(u,x,yy+12,w)};
   const t=r.ttd;
-  sg(t.t2,t.u2,190,482,170);sg(r.nama,r.jabatan,432,482,170);
+  if(t.x1){ // DCC UP3 Jayapura: 3 ttd di baris 1 (Menyetujui, Menyetujui, Pemohon)
+    d.text('Menyetujui',115,377,{align:'center'});d.text('Menyetujui',300,377,{align:'center'});d.text('Pemohon',485,377,{align:'center'});
+    sg(t.t2,t.u2,115,482,150);sg(t.x1,t.x2,300,482,150);sg(r.nama,r.jabatan,485,482,150);
+  }else{
+    d.text('Menyetujui',190,377,{align:'center'});d.text('Pemohon',432,377,{align:'center'});
+    sg(t.t2,t.u2,190,482,170);sg(r.nama,r.jabatan,432,482,170);
+  }
   d.setFont('helvetica','normal');d.text('Mengetahui',300,534,{align:'center'});
   sg(t.t1,t.u1,115,653,150);sg(t.t3,t.u3,300,653,150);sg(t.t4,t.u4,485,653,150);
   // catatan
@@ -3288,14 +3308,14 @@ function letterHTML(r){
   const C=(cx,y,w,h,ex)=>A(cx-w/2,y,w,h,'text-align:center;'+(ex||''));
   const row=(l,v)=>`<div style=&quot;display:flex&quot;><span style=&quot;width:144px;flex:none&quot;>${l}</span><span style=&quot;width:8px;flex:none&quot;>:</span><span style=&quot;width:330px&quot;>${e(v||'-')}</span></div>`;
   const sg=(n,u,cx,y,w)=>C(cx,y,w,`<b style=&quot;text-decoration:underline&quot;>${n?e(n):'..............................'}</b><div>${e(u)}</div>`);
+  const X=t.x1?C(115,368,150,'Menyetujui')+C(300,368,150,'Menyetujui')+C(485,368,150,'Pemohon')+sg(t.t2,t.u2,115,473,150)+sg(t.x1,t.x2,300,473,150)+sg(r.nama,r.jabatan,485,473,150):C(190,368,170,'Menyetujui')+C(432,368,170,'Pemohon')+sg(t.t2,t.u2,190,473,170)+sg(r.nama,r.jabatan,432,473,170);
   const hdr=`<img src=&quot;${HDR_PNG}&quot; style=&quot;width:595px;display:block&quot;>`,lg=`<img src=&quot;${LOGO_SVG}&quot; style=&quot;width:118px;display:block&quot;>`;
   return A(0,0,595,hdr)+A(438,44,0,lg)
   +C(297.5,92,520,'<b style=&quot;text-decoration:underline&quot;>SURAT PERMOHONAN TIDAK MASUK KERJA</b>')
   +C(297.5,106,520,`Nomor : ${r.nomor?e(r.nomor):'<span style=&quot;display:inline-block;width:20px&quot;></span>'}/SDM.00/PLN ND - PA/${yr}`)
   +A(73,143,480,`Yang bertanda tangan di bawah ini :${row('Nama',r.nama)}${row('No. Induk',r.noinduk)}${row('Jabatan',r.jabatan)}${row('Penempatan',r.unit)}<div style=&quot;margin:14px 0 13px&quot;>Dengan ini mengajukan permohonan tidak masuk kerja :</div>${row('Keterangan',r.ket)}${row('Lamanya Cuti',lam(r))}${row('Jumlah Cuti',r.jumlah+' Hari')}${row(sisaLbl(r),r.sisa+' Hari')}`)
   +A(0,328,0,e(hari(r.tglAjuan)),'left:auto;right:39px;')
-  +C(190,368,170,'Menyetujui')+C(432,368,170,'Pemohon')
-  +sg(t.t2,t.u2,190,473,170)+sg(r.nama,r.jabatan,432,473,170)
+  +X
   +C(300,525,100,'Mengetahui')
   +sg(t.t1,t.u1,115,644,150)+sg(t.t3,t.u3,300,644,150)+sg(t.t4,t.u4,485,644,150)
   +A(60,707,0,'NB','font-weight:bold;font-size:7.5px;')
@@ -3315,11 +3335,19 @@ let cur=null;
 function fitSheet(){const k=Math.min(1,($('.pvb').clientWidth-28)/595);$('#sheet').style.transform=`scale(${k})`;$('#pvw').style.height=842*k+'px';$('#pvw').style.width=595*k+'px';$$('#pvEv .pvw2').forEach(w=>{w.style.width=595*k+'px';w.style.height=842*k+'px';w.firstElementChild.style.transform=`scale(${k})`})}
 $('#go').onclick=()=>{
   cur=buildRec();if(!cur)return;
-  $('#sheet').innerHTML=letterHTML(cur);pvEvRender(cur);$('#pv').showModal();fitSheet();
+  $('#sheet').innerHTML=letterHTML(cur);pvEvRender(cur);$('#pv').showModal();fitSheet();pvOn(true);
 };
 addEventListener('resize',()=>{if($('#pv').open)fitSheet()});
 $('#pvX').onclick=()=>$('#pv').close();
-$('#pv').addEventListener('close',()=>{cur=null});
+/* preview surat: tampil paling depan (menutupi header & seluruh layar) */
+function pvOn(on){
+  document.documentElement.classList.toggle('pvo',on);
+  if(on&amp;&amp;!document.getElementById('pvCss')){const st=document.createElement('style');st.id='pvCss';
+    st.textContent='html.pvo #pv{top:0!important;left:50%!important;transform:translateX(-50%);height:100dvh!important;max-height:100dvh!important;width:min(700px,100vw)!important;max-width:100vw!important;border-radius:0!important}';
+    document.head.appendChild(st)}
+  try{const fe=window.frameElement;if(fe)fe.classList.toggle('pvopen',on)}catch(e){}
+}
+$('#pv').addEventListener('close',()=>{cur=null;pvOn(false)});
 $('#pvDl').onclick=()=>{
   if(!cur||cur.saved)return;
   const evs=cur.ev||[];
