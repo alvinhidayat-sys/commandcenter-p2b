@@ -228,6 +228,8 @@ main#abs,main#cut{max-width:none;margin:0;padding:0}
 #abs iframe,#cut iframe{position:fixed;left:0;top:0;width:100%;height:100vh;height:100dvh;border:0;z-index:1}
 #cut:has(iframe.pvopen){position:static!important;z-index:auto!important}
 #cut iframe.pvopen{z-index:2147483000!important}
+/* v15: halaman Rekap Absensi & Pengajuan Cuti (iframe) mengikuti zoom 90% desktop agar tidak terpotong */
+@media(min-width:901px){#abs iframe,#cut iframe{height:calc(100dvh / .9)!important}html.absmode .kita-legacy{display:none!important}}
 @media(min-width:901px){#cut iframe.pvopen{height:calc(100dvh / .9)!important}}
 html.absmode{overflow:hidden;overscroll-behavior:none}html.absmode body{min-height:calc(100vh + 600px)}
 html.absmode header{background:rgba(234,236,248,.5);background:color-mix(in srgb,var(--bg) 50%,transparent);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}
@@ -532,7 +534,7 @@ body.onLanding{padding:0;overflow:hidden}
 #landing:not([hidden]){position:fixed;inset:0;z-index:5}
 .lp{position:absolute;inset:0;overflow:hidden;container-type:size;background:var(--lp-bg);isolation:isolate}
 /* panggung SVG: menutup seluruh layar (cover), rasio asli tetap terjaga agar form pas dengan gambar */
-.sc{--W:max(100cqw,calc(100cqh*2.0656));position:absolute;width:var(--W);height:calc(var(--W)/2.0656);left:calc((100cqw - var(--W))*.05);top:calc((100cqh - var(--W)/2.0656)*.15);overflow:hidden;container-type:inline-size;will-change:transform,opacity}
+.sc{--W:min(100cqw,calc(100cqh*2.0656));position:absolute;width:var(--W);height:calc(var(--W)/2.0656);left:calc((100cqw - var(--W))/2);top:calc((100cqh - var(--W)/2.0656)*.15);overflow:hidden;container-type:inline-size;will-change:transform,opacity}
 .sc>svg{position:absolute;left:0;top:0;width:100%;height:100%;display:block}
 #scL{background:var(--lg-bg);transform-origin:73.6% 54%}
 #scM{background:var(--lp-bg)}
