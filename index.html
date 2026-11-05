@@ -3928,7 +3928,7 @@ function bcls(raw){const n=nz(raw);if(emptyN(n))return[BTR,'kosong'];
 const bkat=raw=>bcls(raw)[0];
 /* ===== penyesuaian manual kategori oleh user (disimpan di browser ini) ===== */
 const MKEY='wo-batal-manual-kategori';
-let MAN={},ANA=[],ADJ='';
+let MAN={},ANA=[],ADJ='',CURX=null;
 try{MAN=JSON.parse(localStorage.getItem(MKEY)||'{}')||{}}catch(e){MAN={}}
 const saveMan=()=>{try{localStorage.setItem(MKEY,JSON.stringify(MAN));return true}catch(e){return false}};
 /* penyimpanan bersama: penyesuaian kategori disimpan di Google Sheet (1JDX5hw...) lewat Apps Script terpisah (MAN_URL) */
@@ -3942,16 +3942,16 @@ async function loadMan(){
     if(D.p2b.length||D.cc.length)render();
   }catch(e){/* server belum bisa dibaca: pakai salinan lokal */}
 }
-function sendMan(key,val){
+function sendMan(key,val,ket,laporan){
   if(!manOn())return Promise.resolve(false);
-  return fetch(MAN_URL,{method:'POST',body:JSON.stringify({act:'manual_set',key:key,val:val})})
+  return fetch(MAN_URL,{method:'POST',body:JSON.stringify({act:'manual_set',key:key,val:val,ket:ket,laporan:laporan||[]})})
     .then(r=>r.text()).then(t=>{const j=JSON.parse(t);return !j.error}).catch(()=>false);
 }
 /* panel: daftar keterangan di luar format paten + hasil analisanya; tombol Sesuaikan untuk memilih kategori manual */
 function paintAnalisa(list){
   const m=new Map();
   list.forEach(r=>{const a=gA(r),n=nz(a);if(emptyN(n))return;const c=bcls(a);if(c[1]=='paten'||c[1]=='manual')return;
-    let e=m.get(n);if(!e){e={t:String(a).trim(),n:0,c};m.set(n,e)}e.n++});
+    let e=m.get(n);if(!e){e={t:String(a).trim(),n:0,c,ls:[]};m.set(n,e)}e.n++;e.ls.push({no:String(r.NO_LAPORAN||''),area:String(r.NAMA_AREA||''),posko:String(r.NAMA_POSKO||'')})});
   const ord={belum:0,analisa:1,manual:2};
   ANA=[...m.values()].sort((x,y)=>ord[x.c[1]]-ord[y.c[1]]||y.n-x.n);
   const cn=k=>ANA.filter(x=>x.c[1]==k).length;
@@ -3961,7 +3961,7 @@ function paintAnalisa(list){
     :'<tr><td class=&quot;em&quot; colspan=&quot;5&quot;>Tidak ada keterangan di luar format paten.</td></tr>';
   bd.innerHTML='<div class=&quot;tw&quot;><table style=&quot;min-width:760px&quot;><thead><tr><th>Keterangan Asli</th><th>Dikelompokkan ke</th><th>Dasar</th><th>Jumlah</th><th>Aksi</th></tr></thead><tbody>'+body+'</tbody></table></div>'+(ANA.length>300?'<p class=&quot;stat&quot;>Menampilkan 300 teks pertama.</p>':'');
   bd.onclick=e=>{const b=e.target.closest('[data-a]');if(b)openAdj(+b.dataset.a)}}
-function openAdj(i){const x=ANA[i];if(!x)return;ADJ=nz(x.t);
+function openAdj(i){const x=ANA[i];if(!x)return;ADJ=nz(x.t);CURX=x;
   $('#atx').textContent=x.t;
   $('#acur').textContent='Saat ini: '+BCAT[x.c[0]][0]+' ('+BDASAR[x.c[1]]+')';
   const sel=$('#asel');sel.innerHTML='<option value=&quot;&quot;>— pilih kategori —</option>'+BCAT.map(c=>`<option>${esc(c[0])}</option>`).join('');
@@ -3969,8 +3969,8 @@ function openAdj(i){const x=ANA[i];if(!x)return;ADJ=nz(x.t);
   $('#adl').hidden=!MAN[ADJ];$('#ova').classList.add('on')}
 $('#asv').onclick=()=>{const v=$('#asel').value;if(!v){toast('Pilih kategori dari daftar terlebih dahulu.',1);return}
   MAN[ADJ]=v;const ok=saveMan();$('#ova').classList.remove('on');render();
-  sendMan(ADJ,v).then(sv=>toast(sv?'Penyesuaian disimpan dan berlaku di semua perangkat.':'Penyesuaian tersimpan di browser ini, tetapi gagal dikirim ke server.',!sv));};
-$('#adl').onclick=()=>{delete MAN[ADJ];saveMan();$('#ova').classList.remove('on');render();sendMan(ADJ,'').then(sv=>toast(sv?'Dikembalikan ke hasil otomatis.':'Dikembalikan di browser ini, tetapi gagal dikirim ke server.',!sv))};
+  sendMan(ADJ,v,CURX?CURX.t:'',CURX?CURX.ls:[]).then(sv=>toast(sv?'Penyesuaian disimpan dan berlaku di semua perangkat.':'Penyesuaian tersimpan di browser ini, tetapi gagal dikirim ke server.',!sv));};
+$('#adl').onclick=()=>{delete MAN[ADJ];saveMan();$('#ova').classList.remove('on');render();sendMan(ADJ,'',CURX?CURX.t:'',[]).then(sv=>toast(sv?'Dikembalikan ke hasil otomatis.':'Dikembalikan di browser ini, tetapi gagal dikirim ke server.',!sv))};
 $('#ax').onclick=()=>$('#ova').classList.remove('on');
 $('#ova').addEventListener('click',e=>{if(e.target.id=='ova')$('#ova').classList.remove('on')});
 document.addEventListener('keydown',e=>{if(e.key=='Escape')$('#ova').classList.remove('on')});
