@@ -621,7 +621,7 @@ header h1,header .brand+h1{font-size:clamp(14px,2.7vw,20px)!important;white-spac
 <button id="p0S" type="button">Sinkron sekarang</button><button id="p0XT" class="alt" type="button">Excel Tabel</button><button id="p0XD" class="alt" type="button">Excel Detail Data</button><span id="p0St" style="font-size:13px;color:var(--mut)">Belum sinkron</span></div>
 <div id="p0Err" style="color:var(--bad);margin-top:8px;white-space:pre-wrap"></div></div>
 <div class="kpi" id="p0K"></div>
-<div class="card"><h3>PENUGASAN KHUSUS (P0) PER UNIT</h3><div class="wrap" id="p0T1"></div></div>
+<div class="card"><h3>PENUGASAN KHUSUS (P0) PER UNIT</h3><div class="wrap" id="p0T1"></div><div class="p0hint" style="margin-top:10px">Keterangan: Over SLA = durasi &gt; SLA jenis pekerjaan (tabel SLA). Auto Close = durasi &gt; 120 menit. Durasi Terbuang = jumlah (durasi − SLA) hanya untuk penugasan yang melewati SLA; durasi ≤ SLA dihitung 0. Klik angka untuk melihat data acuannya.</div></div>
 <div class="card"><h3>PENUGASAN KHUSUS (P0) PER PEKERJAAN</h3><div id="p0T2"></div></div>
 <div class="card"><div class="row" style="justify-content:space-between;align-items:center">
 <div class="row tabs" id="p0Tabs"><button type="button" data-t="j" class="on">Per Jenis Pekerjaan</button><button type="button" data-t="n">Jumlah Pekerjaan</button><button type="button" data-t="t">Durasi Terbuang</button></div>
@@ -5413,9 +5413,9 @@ const S={rows:[],w:[],busy:false,init:false,tab:'j',dim:'u',dr:null,ou:new Set()
 const PAL=['#52c3dc','#f8c420','#c93e55','#5f9e6e','#7b6cf6','#ef8a3c','#2f8fb0','#d8639b','#8fb339','#4b5fd1','#e0a43a','#3bb7a0','#b05c3a','#8e7fbf','#6fa8dc','#cc7a9a','#7a9a2b','#c9b037'];
 /* ---- data ---- */
 function conv(j){const A=j.A||[],U=j.U||[],J=j.J||[];SL.clear();JOBS.forEach(x=>SL.set(x[0],x[1]));
- return(j.rows||[]).map(r=>{const jb=JK.get(key(J[r[4]])),jn=jb?jb[0]:String(J[r[4]]).trim(),sla=r[6]!=null?r[6]:(jb?jb[1]:null),d=+r[5],ac=r[8]!=null?!!r[8]:d>ACMIN,over=sla!=null&&d>sla;
+ return(j.rows||[]).map(r=>{const jb=JK.get(key(J[r[4]])),jn=jb?jb[0]:String(J[r[4]]).trim(),sla=jb?jb[1]:(r[6]!=null?r[6]:null),d=+r[5],ac=r[8]!=null?!!r[8]:d>ACMIN,over=sla!=null&&d>sla;
   if(!jb&&sla!=null)SL.set(jn,sla);
-  return{y:r[0],m:r[1],unit:String(A[r[2]]||'').toUpperCase().replace(/^\s*UP3\s+/,'').trim()||'-',posko:String(U[r[3]]||'').trim()||'-',j:jn,d,over,ac,sla,no:String(r[9]||''),mu:r[10]!=null?+r[10]:null,ak:r[11]!=null?+r[11]:null,tb:r[7]!=null?+r[7]:(over?d-sla:0)}})}
+  return{y:r[0],m:r[1],unit:String(A[r[2]]||'').toUpperCase().replace(/^\s*UP3\s+/,'').trim()||'-',posko:String(U[r[3]]||'').trim()||'-',j:jn,d,over,ac,sla,no:String(r[9]||''),mu:r[10]!=null?+r[10]:null,ak:r[11]!=null?+r[11]:null,tb:over?d-sla:0}})}
 const ag=()=>({n:0,d:0,o:0,a:0,x:0,t:0});
 const add=(g,r)=>{g.n++;g.d+=r.d;if(r.over)g.o++;if(r.ac)g.a++;else if(r.over)g.x++;g.t+=r.tb};
 const sum=(T,g)=>{for(const k in T)T[k]+=g[k]};
@@ -5480,12 +5480,12 @@ function warn(){const y=+$('p0Y').value||0,m=+$('p0M').value||0,L=S.w.filter(x=>
  $('p0Err').textContent=L.length?'Perhatian:\n'+L.map(x=>MNm[x.m-1]+(x.y?' '+x.y:'')+': '+x.t).join('\n'):''}
 function apply(j,msg){S.rows=conv(j);S.w=(j.files||[]).filter(f=>f.w||!f.n).map(f=>({m:f.m,y:f.y,t:f.name+': '+(f.w||'tidak ada data terbaca')}));
  const f=!S.init;S.init=true;fill(f);render();
- $('p0St').textContent=msg||('Tersinkron '+new Date().toLocaleTimeString('id-ID')+' ('+fn(S.rows.length)+' penugasan, '+(j.files||[]).length+' file bulanan)')}
+ $('p0St').textContent=msg||('Tersinkron '+new Date().toLocaleTimeString('id-ID')+' ('+fn(S.rows.length)+' penugasan, '+(j.files||[]).length+' file bulanan)'+(j.stale?' · server sedang memperbarui, data terbaru menyusul':''))}
 async function load(){if(S.busy)return;
  if(!URL_P0){$('p0Err').textContent='URL Apps Script belum diisi. Deploy code.gs sebagai Web App, lalu tempel URL .../exec pada konstanta URL_P0 di index.html.';$('p0St').textContent='Belum terhubung';return}
  S.busy=true;$('p0St').textContent='Menyinkronkan...';
  try{const r=await fetch(URL_P0+'?act=db&t='+Date.now(),{cache:'no-store'});if(!r.ok)throw Error('Apps Script HTTP '+r.status);const j=await r.json();if(j.error)throw Error(j.error);
-  apply(j);try{localStorage.setItem('p0db',JSON.stringify(j))}catch(x){}}
+  apply(j);if(j.stale)setTimeout(load,45000);try{localStorage.setItem('p0db',JSON.stringify(j))}catch(x){}}
  catch(x){$('p0Err').textContent=x.message;$('p0St').textContent='Sinkron gagal'}finally{S.busy=false}}
 function cached(){try{const j=JSON.parse(localStorage.getItem('p0db')||'null');if(j&&j.rows)apply(j,'Menampilkan data tersimpan, menyinkronkan...')}catch(x){}}
 /* ---- detail (klik angka) & export Excel ---- */
