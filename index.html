@@ -524,7 +524,12 @@ header,header .brand,header .brand b,header .brand span,header h1,header #ht,hea
 #p0 .p0b{margin:-2px 0 14px}
 #p0 .p0cv{position:relative;margin-top:12px}
 #p0 .p0hint{font-size:12.5px;color:var(--mut);margin-top:8px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-#p0 .kpi button{cursor:default}
+#p0 .kpi button{cursor:pointer}
+#p0 td.cl{cursor:pointer}#p0 td.cl:hover{background:var(--tint-ye);text-decoration:underline dotted}#p0 tr.tot td.cl:hover{background:var(--cy2);color:var(--on-cy)}
+#p0Md{position:fixed;inset:0;background:var(--scrim);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:14px;z-index:20}#p0Md[hidden]{display:none}
+#p0Md .box{background:var(--sf);color:var(--ink);border-radius:24px;box-shadow:0 20px 50px -12px rgba(0,0,0,.45);width:min(1180px,100%);max-height:88vh;display:flex;flex-direction:column;padding:16px;gap:12px}
+#p0Md h2{margin:0 0 3px;font:700 17px Montserrat,"Segoe UI",system-ui,sans-serif;color:var(--cyt)}#p0Md .wrap{flex:1;max-height:none;overflow:auto}#p0Md table{min-width:980px}
+@media(max-width:640px){#p0Md{padding:0;align-items:flex-end}#p0Md .box{width:100%;max-height:92vh;border-radius:24px 24px 0 0}#p0Md table{min-width:0}}
 /* kartu Absensi dan Lembur: panel ilustrasi dibuat transparan agar bayangan dalam (inset) tampil seperti kartu lain */
 a.mc[href="#absensi"] svg>rect:first-child,a.mc[href="#absensi"] svg>g>rect:first-child{fill:transparent!important}
 /* header menyesuaikan saat jendela mengecil (tablet / jendela sempit): logo di baris atas, teks di bawahnya, tidak saling menimpa */
@@ -612,7 +617,8 @@ header h1,header .brand+h1{font-size:clamp(14px,2.7vw,20px)!important;white-spac
 <div class="card"><div class="row">
 <label>Tahun<select id="p0Y"></select></label>
 <label>Bulan<select id="p0M"></select></label>
-<button id="p0S" type="button">Sinkron sekarang</button><span id="p0St" style="font-size:13px;color:var(--mut)">Belum sinkron</span></div>
+<label>Area<select id="p0A"></select></label>
+<button id="p0S" type="button">Sinkron sekarang</button><button id="p0XT" class="alt" type="button">Excel Tabel</button><button id="p0XD" class="alt" type="button">Excel Detail Data</button><span id="p0St" style="font-size:13px;color:var(--mut)">Belum sinkron</span></div>
 <div id="p0Err" style="color:var(--bad);margin-top:8px;white-space:pre-wrap"></div></div>
 <div class="kpi" id="p0K"></div>
 <div class="card"><h3>PENUGASAN KHUSUS (P0) PER UNIT</h3><div class="wrap" id="p0T1"></div></div>
@@ -3420,7 +3426,7 @@ function makePDF(r,ev){
   // judul
   d.setFontSize(10);d.setFont(&#x27;helvetica&#x27;,&#x27;bold&#x27;);const T=&#x27;SURAT PERMOHONAN TIDAK MASUK KERJA&#x27;,tw=d.getTextWidth(T);
   d.text(T,297.5,102,{align:&#x27;center&#x27;});d.line(297.5-tw/2,104,297.5+tw/2,104);
-  d.setFont(&#x27;helvetica&#x27;,&#x27;normal&#x27;);d.text(&#x27;Nomor : &#x27;+(r.nomor?r.nomor:&#x27;       &#x27;)+&#x27;/SDM.00/PLN ND - PA/&#x27;+r.tglAjuan.slice(0,4),297.5,115,{align:&#x27;center&#x27;});
+  d.setFont(&#x27;helvetica&#x27;,&#x27;normal&#x27;);d.text(&#x27;Nomor : &#x27;+(r.nomor?r.nomor:&#x27;       &#x27;)+&#x27;/SDM.00/PLN ES - PA/&#x27;+r.tglAjuan.slice(0,4),297.5,115,{align:&#x27;center&#x27;});
   const row=(y,l,v)=&gt;{d.setFont(&#x27;helvetica&#x27;,&#x27;normal&#x27;);d.text(l,73,y);d.text(&#x27;:&#x27;,217,y);const ls=d.splitTextToSize(String(v||&#x27;-&#x27;),330);d.text(ls,225,y);return y+13*ls.length};
   d.text(&#x27;Yang bertanda tangan di bawah ini :&#x27;,73,152);
   let y=165;y=row(y,&#x27;Nama&#x27;,r.nama);y=row(y,&#x27;No. Induk&#x27;,r.noinduk);y=row(y,&#x27;Jabatan&#x27;,r.jabatan);y=row(y,&#x27;Penempatan&#x27;,r.unit);
@@ -3484,7 +3490,7 @@ function letterHTML(r){
   const hdr=`&lt;img src=&quot;${HDR_PNG}&quot; style=&quot;width:595px;display:block&quot;&gt;`,lg=`&lt;img src=&quot;${LOGO_SVG}&quot; style=&quot;width:163.21px;display:block&quot;&gt;`;
   return A(0,0,595,hdr)+A(392.79,44,0,lg)
   +C(297.5,92,520,&#x27;&lt;b style=&quot;text-decoration:underline&quot;&gt;SURAT PERMOHONAN TIDAK MASUK KERJA&lt;/b&gt;&#x27;)
-  +C(297.5,106,520,`Nomor : ${r.nomor?e(r.nomor):&#x27;&lt;span style=&quot;display:inline-block;width:20px&quot;&gt;&lt;/span&gt;&#x27;}/SDM.00/PLN ND - PA/${yr}`)
+  +C(297.5,106,520,`Nomor : ${r.nomor?e(r.nomor):&#x27;&lt;span style=&quot;display:inline-block;width:20px&quot;&gt;&lt;/span&gt;&#x27;}/SDM.00/PLN ES - PA/${yr}`)
   +A(73,143,480,`Yang bertanda tangan di bawah ini :${row(&#x27;Nama&#x27;,r.nama)}${row(&#x27;No. Induk&#x27;,r.noinduk)}${row(&#x27;Jabatan&#x27;,r.jabatan)}${row(&#x27;Penempatan&#x27;,r.unit)}&lt;div style=&quot;margin:14px 0 13px&quot;&gt;Dengan ini mengajukan permohonan tidak masuk kerja :&lt;/div&gt;${row(&#x27;Keterangan&#x27;,r.ket)}${row(&#x27;Lamanya Cuti&#x27;,lam(r))}${row(&#x27;Jumlah Cuti&#x27;,r.jumlah+&#x27; Hari&#x27;)}${row(sisaLbl(r),r.sisa+&#x27; Hari&#x27;)}`)
   +A(0,328,0,e(hari(r.tglAjuan)),&#x27;left:auto;right:39px;&#x27;)
   +X
@@ -5409,37 +5415,39 @@ const PAL=['#52c3dc','#f8c420','#c93e55','#5f9e6e','#7b6cf6','#ef8a3c','#2f8fb0'
 function conv(j){const A=j.A||[],U=j.U||[],J=j.J||[];SL.clear();JOBS.forEach(x=>SL.set(x[0],x[1]));
  return(j.rows||[]).map(r=>{const jb=JK.get(key(J[r[4]])),jn=jb?jb[0]:String(J[r[4]]).trim(),sla=r[6]!=null?r[6]:(jb?jb[1]:null),d=+r[5],ac=r[8]!=null?!!r[8]:d>ACMIN,over=sla!=null&&d>sla;
   if(!jb&&sla!=null)SL.set(jn,sla);
-  return{y:r[0],m:r[1],unit:String(A[r[2]]||'').toUpperCase().replace(/^\s*UP3\s+/,'').trim()||'-',posko:String(U[r[3]]||'').trim()||'-',j:jn,d,over,ac,tb:r[7]!=null?+r[7]:(over?d-sla:0)}})}
+  return{y:r[0],m:r[1],unit:String(A[r[2]]||'').toUpperCase().replace(/^\s*UP3\s+/,'').trim()||'-',posko:String(U[r[3]]||'').trim()||'-',j:jn,d,over,ac,sla,no:String(r[9]||''),mu:r[10]!=null?+r[10]:null,ak:r[11]!=null?+r[11]:null,tb:r[7]!=null?+r[7]:(over?d-sla:0)}})}
 const ag=()=>({n:0,d:0,o:0,a:0,x:0,t:0});
 const add=(g,r)=>{g.n++;g.d+=r.d;if(r.over)g.o++;if(r.ac)g.a++;else if(r.over)g.x++;g.t+=r.tb};
 const sum=(T,g)=>{for(const k in T)T[k]+=g[k]};
 const grp=(R,f)=>{const m=new Map();R.forEach(r=>{const k=f(r);let g=m.get(k);if(!g){g=ag();m.set(k,g)}add(g,r)});return m};
-const rowsF=()=>{const y=$('p0Y').value,m=$('p0M').value;return S.rows.filter(r=>(!y||r.y==y)&&(!m||r.m==m))};
-const ulist=()=>{const s=new Set(S.rows.map(r=>r.unit));return UNITS.concat([...s].filter(x=>!UNITS.includes(x)).sort())};
+const rowsF=()=>{const y=$('p0Y').value,m=$('p0M').value,a=$('p0A').value;return S.rows.filter(r=>(!y||r.y==y)&&(!m||r.m==m)&&(!a||r.unit==a))};
+const ulAll=()=>{const s=new Set(S.rows.map(r=>r.unit));return UNITS.concat([...s].filter(x=>!UNITS.includes(x)).sort())};
+const ulist=()=>{const a=$('p0A').value;return a?[a]:ulAll()};
 const jlist=()=>{const s=new Set(S.rows.map(r=>r.j));return JOBS.map(j=>j[0]).concat([...s].filter(x=>!SL.has(x)||!JOBS.some(j=>j[0]==x)).sort())};
 /* ---- tabel ---- */
 const avg=g=>g.n?fn(g.d/g.n,1):'-';
-const cells=(g,l)=>`<td class="n" data-l="${l}">${fn(g.n)}</td><td class="n" data-l="Rata-rata Durasi (m)">${avg(g)}</td><td class="n" data-l="Total Over SLA">${fn(g.o)}</td><td class="n" data-l="Total Auto Close (&gt;120m)">${fn(g.a)}</td><td class="n" data-l="Durasi Terbuang (m)">${fn(g.t)}</td>`;
+const cells=(g,l,q)=>{const a=m=>` data-m="${m}" data-q="${esc(JSON.stringify(q||{}))}"`;return `<td class="n cl" data-l="${l}"${a('n')}>${fn(g.n)}</td><td class="n cl" data-l="Rata-rata Durasi (m)"${a('v')}>${avg(g)}</td><td class="n cl" data-l="Total Over SLA"${a('o')}>${fn(g.o)}</td><td class="n cl" data-l="Total Auto Close (&gt;120m)"${a('a')}>${fn(g.a)}</td><td class="n cl" data-l="Durasi Terbuang (m)"${a('t')}>${fn(g.t)}</td>`};
 const TH=l=>`<th class="n">${l}</th><th class="n">Rata-rata Durasi (m)</th><th class="n">Total Over SLA</th><th class="n">Total Auto Close (&gt;120m)</th><th class="n">Durasi Terbuang (m)</th>`;
 function t1(R){const G=grp(R,r=>r.unit),T=ag();
  let h=`<table><thead><tr><th>Unit</th>${TH('Jumlah P0')}</tr></thead><tbody>`;
  ulist().forEach(u=>{const g=G.get(u)||ag(),k='u|'+u,op=S.ou.has(k);sum(T,g);
-  h+=`<tr class="sub${op?' op':''}" data-k="${esc(k)}"><td data-l="Unit"><span class="tg">▶</span>${esc(u)}</td>${cells(g,'Jumlah P0')}</tr>`;
-  if(op){const P=grp(R.filter(r=>r.unit==u),r=>r.posko);[...P.keys()].sort().forEach(p=>{h+=`<tr class="u"><td data-l="ULP / Posko">${esc(p)}</td>${cells(P.get(p),'Jumlah P0')}</tr>`});if(!P.size)h+='<tr class="u"><td data-l="ULP / Posko">Tidak ada penugasan</td></tr>'}});
- return h+`<tr class="tot"><td data-l="Total">TOTAL</td>${cells(T,'Jumlah P0')}</tr></tbody></table>`}
-function jt(R,bk){const G=grp(R,r=>r.j),T=ag();
+  h+=`<tr class="sub${op?' op':''}" data-k="${esc(k)}"><td data-l="Unit"><span class="tg">▶</span>${esc(u)}</td>${cells(g,'Jumlah P0',{u})}</tr>`;
+  if(op){const P=grp(R.filter(r=>r.unit==u),r=>r.posko);[...P.keys()].sort().forEach(p=>{h+=`<tr class="u"><td data-l="ULP / Posko">${esc(p)}</td>${cells(P.get(p),'Jumlah P0',{u,p})}</tr>`});if(!P.size)h+='<tr class="u"><td data-l="ULP / Posko">Tidak ada penugasan</td></tr>'}});
+ return h+`<tr class="tot"><td data-l="Total">TOTAL</td>${cells(T,'Jumlah P0',{})}</tr></tbody></table>`}
+function jt(R,bk){const G=grp(R,r=>r.j),T=ag(),bu=bk=='*'?{}:{u:bk},SP='\u0001';
  let h=`<table><thead><tr><th>Jenis Penugasan</th><th class="n">SLA (m)</th>${TH('Jumlah Penugasan')}</tr></thead><tbody>`;
  jlist().forEach(j=>{const g=G.get(j)||ag(),k='j|'+bk+'|'+j,op=S.oj.has(k),sl=SL.has(j)?SL.get(j):'-';sum(T,g);
-  h+=`<tr class="sub${op?' op':''}" data-k="${esc(k)}"><td data-l="Jenis Penugasan"><span class="tg">▶</span>${esc(j)}</td><td class="n" data-l="SLA (m)">${sl}</td>${cells(g,'Jumlah Penugasan')}</tr>`;
-  if(op){const P=grp(R.filter(r=>r.j==j),r=>bk=='*'?r.unit+' · '+r.posko:r.posko);[...P.keys()].sort().forEach(p=>{h+=`<tr class="u"><td data-l="ULP / Posko">${esc(p)}</td><td class="n" data-l="SLA (m)">${sl}</td>${cells(P.get(p),'Jumlah Penugasan')}</tr>`});if(!P.size)h+='<tr class="u"><td data-l="ULP / Posko">Tidak ada penugasan</td></tr>'}});
- return h+`<tr class="tot"><td data-l="Total">TOTAL</td><td></td>${cells(T,'Jumlah Penugasan')}</tr></tbody></table>`}
-function t2(R){let h='';const G=grp(R,r=>r.unit);
- ['*'].concat(ulist()).forEach(b=>{const g=b=='*'?[...grp(R,()=>1).values()][0]||ag():G.get(b)||ag(),op=S.ob.has(b);
+  h+=`<tr class="sub${op?' op':''}" data-k="${esc(k)}"><td data-l="Jenis Penugasan"><span class="tg">▶</span>${esc(j)}</td><td class="n" data-l="SLA (m)">${sl}</td>${cells(g,'Jumlah Penugasan',Object.assign({},bu,{j}))}</tr>`;
+  if(op){const P=grp(R.filter(r=>r.j==j),r=>bk=='*'?r.unit+SP+r.posko:r.posko);[...P.keys()].sort().forEach(p=>{const a=p.split(SP),q=bk=='*'?{j,u:a[0],p:a[1]}:Object.assign({},bu,{j,p});
+   h+=`<tr class="u"><td data-l="ULP / Posko">${esc(a.join(' · '))}</td><td class="n" data-l="SLA (m)">${sl}</td>${cells(P.get(p),'Jumlah Penugasan',q)}</tr>`});if(!P.size)h+='<tr class="u"><td data-l="ULP / Posko">Tidak ada penugasan</td></tr>'}});
+ return h+`<tr class="tot"><td data-l="Total">TOTAL</td><td></td>${cells(T,'Jumlah Penugasan',bu)}</tr></tbody></table>`}
+function t2(R){let h='';const G=grp(R,r=>r.unit),ar=$('p0A').value;
+ (ar?[]:['*']).concat(ulist()).forEach(b=>{const g=b=='*'?[...grp(R,()=>1).values()][0]||ag():G.get(b)||ag(),op=S.ob.has(b)||!!ar;
   h+=`<div class="p0h${op?' op':''}" data-b="${esc(b)}"><span class="tg">▶</span><span>${b=='*'?'SEMUA UNIT':esc(b)}</span><small>${fn(g.n)} P0 · ${fn(g.t)} m terbuang</small></div>`;
   if(op)h+=`<div class="wrap p0b">${jt(b=='*'?R:R.filter(r=>r.unit==b),b)}</div>`});return h}
 function kpi(R){const g=ag();R.forEach(r=>add(g,r));
- const K=[['Jumlah P0',fn(g.n)],['Rata-rata Durasi (m)',avg(g)],['Total Over SLA',fn(g.o)+(g.n?` <small>(${fn(g.o/g.n*100,1)}%)</small>`:'')],['Total Auto Close (&gt;120m)',fn(g.a)],['Durasi Terbuang',fn(g.t/60,1)+' <small>jam</small>']];
- return K.map(k=>`<button type="button" tabindex="-1"><b>${k[1]}</b>${k[0]}</button>`).join('')}
+ const K=[['Jumlah P0',fn(g.n),'n'],['Rata-rata Durasi (m)',avg(g),'v'],['Total Over SLA',fn(g.o)+(g.n?` <small>(${fn(g.o/g.n*100,1)}%)</small>`:''),'o'],['Total Auto Close (&gt;120m)',fn(g.a),'a'],['Durasi Terbuang',fn(g.t/60,1)+' <small>jam</small>','t']];
+ return K.map(k=>`<button type="button" tabindex="-1" data-m="${k[2]}" data-q="{}"><b>${k[1]}</b>${k[0]}</button>`).join('')}
 /* ---- chart ---- */
 const gd=(c1,c2)=>cx=>{const a=cx.chart.chartArea;if(!a)return c1;const g=cx.chart.ctx.createLinearGradient(a.left,0,a.right,0);g.addColorStop(0,c1);g.addColorStop(1,c2);return g};
 function chart(){const cv=$('p0Cv');if(!window.Chart||!cv||$('p0').hidden)return;
@@ -5466,7 +5474,7 @@ function chart(){const cv=$('p0Cv');if(!window.Chart||!cv||$('p0').hidden)return
 /* ---- render & sync ---- */
 function render(){const R=rowsF();$('p0K').innerHTML=kpi(R);$('p0T1').innerHTML=t1(R);$('p0T2').innerHTML=t2(R);chart();warn()}
 function opts(s,vals,all,lab){const c=s.value;s.innerHTML='<option value="">'+all+'</option>'+vals.map(v=>`<option value="${v}">${lab?lab(v):v}</option>`).join('');s.value=vals.map(String).includes(c)?c:''}
-function fill(first){const ys=[...new Set(S.rows.map(r=>r.y))].sort();opts($('p0Y'),ys,'Semua tahun');if(first&&ys.length)$('p0Y').value=ys[ys.length-1];fillM()}
+function fill(first){const ys=[...new Set(S.rows.map(r=>r.y))].sort();opts($('p0Y'),ys,'Semua tahun');opts($('p0A'),ulAll(),'Semua area');if(first&&ys.length)$('p0Y').value=ys[ys.length-1];fillM()}
 function fillM(){const y=$('p0Y').value,ms=[...new Set(S.rows.filter(r=>!y||r.y==y).map(r=>r.m))].sort((a,b)=>a-b);opts($('p0M'),ms,'Semua bulan',v=>MNm[v-1])}
 function warn(){const y=+$('p0Y').value||0,m=+$('p0M').value||0,L=S.w.filter(x=>!m||x.m==m).filter(x=>!y||!x.y||x.y==y);
  $('p0Err').textContent=L.length?'Perhatian:\n'+L.map(x=>MNm[x.m-1]+(x.y?' '+x.y:'')+': '+x.t).join('\n'):''}
@@ -5480,6 +5488,43 @@ async function load(){if(S.busy)return;
   apply(j);try{localStorage.setItem('p0db',JSON.stringify(j))}catch(x){}}
  catch(x){$('p0Err').textContent=x.message;$('p0St').textContent='Sinkron gagal'}finally{S.busy=false}}
 function cached(){try{const j=JSON.parse(localStorage.getItem('p0db')||'null');if(j&&j.rows)apply(j,'Menampilkan data tersimpan, menyinkronkan...')}catch(x){}}
+/* ---- detail (klik angka) & export Excel ---- */
+const MT={n:'Jumlah',v:'Rata-rata durasi',o:'Total over SLA',a:'Total auto close (>120m)',t:'Durasi terbuang'};
+const DH=['No','Periode','Area','ULP / Posko','Jenis Penugasan','Mulai','Selesai','SLA (m)','Durasi (m)','Over SLA','Auto Close','Durasi Terbuang (m)'];
+const p2=n=>String(n).padStart(2,'0'),fmt=m=>{if(m==null)return'-';const d=new Date(m*60000);return p2(d.getUTCDate())+'/'+p2(d.getUTCMonth()+1)+'/'+d.getUTCFullYear()+' '+p2(d.getUTCHours())+'.'+p2(d.getUTCMinutes())};
+const r2=v=>Math.round(v*100)/100;
+const drow=r=>[r.no||'-',MNm[r.m-1]+' '+r.y,r.unit,r.posko,r.j,fmt(r.mu),fmt(r.ak),r.sla==null?'-':r.sla,r2(r.d),r.over?'Ya':'Tidak',r.ac?'Ya':'Tidak',r2(r.tb)];
+const sel=(q,m)=>rowsF().filter(r=>(q.u==null||r.unit==q.u)&&(q.p==null||r.posko==q.p)&&(q.j==null||r.j==q.j)&&(m=='o'?r.over:m=='a'?r.ac:m=='t'?r.tb>0:true));
+const PM={rows:[],lim:300,name:''};
+const md=document.createElement('div');md.id='p0Md';md.hidden=true;
+md.innerHTML='<div class="box"><div class="row" style="justify-content:space-between;align-items:center"><div><h2 id="p0Mt"></h2><div id="p0Mi" style="font-size:12.5px;color:var(--mut)"></div></div><div class="row"><button type="button" class="alt" id="p0Mx">Unduh Excel</button><button type="button" id="p0Mc">Tutup</button></div></div><div class="wrap" id="p0Mb"></div><div id="p0Mm"></div></div>';
+document.body.appendChild(md);
+function popBody(){const L=PM.rows.slice(0,PM.lim);
+ $('p0Mb').innerHTML=`<table><thead><tr>${DH.map(h=>'<th>'+h+'</th>').join('')}</tr></thead><tbody>${L.map(r=>'<tr>'+drow(r).map((v,i)=>`<td data-l="${DH[i]}"${typeof v=='number'?' class="n"':''}>${esc(v)}</td>`).join('')+'</tr>').join('')}</tbody></table>`;
+ $('p0Mm').innerHTML=PM.rows.length>PM.lim?`<button type="button" class="alt" id="p0More">Tampilkan ${fn(Math.min(300,PM.rows.length-PM.lim))} baris lagi (${fn(PM.lim)} dari ${fn(PM.rows.length)})</button>`:''}
+function pop(m,q){const R=sel(q,m),g=ag();R.forEach(r=>add(g,r));PM.rows=R;PM.lim=300;
+ const who=[q.u,q.p,q.j].filter(x=>x!=null).join(' › ')||'Semua data (sesuai filter)';
+ $('p0Mt').textContent=MT[m]+' — '+who;
+ $('p0Mi').textContent=fn(R.length)+' baris data'+(m=='v'?' · rata-rata durasi '+avg(g)+' m':m=='t'?' · total durasi terbuang '+fn(g.t)+' m (hanya baris yang melewati SLA)':'');
+ PM.name='P0_'+MT[m].replace(/[^\w]+/g,'-')+'_'+who.replace(/[^\w]+/g,'-').slice(0,40);popBody();md.hidden=false}
+function xl(sheets,name){if(!window.XLSX)return alert('Library Excel belum termuat, coba lagi.');const wb=XLSX.utils.book_new();
+ sheets.forEach(s=>{const ws=XLSX.utils.aoa_to_sheet(s.a);ws['!cols']=s.a[0].map((h,i)=>({wch:Math.min(46,Math.max(String(h).length+2,...s.a.slice(1,60).map(r=>String(r[i]==null?'':r[i]).length+2)))}));XLSX.utils.book_append_sheet(wb,ws,s.n.slice(0,31))});
+ XLSX.writeFile(wb,name+'.xlsx')}
+const sfx=()=>{const f=[$('p0Y').value,$('p0M').value&&MNm[$('p0M').value-1],$('p0A').value].filter(Boolean).join('_').replace(/[^\w-]+/g,'-');return f?'_'+f:''};
+function xTab(){const R=rowsF();if(!R.length)return alert('Tidak ada data untuk diunduh.');
+ const row=g=>[g.n,g.n?Math.round(g.d/g.n*10)/10:'',g.o,g.a,Math.round(g.t*10)/10];
+ const a1=[['Unit','ULP / Posko','Jumlah P0','Rata-rata Durasi (m)','Total Over SLA','Total Auto Close (>120m)','Durasi Terbuang (m)']],T=ag(),G=grp(R,r=>r.unit);
+ ulist().forEach(u=>{const g=G.get(u)||ag();sum(T,g);a1.push([u,'(total unit)'].concat(row(g)));const P=grp(R.filter(r=>r.unit==u),r=>r.posko);[...P.keys()].sort().forEach(p=>a1.push([u,p].concat(row(P.get(p)))))});
+ a1.push(['TOTAL',''].concat(row(T)));
+ const a2=[['Area','ULP / Posko','Jenis Penugasan','SLA (m)','Jumlah Penugasan','Rata-rata Durasi (m)','Total Over SLA','Total Auto Close (>120m)','Durasi Terbuang (m)']];
+ const blk=(ar,RR,po)=>{const G2=grp(RR,r=>r.j);jlist().forEach(j=>{const g=G2.get(j)||ag();if(po&&!g.n)return;a2.push([ar,po||'(total)',j,SL.has(j)?SL.get(j):'-'].concat(row(g)))})};
+ if(!$('p0A').value)blk('SEMUA UNIT',R);
+ ulist().forEach(u=>{const Ru=R.filter(r=>r.unit==u);blk(u,Ru);[...new Set(Ru.map(r=>r.posko))].sort().forEach(p=>blk(u,Ru.filter(r=>r.posko==p),p))});
+ xl([{n:'Per Unit',a:a1},{n:'Per Pekerjaan',a:a2}],'P0_Rekap_Tabel'+sfx())}
+function xDet(){const R=rowsF();if(!R.length)return alert('Tidak ada data untuk diunduh.');xl([{n:'Detail Data',a:[DH].concat(R.map(drow))}],'P0_Detail_Data'+sfx())}
+md.addEventListener('click',e=>{if(e.target===md||e.target.id=='p0Mc')md.hidden=true;else if(e.target.id=='p0More'){PM.lim+=300;popBody()}else if(e.target.id=='p0Mx')xl([{n:'Detail',a:[DH].concat(PM.rows.map(drow))}],PM.name)});
+addEventListener('keydown',e=>{if(e.key=='Escape')md.hidden=true});
+$('p0XT').onclick=xTab;$('p0XD').onclick=xDet;$('p0A').onchange=render;
 window.p0Enter=function(){cur=null;['home','app','cb','md','abs','cut','wob'].forEach(i=>{const x=$(i);if(x)x.hidden=true});$('p0').hidden=false;
  $('ht').textContent='Rekap Penugasan Khusus Yantek';$('hp').textContent='Rekap Penugasan Khusus (P0) PPB per unit dan per pekerjaan: jumlah, rata-rata durasi, over SLA, auto close dan durasi terbuang';
  document.title='Rekap Penugasan Khusus Yantek';window.scrollTo(0,0);if(!S.rows.length)cached();else render();load()};
@@ -5487,7 +5532,7 @@ $('p0Y').onchange=()=>{fillM();render()};$('p0M').onchange=render;$('p0S').oncli
 $('p0Dim').onchange=e=>{S.dim=e.target.value;S.dr=null;chart()};
 $('p0Back').onclick=()=>{S.dr=null;chart()};
 $('p0Tabs').onclick=e=>{const b=e.target.closest('button[data-t]');if(!b)return;S.tab=b.dataset.t;[...$('p0Tabs').children].forEach(x=>x.classList.toggle('on',x==b));chart()};
-$('p0').addEventListener('click',e=>{const h=e.target.closest('.p0h[data-b]'),r=e.target.closest('tr[data-k]');
+$('p0').addEventListener('click',e=>{const c=e.target.closest('td[data-m],.kpi button[data-m]');if(c){pop(c.dataset.m,JSON.parse(c.dataset.q||'{}'));return}const h=e.target.closest('.p0h[data-b]'),r=e.target.closest('tr[data-k]');
  if(h){const b=h.dataset.b;S.ob.has(b)?S.ob.delete(b):S.ob.add(b);$('p0T2').innerHTML=t2(rowsF());return}
  if(r){const k=r.dataset.k,s=k[0]=='u'?S.ou:S.oj;s.has(k)?s.delete(k):s.add(k);k[0]=='u'?$('p0T1').innerHTML=t1(rowsF()):$('p0T2').innerHTML=t2(rowsF())}});
 new MutationObserver(()=>{if(!$('p0').hidden)chart()}).observe(root,{attributes:true,attributeFilter:['data-theme']});
